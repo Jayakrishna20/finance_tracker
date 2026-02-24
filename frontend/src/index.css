@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-primary-main: #b9ff66;
+  --color-primary-dark: #a3e65a;
+  --color-secondary-main: #191a23;
+  --color-secondary-light: #292a32;
+  --color-background-default: #f3f3f3;
+}
+
+html,
+body,
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-background-default);
+  color: var(--color-secondary-main);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
