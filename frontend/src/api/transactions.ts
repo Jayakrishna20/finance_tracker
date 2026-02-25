@@ -4,14 +4,14 @@ import type { Transaction } from '../types';
 
 export const TransactionsAPI = {
     // Create with rounding amount requirement constraint
-    create: async (payload: Omit<Transaction, 'id'>) => {
+    create: async (payload: Omit<Transaction, 'id' | 'category' | 'dayName' | 'weekNumber' | 'monthYear'>) => {
         const roundedPayload = { ...payload, amount: Math.round(payload.amount) };
         const res = await axiosClient.post(API_ROUTES.TRANSACTIONS.CREATE, roundedPayload);
-        return res.data;
+        return res.data.data;
     },
     getAll: async () => {
         const res = await axiosClient.get(API_ROUTES.TRANSACTIONS.GET_ALL);
-        return res.data;
+        return res.data.data;
     },
     delete: async (id: string) => {
         const res = await axiosClient.delete(API_ROUTES.TRANSACTIONS.DELETE(id));

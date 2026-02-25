@@ -22,14 +22,15 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import type { TransactionCategory } from "../../types";
 import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
+import { useCategories } from "../transactions/hooks/useCategories";
+import type { Category } from "../../types";
 
 const schema = z.object({
   date: z.date({ message: "Date is required" }),
-  category: z.string().min(1, "Category is required"),
+  categoryId: z.string().min(1, "Category is required"),
   amount: z.number().min(0.01, "Amount must be greater than 0"),
-  description: z.string().optional(),
+  notes: z.string().optional(),
 
   // Stored but derived/disabled purely for DB
   dayName: z.string(),
@@ -39,17 +40,10 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const categories: TransactionCategory[] = [
-  "Housing",
-  "Food",
-  "Transport",
-  "Utilities",
-  "Entertainment",
-  "Other",
-];
-
 export const TransactionModal: React.FC = () => {
   const { isOpen, closeModal } = useModalStore();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
 
   // Use a custom hook for React Query mutation (will create next)
   const createTxMutation = useCreateTransaction();
@@ -64,9 +58,9 @@ export const TransactionModal: React.FC = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       date: new Date(),
-      category: "",
+      categoryId: "",
       amount: undefined,
-      description: "",
+      notes: "",
       dayName: format(new Date(), "EEEE"),
       weekNumber: getISOWeek(new Date()),
       monthYear: format(new Date(), "MMM-yyyy"),
@@ -152,7 +146,7 @@ export const TransactionModal: React.FC = () => {
             </LocalizationProvider>
 
             <Controller
-              name="category"
+              name="categoryId"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -160,11 +154,12 @@ export const TransactionModal: React.FC = () => {
                   select
                   label="Category"
                   fullWidth
-                  error={!!errors.category}
-                  helperText={errors.category?.message}>
-                  {categories.map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                      {cat}
+                  disabled={isLoadingCategories}
+                  error={!!errors.categoryId}
+                  helperText={errors.categoryId?.message}>
+                  {categories.map((cat: Category) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -191,12 +186,12 @@ export const TransactionModal: React.FC = () => {
           </div>
 
           <Controller
-            name="description"
+            name="notes"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Description (Optional)"
+                label="Notes (Optional)"
                 fullWidth
                 multiline
                 rows={4}
@@ -213,7 +208,7 @@ export const TransactionModal: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={createTxMutation.isPending}
+            disabled={createTxMutation.isPending || isLoadingCategories}
             className="!rounded-xl">
             {createTxMutation.isPending ? "Saving..." : "Save Transaction"}
           </Button>

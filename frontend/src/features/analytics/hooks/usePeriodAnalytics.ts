@@ -24,8 +24,8 @@ export const usePeriodAnalytics = (periodType: 'WEEKLY' | 'MONTHLY' | 'YEARLY', 
         let grandTotal = 0;
 
         filtered.forEach(t => {
-            const cat = t.category;
-            categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
+            const catName = t.category?.name || 'Unknown';
+            categoryTotals[catName] = (categoryTotals[catName] || 0) + t.amount;
             grandTotal += t.amount;
         });
 
