@@ -1,13 +1,8 @@
-export type TransactionCategory =
-    | 'Housing'
-    | 'Food'
-    | 'Transport'
-    | 'Utilities'
-    | 'Entertainment'
-    | 'Other';
+export type TransactionCategory = string;
 
 export interface Transaction {
     id: string;
+    type: 'normal' | 'credit';
     date: string; // ISO String
     category: TransactionCategory;
     amount: number;

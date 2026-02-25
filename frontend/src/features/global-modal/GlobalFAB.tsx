@@ -2,16 +2,23 @@ import React from "react";
 import { Fab } from "@mui/material";
 import { Plus } from "lucide-react";
 import { useModalStore } from "../../store/useModalStore";
+import { useLocation } from "react-router-dom";
 
 export const GlobalFAB: React.FC = () => {
+  const location = useLocation();
   const openModal = useModalStore((state) => state.openModal);
+
+  const isCreditPage = location.pathname === "/credit";
+  const handleOpen = () => {
+    openModal(undefined, isCreditPage ? "credit" : "normal");
+  };
 
   return (
     <Fab
       variant="extended"
       color="primary"
       aria-label="add transaction"
-      onClick={openModal}
+      onClick={handleOpen}
       className="group"
       sx={{
         position: "fixed",
@@ -33,7 +40,7 @@ export const GlobalFAB: React.FC = () => {
       }}>
       <Plus size={24} className="text-secondary-main shrink-0" />
       <span className="text-secondary-main font-bold whitespace-nowrap overflow-hidden transition-all duration-300 w-0 opacity-0 group-hover:w-[124px] group-hover:opacity-100 group-hover:ml-2 text-sm">
-        Add Transaction
+        {isCreditPage ? "Add Credit Tx" : "Add Transaction"}
       </span>
     </Fab>
   );

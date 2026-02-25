@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import { Tabs, Tab } from "@mui/material";
 import { VaultPivotTable } from "./VaultPivotTable";
 
 export const ArchiveView: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
-
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
-  };
 
   return (
     <div className="space-y-6 h-full flex flex-col">
@@ -20,30 +15,34 @@ export const ArchiveView: React.FC = () => {
           boundaries.
         </p>
 
-        <div className="bg-gray-50 rounded-2xl p-2 mb-2 mt-6 inline-block">
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            TabIndicatorProps={{ style: { display: "none" } }}
-            sx={{
-              minHeight: "40px",
-              "& .MuiTab-root": {
-                minHeight: "40px",
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 600,
-                minWidth: "120px",
-                "&.Mui-selected": {
-                  backgroundColor: "white",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                  color: "#191A23",
-                },
-              },
-            }}>
-            <Tab label="Weekly" />
-            <Tab label="Monthly" />
-            <Tab label="Yearly" />
-          </Tabs>
+        <div className="flex bg-gray-100/80 p-1 rounded-xl mb-2 mt-6 inline-flex w-fit">
+          <button
+            onClick={() => setTabIndex(0)}
+            className={`py-2 px-6 min-w-[120px] rounded-lg text-sm font-semibold transition-all ${
+              tabIndex === 0
+                ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+            }`}>
+            Weekly
+          </button>
+          <button
+            onClick={() => setTabIndex(1)}
+            className={`py-2 px-6 min-w-[120px] rounded-lg text-sm font-semibold transition-all ${
+              tabIndex === 1
+                ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+            }`}>
+            Monthly
+          </button>
+          <button
+            onClick={() => setTabIndex(2)}
+            className={`py-2 px-6 min-w-[120px] rounded-lg text-sm font-semibold transition-all ${
+              tabIndex === 2
+                ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+            }`}>
+            Yearly
+          </button>
         </div>
       </div>
 
