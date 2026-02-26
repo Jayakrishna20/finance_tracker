@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
 import toast from 'react-hot-toast';
-import type { Transaction, CreateTransactionPayload, UpdateTransactionPayload } from '../../../types';
+import type { Transaction, CreateTransactionPayload } from '../../../types';
 
 export const useCreateTransaction = () => {
     const queryClient = useQueryClient();

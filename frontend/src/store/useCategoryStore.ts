@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Category, CreateCategoryPayload } from "../types";
+import dummyData from "../api/dummyData.json";
 
 interface CategoryState {
     categories: Category[];
@@ -12,7 +13,7 @@ interface CategoryState {
 export const useCategoryStore = create<CategoryState>()(
     persist(
         (set) => ({
-            categories: [], // Removed dummy data
+            categories: dummyData.categories as Category[],
             addCategory: (payload) =>
                 set((state) => ({
                     categories: [
