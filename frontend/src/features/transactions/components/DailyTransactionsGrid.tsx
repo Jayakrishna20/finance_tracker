@@ -12,7 +12,6 @@ import type { Transaction } from "../../../types";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { useConfirmStore } from "../../../store/useConfirmStore";
-
 import { formatCurrency } from "../../../utils/formatters";
 
 interface DailyTransactionsGridProps {

@@ -3,7 +3,6 @@ import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useTransactions } from "../../transactions/hooks/useTransactions";
 import { formatCurrency } from "../../../utils/formatters";
 import { useCategoryStore } from "../../../store/useCategoryStore";
-import type { Transaction } from "../../../types";
 
 interface VaultPivotTableProps {
   periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
