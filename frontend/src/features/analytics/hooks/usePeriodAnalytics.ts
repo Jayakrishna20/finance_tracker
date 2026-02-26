@@ -3,9 +3,11 @@ import { useTransactions } from '../../transactions/hooks/useTransactions';
 import type { Transaction } from '../../../types';
 import type { PeriodType } from '../../../config/constants';
 import { getISOWeek, format } from 'date-fns';
+import { useCategoryStore } from '../../../store/useCategoryStore';
 
 export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) => {
     const { data: transactions, isLoading } = useTransactions();
+    const { categories } = useCategoryStore();
 
     const aggregatedData = useMemo(() => {
         if (!transactions) return { chartData: [], gridData: [], total: 0 };
@@ -23,7 +25,7 @@ export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) 
         let grandTotal = 0;
 
         filtered.forEach(t => {
-            const catName = t.category?.name || 'Unknown';
+            const catName = t.category?.name || categories.find(c => c.id === t.categoryId)?.name || 'Unknown';
             categoryTotals[catName] = (categoryTotals[catName] || 0) + t.amount;
             grandTotal += t.amount;
         });
@@ -40,7 +42,7 @@ export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) 
         }));
 
         return { chartData, gridData, total: grandTotal };
-    }, [transactions, periodType, periodValue]);
+    }, [transactions, periodType, periodValue, categories]);
 
     return { ...aggregatedData, isLoading };
 };

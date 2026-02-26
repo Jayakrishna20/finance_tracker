@@ -1,0 +1,450 @@
+{
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Food",
+      "color": "#FF6B6B",
+      "type": "normal"
+    },
+    {
+      "id": "cat-2",
+      "name": "Rent",
+      "color": "#4DABF7",
+      "type": "normal"
+    },
+    {
+      "id": "cat-3",
+      "name": "Salary",
+      "color": "#51CF66",
+      "type": "credit"
+    },
+    {
+      "id": "cat-4",
+      "name": "Travel",
+      "color": "#FCC419",
+      "type": "normal"
+    },
+    {
+      "id": "cat-5",
+      "name": "Entertainment",
+      "color": "#B197FC",
+      "type": "normal"
+    },
+    {
+      "id": "cat-6",
+      "name": "Shopping",
+      "color": "#FF922B",
+      "type": "normal"
+    },
+    {
+      "id": "cat-7",
+      "name": "Health",
+      "color": "#20C997",
+      "type": "normal"
+    },
+    {
+      "id": "cat-8",
+      "name": "Miscellaneous",
+      "color": "#868E96",
+      "type": "normal"
+    },
+    {
+      "id": "cat-9",
+      "name": "Investment",
+      "color": "#748FFC",
+      "type": "credit"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-rent-1",
+      "type": "normal",
+      "date": "2026-02-01T10:00:00.000Z",
+      "categoryId": "cat-2",
+      "amount": 25000,
+      "description": "Monthly Rent",
+      "weekNumber": 5,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-sal-1",
+      "type": "credit",
+      "date": "2026-02-01T10:00:00.000Z",
+      "categoryId": "cat-3",
+      "amount": 150000,
+      "description": "Monthly Salary",
+      "weekNumber": 5,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-1",
+      "type": "normal",
+      "date": "2026-02-01T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 350,
+      "description": "Lunch",
+      "weekNumber": 5,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-2",
+      "type": "normal",
+      "date": "2026-02-02T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 250,
+      "description": "Lunch",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-3",
+      "type": "normal",
+      "date": "2026-02-03T20:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 550,
+      "description": "Dinner",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-4",
+      "type": "normal",
+      "date": "2026-02-04T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 200,
+      "description": "Lunch",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-5",
+      "type": "normal",
+      "date": "2026-02-05T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 400,
+      "description": "Lunch",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-travel-5",
+      "type": "normal",
+      "date": "2026-02-05T09:00:00.000Z",
+      "categoryId": "cat-4",
+      "amount": 150,
+      "description": "Uber",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-6",
+      "type": "normal",
+      "date": "2026-02-06T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 320,
+      "description": "Lunch",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-7",
+      "type": "normal",
+      "date": "2026-02-07T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 800,
+      "description": "Dinner",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-shop-7",
+      "type": "normal",
+      "date": "2026-02-07T17:00:00.000Z",
+      "categoryId": "cat-6",
+      "amount": 4500,
+      "description": "Groceries",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-8",
+      "type": "normal",
+      "date": "2026-02-08T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 450,
+      "description": "Lunch",
+      "weekNumber": 6,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-ent-8",
+      "type": "normal",
+      "date": "2026-02-08T19:00:00.000Z",
+      "categoryId": "cat-5",
+      "amount": 1200,
+      "description": "Movie",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-9",
+      "type": "normal",
+      "date": "2026-02-09T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 250,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-10",
+      "type": "normal",
+      "date": "2026-02-10T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 280,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-travel-10",
+      "type": "normal",
+      "date": "2026-02-10T09:00:00.000Z",
+      "categoryId": "cat-4",
+      "amount": 180,
+      "description": "Uber",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-11",
+      "type": "normal",
+      "date": "2026-02-11T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 300,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-12",
+      "type": "normal",
+      "date": "2026-02-12T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 350,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-13",
+      "type": "normal",
+      "date": "2026-02-13T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 400,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-14",
+      "type": "normal",
+      "date": "2026-02-14T20:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 1500,
+      "description": "Dinner",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-shop-14",
+      "type": "normal",
+      "date": "2026-02-14T15:00:00.000Z",
+      "categoryId": "cat-6",
+      "amount": 3800,
+      "description": "Groceries",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-15",
+      "type": "normal",
+      "date": "2026-02-15T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 450,
+      "description": "Lunch",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-travel-15",
+      "type": "normal",
+      "date": "2026-02-15T09:00:00.000Z",
+      "categoryId": "cat-4",
+      "amount": 220,
+      "description": "Uber",
+      "weekNumber": 7,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-16",
+      "type": "normal",
+      "date": "2026-02-16T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 250,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-17",
+      "type": "normal",
+      "date": "2026-02-17T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 300,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-18",
+      "type": "normal",
+      "date": "2026-02-18T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 350,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-19",
+      "type": "normal",
+      "date": "2026-02-19T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 320,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-20",
+      "type": "normal",
+      "date": "2026-02-20T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 400,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-travel-20",
+      "type": "normal",
+      "date": "2026-02-20T09:00:00.000Z",
+      "categoryId": "cat-4",
+      "amount": 200,
+      "description": "Uber",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-21",
+      "type": "normal",
+      "date": "2026-02-21T20:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 1100,
+      "description": "Dinner",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-shop-21",
+      "type": "normal",
+      "date": "2026-02-21T16:00:00.000Z",
+      "categoryId": "cat-6",
+      "amount": 5200,
+      "description": "Groceries",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-22",
+      "type": "normal",
+      "date": "2026-02-22T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 350,
+      "description": "Lunch",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-health-22",
+      "type": "normal",
+      "date": "2026-02-22T10:00:00.000Z",
+      "categoryId": "cat-7",
+      "amount": 1500,
+      "description": "Pharmacy",
+      "weekNumber": 8,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-23",
+      "type": "normal",
+      "date": "2026-02-23T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 250,
+      "description": "Lunch",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-24",
+      "type": "normal",
+      "date": "2026-02-24T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 300,
+      "description": "Lunch",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-25",
+      "type": "normal",
+      "date": "2026-02-25T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 400,
+      "description": "Lunch",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-travel-25",
+      "type": "normal",
+      "date": "2026-02-25T09:00:00.000Z",
+      "categoryId": "cat-4",
+      "amount": 160,
+      "description": "Uber",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-food-26",
+      "type": "normal",
+      "date": "2026-02-26T13:00:00.000Z",
+      "categoryId": "cat-1",
+      "amount": 320,
+      "description": "Lunch",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    },
+    {
+      "id": "tx-inv-26",
+      "type": "credit",
+      "date": "2026-02-26T11:00:00.000Z",
+      "categoryId": "cat-9",
+      "amount": 5000,
+      "description": "Dividend",
+      "weekNumber": 9,
+      "monthYear": "Feb-2026"
+    }
+  ]
+}

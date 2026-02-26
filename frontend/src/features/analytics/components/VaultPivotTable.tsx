@@ -41,8 +41,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
     uniqueCategories.forEach((c) => (categoryGrandTotals[c] = 0));
 
     transactions.forEach((t) => {
-      const catName =
-        t.category?.name ||
+      const catName =       
         categories.find((c) => c.id === t.categoryId)?.name ||
         "Uncategorized";
       let rowKey = "";
@@ -118,7 +117,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
     });
 
     return { rows: finalRows, columns: cols, categoryGrandTotals, totalGrand };
-  }, [transactions, periodType]);
+  }, [transactions, periodType, categories]);
 
   const summaryData = useMemo(() => {
     return {
