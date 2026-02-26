@@ -22,14 +22,14 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
-import { useUpdateTransaction } from "../transactions/hooks/useUpdateTransaction.ts";
-import { useCategoryStore } from "../../store/useCategoryStore";
+import { useCategories } from "../transactions/hooks/useCategories";
+import type { Category } from "../../types";
 
 const schema = z.object({
   date: z.date({ message: "Date is required" }),
-  category: z.string().min(1, "Category is required"),
+  categoryId: z.string().min(1, "Category is required"),
   amount: z.number().min(0.01, "Amount must be greater than 0"),
-  description: z.string().min(1, "Description is required"),
+  notes: z.string().optional(),
 
   // Stored but derived/disabled purely for DB
   dayName: z.string(),
@@ -40,14 +40,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export const TransactionModal: React.FC = () => {
-  const { isOpen, closeModal, editingTransaction, transactionType } =
-    useModalStore();
-  const { categories } = useCategoryStore();
+  const { isOpen, closeModal } = useModalStore();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
 
-  const activeType = editingTransaction
-    ? editingTransaction.type
-    : transactionType;
-
+  // Use a custom hook for React Query mutation (will create next)
   const createTxMutation = useCreateTransaction();
   const updateTxMutation = useUpdateTransaction();
 
@@ -60,34 +57,16 @@ export const TransactionModal: React.FC = () => {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      date: new Date(),
+      categoryId: "",
+      amount: undefined,
+      notes: "",
+      dayName: format(new Date(), "EEEE"),
+      weekNumber: getISOWeek(new Date()),
+      monthYear: format(new Date(), "MMM-yyyy"),
+    },
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      if (editingTransaction) {
-        reset({
-          date: new Date(editingTransaction.date),
-          category: editingTransaction.category,
-          amount: editingTransaction.amount,
-          description: editingTransaction.description || "",
-          dayName: editingTransaction.dayName,
-          weekNumber: editingTransaction.weekNumber,
-          monthYear: editingTransaction.monthYear,
-        });
-      } else {
-        const now = new Date();
-        reset({
-          date: now,
-          category: "",
-          amount: undefined,
-          description: "",
-          dayName: format(now, "EEEE"),
-          weekNumber: getISOWeek(now),
-          monthYear: format(now, "MMM-yyyy"),
-        });
-      }
-    }
-  }, [isOpen, editingTransaction, reset]);
 
   const handleClose = () => {
     reset();
@@ -177,7 +156,7 @@ export const TransactionModal: React.FC = () => {
             </LocalizationProvider>
 
             <Controller
-              name="category"
+              name="categoryId"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -185,21 +164,14 @@ export const TransactionModal: React.FC = () => {
                   select
                   label="Category"
                   fullWidth
-                  error={!!errors.category}
-                  helperText={errors.category?.message}>
-                  {categories
-                    .filter((c) => c.type === activeType)
-                    .map((cat) => (
-                      <MenuItem key={cat.name} value={cat.name}>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: cat.color }}
-                          />
-                          {cat.name}
-                        </div>
-                      </MenuItem>
-                    ))}
+                  disabled={isLoadingCategories}
+                  error={!!errors.categoryId}
+                  helperText={errors.categoryId?.message}>
+                  {categories.map((cat: Category) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               )}
             />
@@ -224,12 +196,12 @@ export const TransactionModal: React.FC = () => {
           </div>
 
           <Controller
-            name="description"
+            name="notes"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Description"
+                label="Notes (Optional)"
                 fullWidth
                 multiline
                 rows={4}
@@ -289,7 +261,7 @@ export const TransactionModal: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={createTxMutation.isPending || updateTxMutation.isPending}
+            disabled={createTxMutation.isPending || isLoadingCategories}
             className="!rounded-xl">
             {createTxMutation.isPending || updateTxMutation.isPending
               ? "Saving..."

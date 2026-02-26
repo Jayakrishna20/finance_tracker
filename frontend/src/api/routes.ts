@@ -7,5 +7,9 @@ export const API_ROUTES = {
     },
     ANALYTICS: {
         GET_SUMMARY: '/api/analytics/summary',
+    },
+    CATEGORIES: {
+        GET_ALL: '/api/categories',
+        CREATE: '/api/categories',
     }
 } as const;
