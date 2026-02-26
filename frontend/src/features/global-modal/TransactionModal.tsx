@@ -24,17 +24,13 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
 import { useUpdateTransaction } from "../transactions/hooks/useUpdateTransaction.ts";
 import { useCategoryStore } from "../../store/useCategoryStore";
+import type { CreateTransactionPayload } from "../../types";
 
 const schema = z.object({
   date: z.date({ message: "Date is required" }),
   categoryId: z.string().min(1, "Category is required"),
   amount: z.number().min(0.01, "Amount must be greater than 0"),
   description: z.string().min(1, "Description is required"),
-
-  // Stored but derived/disabled purely for DB
-  dayName: z.string(),
-  weekNumber: z.number(),
-  monthYear: z.string(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -63,11 +59,8 @@ export const TransactionModal: React.FC = () => {
     defaultValues: {
       date: new Date(),
       categoryId: "",
-      amount: undefined as any,
+      amount: 0,
       description: "",
-      dayName: format(new Date(), "EEEE"),
-      weekNumber: getISOWeek(new Date()),
-      monthYear: format(new Date(), "MMM-yyyy"),
     },
   });
 
@@ -79,9 +72,6 @@ export const TransactionModal: React.FC = () => {
           categoryId: editingTransaction.categoryId,
           amount: editingTransaction.amount,
           description: editingTransaction.description || "",
-          dayName: editingTransaction.dayName,
-          weekNumber: editingTransaction.weekNumber,
-          monthYear: editingTransaction.monthYear,
         });
       } else {
         const now = new Date();
@@ -90,9 +80,6 @@ export const TransactionModal: React.FC = () => {
           categoryId: "",
           amount: undefined,
           description: "",
-          dayName: format(now, "EEEE"),
-          weekNumber: getISOWeek(now),
-          monthYear: format(now, "MMM-yyyy"),
         });
       }
     }
@@ -106,22 +93,18 @@ export const TransactionModal: React.FC = () => {
   const calculateDerivedDates = (newDate: Date | null) => {
     if (!newDate) return;
     setValue("date", newDate, { shouldValidate: true });
-    setValue("dayName", format(newDate, "EEEE"));
-    setValue("weekNumber", getISOWeek(newDate));
-    setValue("monthYear", format(newDate, "MMM-yyyy"));
   };
 
   const onSubmit = (data: FormData) => {
-    const payload = {
-      ...data,
-      type: activeType,
+    const payload: CreateTransactionPayload = {
+      type: activeType || "normal",
       date: data.date.toISOString(),
       amount: Math.round(data.amount),
-      category: data.categoryId, // Ensure category name is sent as well
+      categoryId: data.categoryId,
+      description: data.description,
     };
 
     if (editingTransaction) {
-      // @ts-ignore
       updateTxMutation.mutate(
         { id: editingTransaction.id, payload },
         {
@@ -131,7 +114,6 @@ export const TransactionModal: React.FC = () => {
         },
       );
     } else {
-      // @ts-ignore
       createTxMutation.mutate(payload, {
         onSuccess: () => {
           handleClose();
@@ -200,7 +182,7 @@ export const TransactionModal: React.FC = () => {
                   {categories
                     .filter((c) => c.type === activeType)
                     .map((cat) => (
-                      <MenuItem key={cat.name} value={cat.name}>
+                      <MenuItem key={cat.id} value={cat.id}>
                         <div className="flex items-center gap-2">
                           <div
                             className="w-3 h-3 rounded-full"
@@ -252,7 +234,7 @@ export const TransactionModal: React.FC = () => {
           <div className="bg-slate-100/80 p-5 rounded-2xl flex flex-col gap-4 !mt-6 border border-slate-200 shadow-sm">
             <TextField
               label="Day Name"
-              value={watch("dayName") || ""}
+              value={watch("date") ? format(watch("date"), "EEEE") : ""}
               disabled
               fullWidth
               size="small"
@@ -265,7 +247,7 @@ export const TransactionModal: React.FC = () => {
             <div className="flex gap-4">
               <TextField
                 label="Week Number"
-                value={watch("weekNumber") || ""}
+                value={watch("date") ? getISOWeek(watch("date")) : ""}
                 disabled
                 fullWidth
                 size="small"
@@ -277,7 +259,7 @@ export const TransactionModal: React.FC = () => {
               />
               <TextField
                 label="Month Year"
-                value={watch("monthYear") || ""}
+                value={watch("date") ? format(watch("date"), "MMM-yyyy") : ""}
                 disabled
                 fullWidth
                 size="small"

@@ -1,44 +1,33 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-export interface CategoryItem {
-    name: string;
-    color: string;
-    type: 'normal' | 'credit';
-}
+import type { Category, CreateCategoryPayload } from "../types";
 
 interface CategoryState {
-    categories: CategoryItem[];
-    addCategory: (category: string, color?: string, type?: 'normal' | 'credit') => void;
-    removeCategory: (category: string) => void;
-    updateCategory: (oldCategory: string, newCategory: string, color: string, type: 'normal' | 'credit') => void;
+    categories: Category[];
+    addCategory: (payload: CreateCategoryPayload) => void;
+    removeCategory: (id: string) => void;
+    updateCategory: (id: string, payload: Partial<CreateCategoryPayload>) => void;
 }
-
-const defaultCategories: CategoryItem[] = [
-    { name: "Housing", color: "#3B82F6", type: "normal" }, // blue-500
-    { name: "Food", color: "#F59E0B", type: "normal" }, // amber-500
-    { name: "Transport", color: "#10B981", type: "normal" }, // emerald-500
-    { name: "Utilities", color: "#8B5CF6", type: "normal" }, // violet-500
-    { name: "Entertainment", color: "#EC4899", type: "normal" }, // pink-500
-    { name: "Other", color: "#6B7280", type: "normal" } // gray-500
-];
 
 export const useCategoryStore = create<CategoryState>()(
     persist(
         (set) => ({
-            categories: defaultCategories,
-            addCategory: (category, color = "#6B7280", type = "normal") =>
+            categories: [], // Removed dummy data
+            addCategory: (payload) =>
                 set((state) => ({
-                    categories: [...state.categories, { name: category, color, type }],
+                    categories: [
+                        ...state.categories,
+                        { ...payload, id: crypto.randomUUID() },
+                    ],
                 })),
-            removeCategory: (category) =>
+            removeCategory: (id) =>
                 set((state) => ({
-                    categories: state.categories.filter((c) => c.name !== category),
+                    categories: state.categories.filter((c) => c.id !== id),
                 })),
-            updateCategory: (oldCategory, newCategory, color, type) =>
+            updateCategory: (id, payload) =>
                 set((state) => ({
                     categories: state.categories.map((c) =>
-                        c.name === oldCategory ? { name: newCategory, color, type } : { ...c, type: c.type || "normal" }
+                        c.id === id ? { ...c, ...payload } : c
                     ),
                 })),
         }),

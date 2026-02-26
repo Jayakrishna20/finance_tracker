@@ -1,16 +1,29 @@
-export type TransactionCategory = string;
+export type TransactionType = 'normal' | 'credit';
+
+export interface Category {
+    id: string;
+    name: string;
+    type: TransactionType;
+    color: string;
+}
 
 export interface Transaction {
     id: string;
-    type: 'normal' | 'credit';
+    type: TransactionType;
     date: string; // ISO String
     categoryId: string;
-    category: TransactionCategory;
+    category?: Category;
     amount: number;
-    description: string
+    description: string;
 
-    // Auto-calculated fields
-    dayName: string;
-    weekNumber: number;
-    monthYear: string;
+    // Derived/UI fields
+    dayName?: string;
+    weekNumber?: number;
+    monthYear?: string;
 }
+
+export type CreateCategoryPayload = Omit<Category, 'id'>;
+export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
+
+export type CreateTransactionPayload = Omit<Transaction, 'id' | 'category' | 'dayName' | 'weekNumber' | 'monthYear'>;
+export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;
