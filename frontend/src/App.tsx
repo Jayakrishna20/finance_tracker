@@ -11,6 +11,7 @@ import { SettingsPage } from "./features/settings/SettingsPage";
 import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
 
 import { Toaster } from "react-hot-toast";
+import { COLORS } from "./config/constants";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -37,12 +38,12 @@ function App() {
             },
             success: {
               style: {
-                borderBottom: "4px solid #10B981",
+                borderBottom: `4px solid ${COLORS.SUCCESS}`,
               },
             },
             error: {
               style: {
-                borderBottom: "4px solid #EF4444",
+                borderBottom: `4px solid ${COLORS.ERROR}`,
               },
             },
           }}

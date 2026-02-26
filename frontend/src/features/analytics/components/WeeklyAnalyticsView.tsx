@@ -1,15 +1,19 @@
 import React from "react";
-import { PeriodAnalytics } from "./PeriodAnalytics";
 import { getISOWeek } from "date-fns";
+import { PeriodAnalytics } from "./PeriodAnalytics";
+import { useTransactions } from "../../transactions/hooks/useTransactions";
 
 export const WeeklyAnalyticsView: React.FC = () => {
   const currentWeek = getISOWeek(new Date()).toString();
-  // Generate some dummy available weeks for the dropdown
-  const availableWeeks = [
-    currentWeek,
-    (parseInt(currentWeek) - 1).toString(),
-    (parseInt(currentWeek) - 2).toString(),
-  ];
+  const { data: transactions } = useTransactions();
+
+  const availableWeeks = React.useMemo(() => {
+    if (!transactions) return [currentWeek];
+    const weeks = Array.from(
+      new Set(transactions.map((t) => getISOWeek(new Date(t.date)).toString())),
+    ).sort((a, b) => parseInt(b) - parseInt(a));
+    return weeks.includes(currentWeek) ? weeks : [currentWeek, ...weeks];
+  }, [transactions, currentWeek]);
 
   return (
     <div className="space-y-6">

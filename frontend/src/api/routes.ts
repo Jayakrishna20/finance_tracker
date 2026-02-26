@@ -11,5 +11,7 @@ export const API_ROUTES = {
     CATEGORIES: {
         GET_ALL: '/api/categories',
         CREATE: '/api/categories',
+        UPDATE: (id: string) => `/api/categories/${id}`,
+        DELETE: (id: string) => `/api/categories/${id}`,
     }
 } as const;

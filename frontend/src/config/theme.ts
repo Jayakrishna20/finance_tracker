@@ -1,23 +1,24 @@
 import { createTheme } from '@mui/material/styles';
+import { COLORS } from './constants';
 
 const positivusTheme = createTheme({
     palette: {
         primary: {
-            main: '#B9FF66', // Positivus electric green
-            dark: '#A3E65A',
-            contrastText: '#191A23',
+            main: COLORS.PRIMARY,
+            dark: COLORS.ACCENT,
+            contrastText: COLORS.SECONDARY,
         },
         secondary: {
-            main: '#191A23', // Dark slate
-            light: '#292A32',
+            main: COLORS.SECONDARY,
+            light: COLORS.DARK_GRAY,
             contrastText: '#FFFFFF',
         },
         background: {
-            default: '#F3F3F3', // Light gray background
+            default: COLORS.LIGHT_GRAY,
             paper: '#FFFFFF',
         },
         text: {
-            primary: '#191A23',
+            primary: COLORS.SECONDARY,
         },
     },
     typography: {

@@ -1,16 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
 import toast from 'react-hot-toast';
-import type { Transaction } from '../../../types';
-
-type NewTransactionInput = Omit<Transaction, 'id'>;
+import type { Transaction, CreateTransactionPayload, UpdateTransactionPayload } from '../../../types';
 
 export const useCreateTransaction = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: TransactionsAPI.create,
-        onMutate: async (newTx: NewTransactionInput) => {
+        onMutate: async (newTx: CreateTransactionPayload) => {
             await queryClient.cancelQueries({ queryKey: ['transactions'] });
 
             const previousTxs = queryClient.getQueryData<Transaction[]>(['transactions']);
