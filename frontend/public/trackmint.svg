@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="mintDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <g filter="url(#shadow)">
+    <!-- Main stem of T -->
+    <rect x="216" y="160" width="80" height="200" rx="40" fill="url(#mintDark)"/>
+    <!-- Top bar of T -->
+    <rect x="136" y="120" width="240" height="80" rx="40" fill="url(#mint)"/>
+    <!-- Leaf / Growth curve crossing the T -->
+    <path d="M 296 260 Q 380 240 400 160 Q 330 170 296 260 Z" fill="#A7F3D0" opacity="0.9"/>
+    <!-- Little dot for "mint" essence -->
+    <circle cx="390" cy="140" r="16" fill="#34D399"/>
+  </g>
+</svg>
