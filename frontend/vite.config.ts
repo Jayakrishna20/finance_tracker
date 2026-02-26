@@ -13,23 +13,24 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Group React-related packages
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor';
-            }
-            // Group MUI packages separately as they are quite large
             if (id.includes('@mui')) {
               return 'mui-vendor';
             }
-            // Recharts also tends to be large
             if (id.includes('recharts')) {
               return 'recharts-vendor';
             }
-            // Everything else falls into the general vendor chunk
-            return 'vendor';
+            if (
+              id.includes('/node_modules/react/') ||
+              id.includes('/node_modules/react-dom/') ||
+              id.includes('/node_modules/react-router/') ||
+              id.includes('/node_modules/react-router-dom/')
+            ) {
+              return 'react-vendor';
+            }
           }
         }
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000,
   }
 })
