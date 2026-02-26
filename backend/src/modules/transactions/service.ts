@@ -1,33 +1,21 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import { getDateDimensions } from '../../utils/date';
 
 export class TransactionService {
     constructor(private prisma: PrismaClient) { }
 
-    async create(data: { userId: string, date: string, categoryId: string, amount: number, notes?: string }, timezone: string = 'UTC') {
-        const dimensions = getDateDimensions(data.date, timezone);
-
+    async create(data: { date: string, categoryId: string, amount: number, notes?: string }) {
         return this.prisma.transaction.create({
             data: {
-                userId: data.userId,
-                date: dimensions.date,
+                date: new Date(data.date),
                 categoryId: data.categoryId,
                 amount: data.amount,
                 notes: data.notes,
-
-                // Push computed date values mapped directly into Postgres explicitly
-                dayName: dimensions.dayName,
-                weekNumber: dimensions.weekNumber,
-                monthYear: dimensions.monthYear,
-                year: dimensions.year
             }
         });
     }
 
-    async getFiltered(filters: { userId: string, startDate?: string, endDate?: string, categoryId?: string }) {
-        const whereClause: Prisma.TransactionWhereInput = {
-            userId: filters.userId
-        };
+    async getFiltered(filters: { startDate?: string, endDate?: string, categoryId?: string }) {
+        const whereClause: Prisma.TransactionWhereInput = {};
 
         if (filters.startDate || filters.endDate) {
             whereClause.date = {};
@@ -39,7 +27,6 @@ export class TransactionService {
             whereClause.categoryId = filters.categoryId;
         }
 
-        // Leveraging @@index([userId, date(sort: Desc)])
         return this.prisma.transaction.findMany({
             where: whereClause,
             include: { category: true },
@@ -48,9 +35,22 @@ export class TransactionService {
         });
     }
 
-    async delete(id: string, userId: string) {
+    async update(id: string, data: { date?: string, categoryId?: string, amount?: number, notes?: string }) {
+        const updateData: Prisma.TransactionUpdateInput = {};
+        if (data.date) updateData.date = new Date(data.date);
+        if (data.categoryId) updateData.category = { connect: { id: data.categoryId } };
+        if (data.amount !== undefined) updateData.amount = data.amount;
+        if (data.notes !== undefined) updateData.notes = data.notes;
+
+        return this.prisma.transaction.update({
+            where: { id },
+            data: updateData
+        });
+    }
+
+    async delete(id: string) {
         return this.prisma.transaction.delete({
-            where: { id, userId } // Ensure user ownership at Database Level
+            where: { id }
         });
     }
 }

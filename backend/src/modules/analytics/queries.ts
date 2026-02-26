@@ -1,24 +1,34 @@
 import { PrismaClient } from '@prisma/client';
+import { startOfYear, endOfYear, startOfMonth, endOfMonth, startOfISOWeek, endOfISOWeek, parse } from 'date-fns';
 
-/**
- * All database operations encapsulate heavy logic executing precisely around 
- * @@index constraints initialized during Schema creation. 
- * Operations occur purely in PostgreSQL DB natively preventing excessive runtime memory.
- */
+export async function getWeeklyAnalytics(prisma: PrismaClient, week: number, year: number) {
+  // ISO Weeks are tricky to parse directly, simpler to iterate if we don't have a helper.
+  // We'll construct a date that definitely falls in that week/year.
+  // Note: This is an approximation of the week range.
+  const dateInWeek = parse(`${year}-W${week}-1`, "I'RRRR-'W'II-i", new Date());
+  const startDate = startOfISOWeek(dateInWeek);
+  const endDate = endOfISOWeek(dateInWeek);
 
-export async function getWeeklyAnalytics(prisma: PrismaClient, userId: string, week: number, year: number) {
   const [categoryTotals, grandTotalAgg] = await Promise.all([
-    // Grouping by explicit integer index
     prisma.transaction.groupBy({
       by: ['categoryId'],
-      where: { userId, weekNumber: week, year },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true },
       orderBy: { _sum: { amount: 'desc' } }
     }),
 
-    // Aggregating Grand Total
     prisma.transaction.aggregate({
-      where: { userId, weekNumber: week, year },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true }
     })
   ]);
@@ -40,17 +50,31 @@ export async function getWeeklyAnalytics(prisma: PrismaClient, userId: string, w
   };
 }
 
-export async function getMonthlyAnalytics(prisma: PrismaClient, userId: string, monthYear: string) {
-  // Leverages @@index([userId, monthYear]) directly instead of casting `DATE_TRUNC()` logic.
+export async function getMonthlyAnalytics(prisma: PrismaClient, monthYear: string) {
+  // monthYear is in format 'MMM-yyyy' (e.g., Oct-2026)
+  const dateInMonth = parse(monthYear, 'MMM-yyyy', new Date());
+  const startDate = startOfMonth(dateInMonth);
+  const endDate = endOfMonth(dateInMonth);
+
   const [categoryTotals, grandTotalAgg] = await Promise.all([
     prisma.transaction.groupBy({
       by: ['categoryId'],
-      where: { userId, monthYear },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true },
       orderBy: { _sum: { amount: 'desc' } }
     }),
     prisma.transaction.aggregate({
-      where: { userId, monthYear },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true }
     })
   ]);
@@ -72,16 +96,30 @@ export async function getMonthlyAnalytics(prisma: PrismaClient, userId: string, 
   };
 }
 
-export async function getYearlyAnalytics(prisma: PrismaClient, userId: string, year: number) {
+export async function getYearlyAnalytics(prisma: PrismaClient, year: number) {
+  const dateInYear = parse(`${year}`, 'yyyy', new Date());
+  const startDate = startOfYear(dateInYear);
+  const endDate = endOfYear(dateInYear);
+
   const [categoryTotals, grandTotalAgg] = await Promise.all([
     prisma.transaction.groupBy({
       by: ['categoryId'],
-      where: { userId, year },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true },
       orderBy: { _sum: { amount: 'desc' } }
     }),
     prisma.transaction.aggregate({
-      where: { userId, year },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
       _sum: { amount: true }
     })
   ]);

@@ -13,9 +13,8 @@ const analyticsRoutes: FastifyPluginAsync = async (fastify) => {
         '/weekly',
         { schema: { querystring: WeeklyAnalyticsSchema } },
         async (request, reply) => {
-            // Normally \`request.user.id\` extracted via Auth Middleware
-            const { week, year, userId } = request.query;
-            const data = await getWeeklyAnalytics(fastify.prisma, userId, week, year);
+            const { week, year } = request.query;
+            const data = await getWeeklyAnalytics(fastify.prisma, week, year);
             return reply.send({ status: 'success', data });
         }
     );
@@ -25,8 +24,8 @@ const analyticsRoutes: FastifyPluginAsync = async (fastify) => {
         '/monthly',
         { schema: { querystring: MonthlyAnalyticsSchema } },
         async (request, reply) => {
-            const { monthYear, userId } = request.query;
-            const data = await getMonthlyAnalytics(fastify.prisma, userId, monthYear);
+            const { monthYear } = request.query;
+            const data = await getMonthlyAnalytics(fastify.prisma, monthYear);
             return reply.send({ status: 'success', data });
         }
     );
@@ -36,8 +35,8 @@ const analyticsRoutes: FastifyPluginAsync = async (fastify) => {
         '/yearly',
         { schema: { querystring: YearlyAnalyticsSchema } },
         async (request, reply) => {
-            const { year, userId } = request.query;
-            const data = await getYearlyAnalytics(fastify.prisma, userId, year);
+            const { year } = request.query;
+            const data = await getYearlyAnalytics(fastify.prisma, year);
             return reply.send({ status: 'success', data });
         }
     );
