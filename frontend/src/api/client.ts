@@ -16,35 +16,16 @@ const getMockData = async (): Promise<{ transactions: any[], categories: any[] }
         return JSON.parse(stored);
     }
 
-    // Default mock data
-    const categories = [
-        { id: '1', name: 'Housing', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-        { id: '2', name: 'Food', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-        { id: '3', name: 'Transport', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-        { id: '4', name: 'Utilities', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-        { id: '5', name: 'Entertainment', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-        { id: '6', name: 'Other', type: 'normal', userId: '808240ba-8501-447a-8f64-463ae30e71ce' },
-    ];
+    try {
+        const response = await axios.get('/db.json');
+        const data = response.data;
 
-    const data = {
-        categories,
-        transactions: [
-            {
-                id: crypto.randomUUID(),
-                date: new Date().toISOString(),
-                categoryId: '1',
-                category: categories[0],
-                amount: 1500,
-                notes: 'Monthly rent',
-                description: 'Monthly rent',
-                dayName: 'Monday',
-                weekNumber: 1,
-                monthYear: 'Feb-2026'
-            }
-        ]
-    };
-    localStorage.setItem('mockDB', JSON.stringify(data));
-    return data;
+        localStorage.setItem('mockDB', JSON.stringify(data));
+        return data;
+    } catch (error) {
+        console.error('Failed to load mock data from db.json', error);
+        return { transactions: [], categories: [] };
+    }
 };
 
 const saveMockData = (data: any) => {

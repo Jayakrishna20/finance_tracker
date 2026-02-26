@@ -1,16 +1,16 @@
-export type TransactionCategory = string;
+export interface Category {
+    id: string;
+    name: string;
+    type: 'normal' | 'credit';
+    color?: string;
+}
 
 export interface Transaction {
     id: string;
     type: 'normal' | 'credit';
     date: string; // ISO String
     categoryId: string;
-    category: TransactionCategory;
+    category: Category;
     amount: number;
     description: string
-
-    // Auto-calculated fields
-    dayName: string;
-    weekNumber: number;
-    monthYear: string;
 }

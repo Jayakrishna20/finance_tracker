@@ -1,55 +1,55 @@
 import { FastifyPluginAsync } from 'fastify';
-import { Type } from '@sinclair/typebox';
-import { TransactionService } from './service';
-import { CreateTransactionSchema, ParamsIdSchema, QueryTransactionSchema } from './schemas';
-
-// Note: Requires Fastify 5+ type resolution logic for body schemas
-// Because type inference requires complex utility types, we'll cast explicit `Request` types or use `fastify.post<...>` 
 import { Static } from '@sinclair/typebox';
+import { TransactionService } from './service';
+import { CreateTransactionSchema, UpdateTransactionSchema, TransactionQuerySchema, TransactionIdParamsSchema } from './schemas';
 
-type CreateTx = Static<typeof CreateTransactionSchema>;
-type QueryTx = Static<typeof QueryTransactionSchema>;
-type ParamsTx = Static<typeof ParamsIdSchema>;
+type CreateTransaction = Static<typeof CreateTransactionSchema>;
+type UpdateTransaction = Static<typeof UpdateTransactionSchema>;
+type TransactionQuery = Static<typeof TransactionQuerySchema>;
+type TransactionIdParams = Static<typeof TransactionIdParamsSchema>;
 
-const transactionRoutes: FastifyPluginAsync = async (fastify, options) => {
+const transactionRoutes: FastifyPluginAsync = async (fastify) => {
     const service = new TransactionService(fastify.prisma);
 
-    // POST /v1/transactions
-    fastify.post<{ Body: CreateTx }>(
+    // GET /v1/transactions
+    fastify.get<{ Querystring: TransactionQuery }>(
         '/',
-        { schema: { body: CreateTransactionSchema } },
+        { schema: { querystring: TransactionQuerySchema } },
         async (request, reply) => {
-            // In a real app the user's timezone config would come from decoded JWT/DB profile
-            // For this SaaS V1 demo, assume explicit configuration headers pass timezone or fallback to UTC
-            const userTimezoneHeader = (request.headers['x-user-timezone'] as string) || 'UTC';
-
-            const newTransaction = await service.create(request.body, userTimezoneHeader);
-            return reply.status(201).send({ status: 'success', data: newTransaction });
+            const transactions = await service.getFiltered(request.query);
+            return reply.send({ status: 'success', data: transactions });
         }
     );
 
-    // GET /v1/transactions
-    fastify.get<{ Querystring: QueryTx }>(
+    // POST /v1/transactions
+    fastify.post<{ Body: CreateTransaction }>(
         '/',
-        { schema: { querystring: QueryTransactionSchema } },
+        { schema: { body: CreateTransactionSchema } },
         async (request, reply) => {
-            // In prod `userId` MUST come from \`request.user.id\` context injected by JWT Plugin
-            // Passed over Query params uniquely here for isolated module testing
-            const transactions = await service.getFiltered(request.query);
-            return reply.status(200).send({ status: 'success', data: transactions });
+            const transaction = await service.create(request.body);
+            return reply.code(201).send({ status: 'success', data: transaction });
+        }
+    );
+
+    // PATCH /v1/transactions/:id
+    fastify.patch<{ Params: TransactionIdParams; Body: UpdateTransaction }>(
+        '/:id',
+        { schema: { params: TransactionIdParamsSchema, body: UpdateTransactionSchema } },
+        async (request, reply) => {
+            const { id } = request.params;
+            const transaction = await service.update(id, request.body);
+            return reply.send({ status: 'success', data: transaction });
         }
     );
 
     // DELETE /v1/transactions/:id
-    fastify.delete<{ Params: ParamsTx }>(
+    fastify.delete<{ Params: TransactionIdParams }>(
         '/:id',
-        { schema: { params: ParamsIdSchema } },
+        { schema: { params: TransactionIdParamsSchema } },
         async (request, reply) => {
-            // In production `userId` would be forced from Context JWT
-            const userId = (request.headers['x-user-id'] as string) || 'DEMO-USER';
-
-            await service.delete(request.params.id, userId);
-            return reply.status(200).send({ status: 'success', message: 'Transaction Deleted Successfully' });
+            const { id } = request.params;
+            await service.delete(id);
+            return reply.send({ status: 'success', message: 'Transaction deleted' });
         }
     );
 };

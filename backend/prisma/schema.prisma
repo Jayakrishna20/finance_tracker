@@ -8,37 +8,22 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  
-  categories   Category[]
-  transactions Transaction[]
-  
-  @@map("users")
-}
-
 model Category {
   id           String        @id @default(uuid())
   name         String
   type         String        @default("normal")
-  userId       String
   
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
 
-  @@unique([userId, name])
+  @@unique([name])
   @@map("categories")
 }
 
 model Transaction {
   id           String   @id @default(uuid())
-  userId       String
   date         DateTime 
   
   categoryId   String
@@ -47,22 +32,11 @@ model Transaction {
   amount       Int      // Stored as integer (e.g., in cents)
   notes        String?
   
-  // Denormalized Date Dimensions
-  dayName      String   // E.g., 'Monday'
-  weekNumber   Int      // ISO week reference
-  monthYear    String   // E.g., '10-2026'
-  year         Int      // E.g., 2026
-  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   // Indexes for high-performance aggregations
-  @@index([userId, date(sort: Desc)])
-  @@index([userId, weekNumber, year])
-  @@index([userId, monthYear])
-  @@index([userId, year])
+  @@index([date(sort: Desc)])
 
   @@map("transactions")
 }

@@ -30,11 +30,6 @@ const schema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   amount: z.number().min(0.01, "Amount must be greater than 0"),
   description: z.string().min(1, "Description is required"),
-
-  // Stored but derived/disabled purely for DB
-  dayName: z.string(),
-  weekNumber: z.number(),
-  monthYear: z.string(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -65,9 +60,6 @@ export const TransactionModal: React.FC = () => {
       categoryId: "",
       amount: undefined as any,
       description: "",
-      dayName: format(new Date(), "EEEE"),
-      weekNumber: getISOWeek(new Date()),
-      monthYear: format(new Date(), "MMM-yyyy"),
     },
   });
 
@@ -79,9 +71,6 @@ export const TransactionModal: React.FC = () => {
           categoryId: editingTransaction.categoryId,
           amount: editingTransaction.amount,
           description: editingTransaction.description || "",
-          dayName: editingTransaction.dayName,
-          weekNumber: editingTransaction.weekNumber,
-          monthYear: editingTransaction.monthYear,
         });
       } else {
         const now = new Date();
@@ -90,9 +79,6 @@ export const TransactionModal: React.FC = () => {
           categoryId: "",
           amount: undefined,
           description: "",
-          dayName: format(now, "EEEE"),
-          weekNumber: getISOWeek(now),
-          monthYear: format(now, "MMM-yyyy"),
         });
       }
     }
@@ -106,24 +92,20 @@ export const TransactionModal: React.FC = () => {
   const calculateDerivedDates = (newDate: Date | null) => {
     if (!newDate) return;
     setValue("date", newDate, { shouldValidate: true });
-    setValue("dayName", format(newDate, "EEEE"));
-    setValue("weekNumber", getISOWeek(newDate));
-    setValue("monthYear", format(newDate, "MMM-yyyy"));
   };
 
   const onSubmit = (data: FormData) => {
     const payload = {
-      ...data,
       type: activeType,
       date: data.date.toISOString(),
       amount: Math.round(data.amount),
-      category: data.categoryId, // Ensure category name is sent as well
+      categoryId: data.categoryId,
+      description: data.description,
     };
 
     if (editingTransaction) {
-      // @ts-ignore
       updateTxMutation.mutate(
-        { id: editingTransaction.id, payload },
+        { id: editingTransaction.id, payload: payload as any },
         {
           onSuccess: () => {
             handleClose();
@@ -131,8 +113,7 @@ export const TransactionModal: React.FC = () => {
         },
       );
     } else {
-      // @ts-ignore
-      createTxMutation.mutate(payload, {
+      createTxMutation.mutate(payload as any, {
         onSuccess: () => {
           handleClose();
         },
@@ -252,7 +233,7 @@ export const TransactionModal: React.FC = () => {
           <div className="bg-slate-100/80 p-5 rounded-2xl flex flex-col gap-4 !mt-6 border border-slate-200 shadow-sm">
             <TextField
               label="Day Name"
-              value={watch("dayName") || ""}
+              value={watch("date") ? format(watch("date"), "EEEE") : ""}
               disabled
               fullWidth
               size="small"
@@ -265,7 +246,7 @@ export const TransactionModal: React.FC = () => {
             <div className="flex gap-4">
               <TextField
                 label="Week Number"
-                value={watch("weekNumber") || ""}
+                value={watch("date") ? getISOWeek(watch("date")) : ""}
                 disabled
                 fullWidth
                 size="small"
@@ -277,7 +258,7 @@ export const TransactionModal: React.FC = () => {
               />
               <TextField
                 label="Month Year"
-                value={watch("monthYear") || ""}
+                value={watch("date") ? format(watch("date"), "MMM-yyyy") : ""}
                 disabled
                 fullWidth
                 size="small"

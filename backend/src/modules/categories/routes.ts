@@ -1,39 +1,50 @@
 import { FastifyPluginAsync } from 'fastify';
 import { Static } from '@sinclair/typebox';
 import { CategoryService } from './service';
-import { CreateCategorySchema, QueryCategorySchema } from './schemas';
+import { CreateCategorySchema, UpdateCategorySchema, CategoryIdParamsSchema } from './schemas';
 
 type CreateCategory = Static<typeof CreateCategorySchema>;
-type QueryCategory = Static<typeof QueryCategorySchema>;
+type UpdateCategory = Static<typeof UpdateCategorySchema>;
+type CategoryIdParams = Static<typeof CategoryIdParamsSchema>;
 
-const categoryRoutes: FastifyPluginAsync = async (fastify, options) => {
+const categoryRoutes: FastifyPluginAsync = async (fastify) => {
     const service = new CategoryService(fastify.prisma);
 
-    // GET /v1/categories?userId=...
-    fastify.get<{ Querystring: QueryCategory }>(
-        '/',
-        { schema: { querystring: QueryCategorySchema } },
-        async (request, reply) => {
-            const categories = await service.list(request.query.userId);
-
-            // If none found for user, seed defaults for demo purposes
-            if (categories.length === 0) {
-                await service.seedDefaults(request.query.userId);
-                const seeded = await service.list(request.query.userId);
-                return reply.status(200).send({ status: 'success', data: seeded });
-            }
-
-            return reply.status(200).send({ status: 'success', data: categories });
-        }
-    );
+    // GET /v1/categories
+    fastify.get('/', async (request, reply) => {
+        const categories = await service.list();
+        return reply.send({ status: 'success', data: categories });
+    });
 
     // POST /v1/categories
     fastify.post<{ Body: CreateCategory }>(
         '/',
         { schema: { body: CreateCategorySchema } },
         async (request, reply) => {
-            const newCategory = await service.create(request.body);
-            return reply.status(201).send({ status: 'success', data: newCategory });
+            const category = await service.create(request.body);
+            return reply.code(201).send({ status: 'success', data: category });
+        }
+    );
+
+    // PATCH /v1/categories/:id
+    fastify.patch<{ Params: CategoryIdParams; Body: UpdateCategory }>(
+        '/:id',
+        { schema: { params: CategoryIdParamsSchema, body: UpdateCategorySchema } },
+        async (request, reply) => {
+            const { id } = request.params;
+            const category = await service.update(id, request.body);
+            return reply.send({ status: 'success', data: category });
+        }
+    );
+
+    // DELETE /v1/categories/:id
+    fastify.delete<{ Params: CategoryIdParams }>(
+        '/:id',
+        { schema: { params: CategoryIdParamsSchema } },
+        async (request, reply) => {
+            const { id } = request.params;
+            await service.delete(id);
+            return reply.send({ status: 'success', message: 'Category deleted' });
         }
     );
 };

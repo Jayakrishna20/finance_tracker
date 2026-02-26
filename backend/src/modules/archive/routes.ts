@@ -2,7 +2,6 @@ import { FastifyPluginAsync } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 
 const BaseArchiveSchema = Type.Object({
-  userId: Type.String({ format: 'uuid' }),
   cursor: Type.Optional(Type.String()), // Cursor based pagination
   limit: Type.Optional(Type.Integer({ default: 10, maximum: 50 }))
 });
@@ -11,8 +10,7 @@ type BaseArchive = Static<typeof BaseArchiveSchema>;
 
 /**
  * Returns a list of past Aggregation periods (Weekly/Monthly/Yearly) sequentially.
- * In a production architecture querying an archive like this uses robust cursor pagination 
- * ordering heavily over indexes explicitly.
+ * Since we removed denormalized fields, we use raw SQL to group by date parts.
  */
 const archiveRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /v1/archive/weekly
@@ -20,21 +18,23 @@ const archiveRoutes: FastifyPluginAsync = async (fastify) => {
     '/weekly',
     { schema: { querystring: BaseArchiveSchema } },
     async (request, reply) => {
-      const { userId, limit = 10, cursor } = request.query;
+      const { limit = 10 } = request.query;
 
-      // Group directly against the index pulling historical weeks sorted
-      const result = await fastify.prisma.transaction.groupBy({
-        by: ['weekNumber', 'year'],
-        where: { userId },
-        _sum: { amount: true },
-        orderBy: [{ year: 'desc' }, { weekNumber: 'desc' }],
-        take: limit,
-        // (Cursor mapping requires raw query execution if mapping across explicit grouped composites)
-      });
+      // Group by ISO Week using Postgres date_trunc
+      const result: any[] = await fastify.prisma.$queryRaw`
+        SELECT 
+          EXTRACT(ISOYEAR FROM date) as year,
+          EXTRACT(WEEK FROM date) as "weekNumber",
+          SUM(amount) as total
+        FROM transactions
+        GROUP BY year, "weekNumber"
+        ORDER BY year DESC, "weekNumber" DESC
+        LIMIT ${limit}
+      `;
 
       const processed = result.map((r: any) => ({
         period: `W${r.weekNumber}-${r.year}`,
-        total: r._sum.amount || 0
+        total: Number(r.total) || 0
       }));
 
       return reply.send({ status: 'success', data: processed });
@@ -46,19 +46,22 @@ const archiveRoutes: FastifyPluginAsync = async (fastify) => {
     '/monthly',
     { schema: { querystring: BaseArchiveSchema } },
     async (request, reply) => {
-      const { userId, limit = 10 } = request.query;
+      const { limit = 10 } = request.query;
 
-      const result = await fastify.prisma.transaction.groupBy({
-        by: ['monthYear'],
-        where: { userId },
-        _sum: { amount: true },
-        orderBy: { monthYear: 'desc' }, // In prod logic: year-month format "2026-01" to sort correctly
-        take: limit
-      });
+      const result: any[] = await fastify.prisma.$queryRaw`
+        SELECT 
+          TO_CHAR(date, 'Mon-YYYY') as "monthYear",
+          SUM(amount) as total,
+          DATE_TRUNC('month', date) as sort_month
+        FROM transactions
+        GROUP BY "monthYear", sort_month
+        ORDER BY sort_month DESC
+        LIMIT ${limit}
+      `;
 
       const processed = result.map((r: any) => ({
         period: r.monthYear,
-        total: r._sum.amount || 0
+        total: Number(r.total) || 0
       }));
 
       return reply.send({ status: 'success', data: processed });
@@ -70,19 +73,21 @@ const archiveRoutes: FastifyPluginAsync = async (fastify) => {
     '/yearly',
     { schema: { querystring: BaseArchiveSchema } },
     async (request, reply) => {
-      const { userId, limit = 10 } = request.query;
+      const { limit = 10 } = request.query;
 
-      const result = await fastify.prisma.transaction.groupBy({
-        by: ['year'],
-        where: { userId },
-        _sum: { amount: true },
-        orderBy: { year: 'desc' },
-        take: limit
-      });
+      const result: any[] = await fastify.prisma.$queryRaw`
+        SELECT 
+          EXTRACT(YEAR FROM date) as year,
+          SUM(amount) as total
+        FROM transactions
+        GROUP BY year
+        ORDER BY year DESC
+        LIMIT ${limit}
+      `;
 
       const processed = result.map((r: any) => ({
         period: `${r.year}`,
-        total: r._sum.amount || 0
+        total: Number(r.total) || 0
       }));
 
       return reply.send({ status: 'success', data: processed });

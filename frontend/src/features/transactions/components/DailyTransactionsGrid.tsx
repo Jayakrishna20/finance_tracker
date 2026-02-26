@@ -5,7 +5,7 @@ import {
   GridActionsCellItem,
 } from "@mui/x-data-grid";
 import { Edit2, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { format, getISOWeek } from "date-fns";
 import { useTransactions } from "../hooks/useTransactions";
 import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
 import type { Transaction } from "../../../types";
@@ -51,21 +51,28 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         valueGetter: (value: Date) => new Date(value),
         valueFormatter: (value: Date) => format(value, "MMM dd, yyyy"),
       },
-      { field: "dayName", headerName: "Day", width: 100 },
+      {
+        field: "dayName",
+        headerName: "Day",
+        width: 100,
+        valueGetter: (_value, row) => format(new Date(row.date), "EEEE"),
+      },
       {
         field: "category",
         headerName: "Category",
         width: 140,
+        valueGetter: (_value, row) => row.category?.name || "Uncategorized",
         renderCell: (params) => {
+          const categoryName = params.value;
           const matchedColor =
-            categories.find((c) => c.name === params.value)?.color || "#6B7280";
+            categories.find((c) => c.name === categoryName)?.color || "#6B7280";
           return (
             <div className="flex items-center gap-2 h-full">
               <div
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: matchedColor }}
               />
-              {params.value}
+              {categoryName}
             </div>
           );
         },
@@ -83,8 +90,19 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         flex: 1,
         minWidth: 200,
       },
-      { field: "weekNumber", headerName: "Week", width: 80, type: "number" },
-      { field: "monthYear", headerName: "Month", width: 110 },
+      {
+        field: "weekNumber",
+        headerName: "Week",
+        width: 80,
+        type: "number",
+        valueGetter: (_value, row) => getISOWeek(new Date(row.date)),
+      },
+      {
+        field: "monthYear",
+        headerName: "Month",
+        width: 110,
+        valueGetter: (_value, row) => format(new Date(row.date), "MMM-yyyy"),
+      },
       {
         field: "actions",
         type: "actions",
