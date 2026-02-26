@@ -34,10 +34,10 @@ export const Sidebar: React.FC = () => {
         <div
           className={`flex items-center gap-3 overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
           <div className="w-8 h-8 rounded-lg bg-primary-main flex shrink-0 items-center justify-center text-secondary-main font-bold">
-            F
+            T
           </div>
           <h1 className="text-xl font-bold tracking-tight text-white whitespace-nowrap overflow-hidden">
-            Finance SaaS
+            TrackMint
           </h1>
         </div>
 
