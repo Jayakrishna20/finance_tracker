@@ -7,11 +7,10 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
 import { AnalyticsContainer } from "./features/analytics/components/AnalyticsContainer";
 import { ArchiveView } from "./features/analytics/components/ArchiveView";
+import { SettingsPage } from "./features/settings/SettingsPage";
+import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
 
 import { Toaster } from "react-hot-toast";
-
-// Temporary placeholder components for routes
-const Dashboard = () => <DailyTransactionsGrid />;
 
 // Create a client
 const queryClient = new QueryClient({
@@ -28,13 +27,41 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={positivusTheme}>
         <CssBaseline />
-        <Toaster position="top-right" />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              fontSize: "16px",
+              padding: "16px 24px",
+              maxWidth: "500px",
+            },
+            success: {
+              style: {
+                borderBottom: "4px solid #10B981",
+              },
+            },
+            error: {
+              style: {
+                borderBottom: "4px solid #EF4444",
+              },
+            },
+          }}
+        />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<DailyTransactionsGrid type="normal" />} />
+              <Route
+                path="credit"
+                element={<DailyTransactionsGrid type="credit" />}
+              />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route
+                path="settings/categories"
+                element={<CategorySettingsPage />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>

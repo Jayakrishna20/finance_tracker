@@ -3,38 +3,36 @@ import { TransactionsAPI } from '../../../api/transactions';
 import toast from 'react-hot-toast';
 import type { Transaction } from '../../../types';
 
-type NewTransactionInput = Omit<Transaction, 'id'>;
-
-export const useCreateTransaction = () => {
+export const useUpdateTransaction = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: TransactionsAPI.create,
-        onMutate: async (newTx: NewTransactionInput) => {
+        mutationFn: ({ id, payload }: { id: string; payload: Omit<Transaction, 'id'> }) =>
+            TransactionsAPI.update(id, payload),
+        onMutate: async ({ id, payload }) => {
             await queryClient.cancelQueries({ queryKey: ['transactions'] });
 
             const previousTxs = queryClient.getQueryData<Transaction[]>(['transactions']);
 
             if (previousTxs) {
-                queryClient.setQueryData<Transaction[]>(['transactions'], [
-                    ...previousTxs,
-                    { ...newTx, id: `temp-${Date.now()}` } as Transaction
-                ]);
+                queryClient.setQueryData<Transaction[]>(['transactions'], (old) =>
+                    old?.map((tx) => (tx.id === id ? { ...tx, ...payload } : tx)) || []
+                );
             }
 
             return { previousTxs };
         },
-        onError: (_err, _newTx, context) => {
+        onError: (_err, _variables, context) => {
             if (context?.previousTxs) {
                 queryClient.setQueryData(['transactions'], context.previousTxs);
             }
-            toast.error("Failed to add transaction.");
+            toast.error("Failed to update transaction.");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
         },
         onSuccess: () => {
-            toast.success("Transaction added successfully!");
+            toast.success("Transaction updated successfully!");
         }
     });
 };

@@ -13,6 +13,11 @@ export const TransactionsAPI = {
         const res = await axiosClient.get(API_ROUTES.TRANSACTIONS.GET_ALL);
         return res.data.data;
     },
+    update: async (id: string, payload: Omit<Transaction, 'id'>) => {
+        const roundedPayload = { ...payload, amount: Math.round(payload.amount) };
+        const res = await axiosClient.patch(API_ROUTES.TRANSACTIONS.UPDATE(id), roundedPayload);
+        return res.data;
+    },
     delete: async (id: string) => {
         const res = await axiosClient.delete(API_ROUTES.TRANSACTIONS.DELETE(id));
         return res.data;

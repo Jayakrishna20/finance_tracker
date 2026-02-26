@@ -1,5 +1,4 @@
-import React from "react";
-import toast from "react-hot-toast";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -23,14 +22,14 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
-import { useCategories } from "../transactions/hooks/useCategories";
-import type { Category } from "../../types";
+import { useUpdateTransaction } from "../transactions/hooks/useUpdateTransaction.ts";
+import { useCategoryStore } from "../../store/useCategoryStore";
 
 const schema = z.object({
   date: z.date({ message: "Date is required" }),
   categoryId: z.string().min(1, "Category is required"),
   amount: z.number().min(0.01, "Amount must be greater than 0"),
-  notes: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
 
   // Stored but derived/disabled purely for DB
   dayName: z.string(),
@@ -41,31 +40,63 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export const TransactionModal: React.FC = () => {
-  const { isOpen, closeModal } = useModalStore();
-  const { data: categories = [], isLoading: isLoadingCategories } =
-    useCategories();
+  const { isOpen, closeModal, editingTransaction, transactionType } =
+    useModalStore();
+  const { categories } = useCategoryStore();
 
-  // Use a custom hook for React Query mutation (will create next)
+  const activeType = editingTransaction
+    ? editingTransaction.type
+    : transactionType;
+
   const createTxMutation = useCreateTransaction();
+  const updateTxMutation = useUpdateTransaction();
 
   const {
     control,
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       date: new Date(),
       categoryId: "",
-      amount: undefined,
-      notes: "",
+      amount: undefined as any,
+      description: "",
       dayName: format(new Date(), "EEEE"),
       weekNumber: getISOWeek(new Date()),
       monthYear: format(new Date(), "MMM-yyyy"),
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      if (editingTransaction) {
+        reset({
+          date: new Date(editingTransaction.date),
+          categoryId: editingTransaction.categoryId,
+          amount: editingTransaction.amount,
+          description: editingTransaction.description || "",
+          dayName: editingTransaction.dayName,
+          weekNumber: editingTransaction.weekNumber,
+          monthYear: editingTransaction.monthYear,
+        });
+      } else {
+        const now = new Date();
+        reset({
+          date: now,
+          categoryId: "",
+          amount: undefined,
+          description: "",
+          dayName: format(now, "EEEE"),
+          weekNumber: getISOWeek(now),
+          monthYear: format(now, "MMM-yyyy"),
+        });
+      }
+    }
+  }, [isOpen, editingTransaction, reset]);
 
   const handleClose = () => {
     reset();
@@ -83,20 +114,30 @@ export const TransactionModal: React.FC = () => {
   const onSubmit = (data: FormData) => {
     const payload = {
       ...data,
+      type: activeType,
       date: data.date.toISOString(),
-      amount: Math.round(data.amount), // Round before submit requirement
+      amount: Math.round(data.amount),
+      category: data.categoryId, // Ensure category name is sent as well
     };
 
-    // @ts-ignore
-    createTxMutation.mutate(payload, {
-      onSuccess: () => {
-        toast.success("Transaction added successfully!");
-        handleClose();
-      },
-      onError: () => {
-        toast.error("Failed to add transaction. Please try again.");
-      },
-    });
+    if (editingTransaction) {
+      // @ts-ignore
+      updateTxMutation.mutate(
+        { id: editingTransaction.id, payload },
+        {
+          onSuccess: () => {
+            handleClose();
+          },
+        },
+      );
+    } else {
+      // @ts-ignore
+      createTxMutation.mutate(payload, {
+        onSuccess: () => {
+          handleClose();
+        },
+      });
+    }
   };
 
   return (
@@ -110,7 +151,7 @@ export const TransactionModal: React.FC = () => {
       }}>
       <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
         <DialogTitle className="!p-0 !text-xl !font-bold">
-          Add Transaction
+          {editingTransaction ? "Edit Transaction" : "Add Transaction"}
         </DialogTitle>
         <IconButton onClick={handleClose} size="small">
           <X size={20} />
@@ -154,14 +195,21 @@ export const TransactionModal: React.FC = () => {
                   select
                   label="Category"
                   fullWidth
-                  disabled={isLoadingCategories}
                   error={!!errors.categoryId}
                   helperText={errors.categoryId?.message}>
-                  {categories.map((cat: Category) => (
-                    <MenuItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </MenuItem>
-                  ))}
+                  {categories
+                    .filter((c) => c.type === activeType)
+                    .map((cat) => (
+                      <MenuItem key={cat.name} value={cat.name}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: cat.color }}
+                          />
+                          {cat.name}
+                        </div>
+                      </MenuItem>
+                    ))}
                 </TextField>
               )}
             />
@@ -186,18 +234,61 @@ export const TransactionModal: React.FC = () => {
           </div>
 
           <Controller
-            name="notes"
+            name="description"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Notes (Optional)"
+                label="Description"
                 fullWidth
                 multiline
                 rows={4}
+                error={!!errors.description}
+                helperText={errors.description?.message}
               />
             )}
           />
+
+          <div className="bg-slate-100/80 p-5 rounded-2xl flex flex-col gap-4 !mt-6 border border-slate-200 shadow-sm">
+            <TextField
+              label="Day Name"
+              value={watch("dayName") || ""}
+              disabled
+              fullWidth
+              size="small"
+              sx={{
+                "& .MuiInputBase-input.Mui-disabled": {
+                  WebkitTextFillColor: "#475569",
+                },
+              }}
+            />
+            <div className="flex gap-4">
+              <TextField
+                label="Week Number"
+                value={watch("weekNumber") || ""}
+                disabled
+                fullWidth
+                size="small"
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    WebkitTextFillColor: "#475569",
+                  },
+                }}
+              />
+              <TextField
+                label="Month Year"
+                value={watch("monthYear") || ""}
+                disabled
+                fullWidth
+                size="small"
+                sx={{
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    WebkitTextFillColor: "#475569",
+                  },
+                }}
+              />
+            </div>
+          </div>
         </DialogContent>
 
         <DialogActions className="px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
@@ -208,9 +299,11 @@ export const TransactionModal: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={createTxMutation.isPending || isLoadingCategories}
+            disabled={createTxMutation.isPending || updateTxMutation.isPending}
             className="!rounded-xl">
-            {createTxMutation.isPending ? "Saving..." : "Save Transaction"}
+            {createTxMutation.isPending || updateTxMutation.isPending
+              ? "Saving..."
+              : "Save Transaction"}
           </Button>
         </DialogActions>
       </form>

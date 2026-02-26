@@ -10,6 +10,7 @@ import {
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { usePeriodAnalytics } from "../hooks/usePeriodAnalytics";
+import { useCategoryStore } from "../../../store/useCategoryStore";
 
 interface PeriodAnalyticsProps {
   periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
@@ -36,6 +37,7 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
     periodType,
     selectedPeriod,
   );
+  const { categories } = useCategoryStore();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -94,12 +96,17 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
                   outerRadius={120}
                   paddingAngle={5}
                   dataKey="value">
-                  {chartData.map((_entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
+                  {chartData.map((_entry, index) => {
+                    const matchedColor = categories.find(
+                      (c) => c.name === _entry.name,
+                    )?.color;
+                    return (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={matchedColor || COLORS[index % COLORS.length]}
+                      />
+                    );
+                  })}
                 </Pie>
                 <Tooltip
                   formatter={(value: number | undefined) =>

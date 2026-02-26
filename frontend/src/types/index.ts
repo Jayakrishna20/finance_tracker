@@ -1,17 +1,13 @@
-export interface Category {
-    id: string;
-    name: string;
-    type: string;
-    userId: string;
-}
+export type TransactionCategory = string;
 
 export interface Transaction {
     id: string;
+    type: 'normal' | 'credit';
     date: string; // ISO String
     categoryId: string;
-    category: Category;
+    category: TransactionCategory;
     amount: number;
-    notes?: string;
+    description: string
 
     // Auto-calculated fields
     dayName: string;
