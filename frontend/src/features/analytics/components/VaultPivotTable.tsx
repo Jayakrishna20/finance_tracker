@@ -6,7 +6,7 @@ const formatCurrency = (val: unknown) => {
   if (val === undefined || val === null || typeof val !== "number") return "";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0,
   }).format(val);
 };
