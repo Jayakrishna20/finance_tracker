@@ -1,17 +1,17 @@
-export type TransactionCategory =
-    | 'Housing'
-    | 'Food'
-    | 'Transport'
-    | 'Utilities'
-    | 'Entertainment'
-    | 'Other';
+export interface Category {
+    id: string;
+    name: string;
+    type: string;
+    userId: string;
+}
 
 export interface Transaction {
     id: string;
     date: string; // ISO String
-    category: TransactionCategory;
+    categoryId: string;
+    category: Category;
     amount: number;
-    description?: string;
+    notes?: string;
 
     // Auto-calculated fields
     dayName: string;
