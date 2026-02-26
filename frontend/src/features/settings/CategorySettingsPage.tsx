@@ -26,7 +26,7 @@ export const CategorySettingsPage: React.FC = () => {
   const [newCat, setNewCat] = useState("");
   const [newCatColor, setNewCatColor] = useState("#3B82F6");
   const [newCatType, setNewCatType] = useState<"normal" | "credit">("normal");
-  const [editingCat, setEditingCat] = useState<string | null>(null);
+  const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editColor, setEditColor] = useState("");
   const [editType, setEditType] = useState<"normal" | "credit">("normal");
@@ -40,57 +40,64 @@ export const CategorySettingsPage: React.FC = () => {
       toast.error("Category already exists.");
       return;
     }
-    addCategory(trimmed, newCatColor, newCatType);
+    addCategory({ name: trimmed, color: newCatColor, type: newCatType });
     setNewCat("");
     setNewCatColor("#3B82F6");
     setNewCatType("normal");
     toast.success("Category added.");
   };
 
-  const handleDelete = (catName: string) => {
+  const handleDelete = (id: string, catName: string) => {
     openConfirm({
       title: "Delete Category",
       message: `Are you sure you want to delete the "${catName}" category?`,
       onConfirm: () => {
-        removeCategory(catName);
+        removeCategory(id);
         toast.success("Category deleted.");
       },
     });
   };
 
   const handleStartEdit = (
+    id: string,
     catName: string,
     catColor: string,
     catType: "normal" | "credit" = "normal",
   ) => {
-    setEditingCat(catName);
+    setEditingCatId(id);
     setEditValue(catName);
     setEditColor(catColor);
     setEditType(catType);
   };
 
   const handleSaveEdit = () => {
-    if (!editingCat) return;
-    const oldCatName = editingCat;
+    if (!editingCatId) return;
     const trimmed = editValue.trim();
     if (!trimmed) {
-      setEditingCat(null);
+      setEditingCatId(null);
       return;
     }
     if (
-      trimmed.toLowerCase() !== oldCatName.toLowerCase() &&
-      categories.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())
+      categories.some(
+        (c) =>
+          c.id !== editingCatId &&
+          c.name.toLowerCase() === trimmed.toLowerCase(),
+      )
     ) {
       toast.error("This category name already exists.");
       return;
     }
-    updateCategory(oldCatName, trimmed, editColor, editType);
-    setEditingCat(null);
+    updateCategory(editingCatId, {
+      name: trimmed,
+      color: editColor,
+      type: editType,
+    });
+    setEditingCatId(null);
     toast.success("Category updated.");
   };
 
   const handleCancelEdit = () => {
-    setEditingCat(null);
+    setEditingCatId(null);
     setEditValue("");
     setEditColor("");
     setEditType("normal");
@@ -159,7 +166,7 @@ export const CategorySettingsPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {categories.map((cat) => (
             <div
-              key={cat.name}
+              key={cat.id}
               className="flex flex-col gap-3 bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
               <div
                 className="absolute top-0 left-0 w-full h-1"
@@ -183,14 +190,14 @@ export const CategorySettingsPage: React.FC = () => {
                   <IconButton
                     size="small"
                     onClick={() =>
-                      handleStartEdit(cat.name, cat.color, cat.type)
+                      handleStartEdit(cat.id, cat.name, cat.color, cat.type)
                     }
                     className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors">
                     <Edit2 size={16} />
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={() => handleDelete(cat.name)}
+                    onClick={() => handleDelete(cat.id, cat.name)}
                     className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={16} />
                   </IconButton>
@@ -208,7 +215,7 @@ export const CategorySettingsPage: React.FC = () => {
       </div>
 
       <Dialog
-        open={!!editingCat}
+        open={!!editingCatId}
         onClose={handleCancelEdit}
         maxWidth="xs"
         fullWidth

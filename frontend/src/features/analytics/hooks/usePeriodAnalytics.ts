@@ -1,23 +1,22 @@
 import { useMemo } from 'react';
 import { useTransactions } from '../../transactions/hooks/useTransactions';
 import type { Transaction } from '../../../types';
+import type { PeriodType } from '../../../config/constants';
+import { getISOWeek, format } from 'date-fns';
 
-export const usePeriodAnalytics = (periodType: 'WEEKLY' | 'MONTHLY' | 'YEARLY', periodValue: string) => {
+export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) => {
     const { data: transactions, isLoading } = useTransactions();
 
     const aggregatedData = useMemo(() => {
         if (!transactions) return { chartData: [], gridData: [], total: 0 };
 
-        // Filter transactions by the selected period
-        // Assumes periodValue formats align: W41-2023, Oct-2023, 2023
         let filtered: Transaction[] = [];
         if (periodType === 'WEEKLY') {
-            // Very naive string matching for mock purposes
-            filtered = transactions.filter(t => t.weekNumber.toString() === periodValue);
+            filtered = transactions.filter(t => (t.weekNumber || getISOWeek(new Date(t.date))).toString() === periodValue);
         } else if (periodType === 'MONTHLY') {
-            filtered = transactions.filter(t => t.monthYear === periodValue);
+            filtered = transactions.filter(t => (t.monthYear || format(new Date(t.date), "MMM-yyyy")) === periodValue);
         } else {
-            filtered = transactions.filter(t => t.date.startsWith(periodValue)); // year matching
+            filtered = transactions.filter(t => t.date.startsWith(periodValue));
         }
 
         const categoryTotals: Record<string, number> = {};

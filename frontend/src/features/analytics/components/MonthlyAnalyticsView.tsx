@@ -1,10 +1,23 @@
 import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
+import { useTransactions } from "../../transactions/hooks/useTransactions";
 
 export const MonthlyAnalyticsView: React.FC = () => {
   const currentMonth = format(new Date(), "MMM-yyyy");
-  const availableMonths = [currentMonth, "Sep-2023", "Aug-2023"];
+  const { data: transactions } = useTransactions();
+
+  const availableMonths = React.useMemo(() => {
+    if (!transactions) return [currentMonth];
+    const months = Array.from(
+      new Set(
+        transactions.map(
+          (t) => t.monthYear || format(new Date(t.date), "MMM-yyyy"),
+        ),
+      ),
+    ).sort((a, b) => b.localeCompare(a)); // Simple sort, maybe better to sort by date
+    return months.includes(currentMonth) ? months : [currentMonth, ...months];
+  }, [transactions, currentMonth]);
 
   return (
     <div className="space-y-6">

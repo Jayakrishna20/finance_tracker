@@ -1,15 +1,8 @@
 import React, { useMemo } from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useTransactions } from "../../transactions/hooks/useTransactions";
-
-const formatCurrency = (val: unknown) => {
-  if (val === undefined || val === null || typeof val !== "number") return "";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(val);
-};
+import { formatCurrency } from "../../../utils/formatters";
+import { useCategoryStore } from "../../../store/useCategoryStore";
 
 interface VaultPivotTableProps {
   periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
@@ -19,7 +12,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
   periodType,
 }) => {
   const { data: transactions, isLoading } = useTransactions();
-
+  const { categories } = useCategoryStore();
   const { rows, columns, categoryGrandTotals, totalGrand } = useMemo(() => {
     if (!transactions)
       return {
@@ -31,7 +24,14 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
 
     // Extract unique categories for columns
     const uniqueCategories = Array.from(
-      new Set(transactions.map((t) => t.category)),
+      new Set(
+        transactions.map(
+          (t) =>
+            t.category?.name ||
+            categories.find((c) => c.id === t.categoryId)?.name ||
+            "Uncategorized",
+        ),
+      ),
     ).sort();
 
     const pivotMap = new Map<string, Record<string, number | string>>();
@@ -41,10 +41,13 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
     uniqueCategories.forEach((c) => (categoryGrandTotals[c] = 0));
 
     transactions.forEach((t) => {
+      const catName =
+        t.category?.name ||
+        categories.find((c) => c.id === t.categoryId)?.name ||
+        "Uncategorized";
       let rowKey = "";
-      if (periodType === "WEEKLY") rowKey = t.weekNumber.toString();
-      else if (periodType === "MONTHLY")
-        rowKey = t.monthYear; // already formatted
+      if (periodType === "WEEKLY") rowKey = (t.weekNumber || 0).toString();
+      else if (periodType === "MONTHLY") rowKey = t.monthYear || "";
       else if (periodType === "YEARLY")
         rowKey = new Date(t.date).getFullYear().toString();
 
@@ -54,10 +57,10 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
       }
 
       const rowData = pivotMap.get(rowKey)!;
-      (rowData[t.category] as number) += t.amount;
+      (rowData[catName] as number) += t.amount;
       (rowData.total as number) += t.amount;
 
-      categoryGrandTotals[t.category] += t.amount;
+      categoryGrandTotals[catName] += t.amount;
       totalGrand += t.amount;
     });
 
@@ -165,7 +168,9 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
                   const rawVal =
                     summaryData[col.field as keyof typeof summaryData];
                   const cellValue =
-                    col.type === "number" ? formatCurrency(rawVal) : rawVal;
+                    col.type === "number" && typeof rawVal === "number"
+                      ? formatCurrency(rawVal)
+                      : rawVal;
 
                   return (
                     <div

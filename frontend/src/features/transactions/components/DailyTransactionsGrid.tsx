@@ -12,15 +12,7 @@ import type { Transaction } from "../../../types";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { useConfirmStore } from "../../../store/useConfirmStore";
-
-// Simple currency formatter
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(value);
-};
+import { formatCurrency } from "../../../utils/formatters";
 
 interface DailyTransactionsGridProps {
   type?: "normal" | "credit" | "all";
@@ -61,11 +53,14 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         field: "category",
         headerName: "Category",
         width: 140,
-        valueGetter: (_value, row) => row.category?.name || "Uncategorized",
+        valueGetter: (_value, row) =>
+          row.category?.name ||
+          categories.find((c) => c.id === row.categoryId)?.name ||
+          "Uncategorized",
         renderCell: (params) => {
           const categoryName = params.value;
-          const matchedColor =
-            categories.find((c) => c.name === categoryName)?.color || "#6B7280";
+          const category = categories.find((c) => c.name === categoryName);
+          const matchedColor = category?.color || "#6B7280";
           return (
             <div className="flex items-center gap-2 h-full">
               <div

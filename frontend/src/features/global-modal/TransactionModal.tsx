@@ -24,6 +24,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
 import { useUpdateTransaction } from "../transactions/hooks/useUpdateTransaction.ts";
 import { useCategoryStore } from "../../store/useCategoryStore";
+import type { CreateTransactionPayload } from "../../types";
 
 const schema = z.object({
   date: z.date({ message: "Date is required" }),
@@ -58,7 +59,7 @@ export const TransactionModal: React.FC = () => {
     defaultValues: {
       date: new Date(),
       categoryId: "",
-      amount: undefined as any,
+      amount: 0,
       description: "",
     },
   });
@@ -95,8 +96,8 @@ export const TransactionModal: React.FC = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    const payload = {
-      type: activeType,
+    const payload: CreateTransactionPayload = {
+      type: activeType || "normal",
       date: data.date.toISOString(),
       amount: Math.round(data.amount),
       categoryId: data.categoryId,
@@ -105,7 +106,7 @@ export const TransactionModal: React.FC = () => {
 
     if (editingTransaction) {
       updateTxMutation.mutate(
-        { id: editingTransaction.id, payload: payload as any },
+        { id: editingTransaction.id, payload },
         {
           onSuccess: () => {
             handleClose();
@@ -113,7 +114,7 @@ export const TransactionModal: React.FC = () => {
         },
       );
     } else {
-      createTxMutation.mutate(payload as any, {
+      createTxMutation.mutate(payload, {
         onSuccess: () => {
           handleClose();
         },
@@ -181,7 +182,7 @@ export const TransactionModal: React.FC = () => {
                   {categories
                     .filter((c) => c.type === activeType)
                     .map((cat) => (
-                      <MenuItem key={cat.name} value={cat.name}>
+                      <MenuItem key={cat.id} value={cat.id}>
                         <div className="flex items-center gap-2">
                           <div
                             className="w-3 h-3 rounded-full"

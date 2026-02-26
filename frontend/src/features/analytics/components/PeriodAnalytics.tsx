@@ -11,21 +11,14 @@ import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { usePeriodAnalytics } from "../hooks/usePeriodAnalytics";
 import { useCategoryStore } from "../../../store/useCategoryStore";
+import { formatCurrency } from "../../../utils/formatters";
+import { CHART_COLORS, type PeriodType } from "../../../config/constants";
 
 interface PeriodAnalyticsProps {
-  periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
+  periodType: PeriodType;
   defaultPeriod: string;
   availablePeriods: string[];
 }
-
-const COLORS = [
-  "#B9FF66",
-  "#191A23",
-  "#A3E65A",
-  "#292A32",
-  "#F3F3F3",
-  "#CCCCCC",
-];
 
 export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
   periodType,
@@ -38,14 +31,6 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
     selectedPeriod,
   );
   const { categories } = useCategoryStore();
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
 
   const columns: GridColDef[] = [
     { field: "category", headerName: "Category", flex: 1 },
@@ -103,7 +88,10 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
                     return (
                       <Cell
                         key={`cell-${index}`}
-                        fill={matchedColor || COLORS[index % COLORS.length]}
+                        fill={
+                          matchedColor ||
+                          CHART_COLORS[index % CHART_COLORS.length]
+                        }
                       />
                     );
                   })}

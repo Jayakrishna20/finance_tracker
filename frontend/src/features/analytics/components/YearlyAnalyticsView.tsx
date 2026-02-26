@@ -1,10 +1,19 @@
 import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
+import { useTransactions } from "../../transactions/hooks/useTransactions";
 
 export const YearlyAnalyticsView: React.FC = () => {
   const currentYear = format(new Date(), "yyyy");
-  const availableYears = [currentYear, "2023", "2022"];
+  const { data: transactions } = useTransactions();
+
+  const availableYears = React.useMemo(() => {
+    if (!transactions) return [currentYear];
+    const years = Array.from(
+      new Set(transactions.map((t) => format(new Date(t.date), "yyyy"))),
+    ).sort((a, b) => parseInt(b) - parseInt(a));
+    return years.includes(currentYear) ? years : [currentYear, ...years];
+  }, [transactions, currentYear]);
 
   return (
     <div className="space-y-6">
