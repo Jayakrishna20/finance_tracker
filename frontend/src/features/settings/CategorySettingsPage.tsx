@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Edit2, Check, X, ArrowLeft } from "lucide-react";
+import { Plus, Trash2, Edit2, X, ArrowLeft } from "lucide-react";
 import { useCategoryStore } from "../../store/useCategoryStore";
 import { useConfirmStore } from "../../store/useConfirmStore";
 import {
@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   Dialog,
   DialogTitle,
   DialogContent,
