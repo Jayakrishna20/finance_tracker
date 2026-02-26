@@ -168,7 +168,9 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
                   const rawVal =
                     summaryData[col.field as keyof typeof summaryData];
                   const cellValue =
-                    col.type === "number" ? formatCurrency(rawVal) : rawVal;
+                    col.type === "number" && typeof rawVal === "number"
+                      ? formatCurrency(rawVal)
+                      : rawVal;
 
                   return (
                     <div
