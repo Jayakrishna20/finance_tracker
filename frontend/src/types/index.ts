@@ -7,7 +7,7 @@ export interface Transaction {
     categoryId: string;
     category: TransactionCategory;
     amount: number;
-    notes?: string;
+    description: string
 
     // Auto-calculated fields
     dayName: string;

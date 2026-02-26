@@ -36,6 +36,7 @@ const getMockData = async (): Promise<{ transactions: any[], categories: any[] }
                 category: categories[0],
                 amount: 1500,
                 notes: 'Monthly rent',
+                description: 'Monthly rent',
                 dayName: 'Monday',
                 weekNumber: 1,
                 monthYear: 'Feb-2026'
