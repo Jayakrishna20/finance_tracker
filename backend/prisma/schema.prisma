@@ -3,16 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // If using Supabase and PgBouncer, uncomment this:
   // directUrl = env("DIRECT_URL")
+}
+
+model CategoryType {
+  id               BigInt     @id @default(autoincrement())
+  categoryTypeName String
+  isActive         Boolean    @default(true)
+  createdAt        DateTime   @default(now())
+  modifiedAt       DateTime   @updatedAt
+  categories       Category[]
 }
 
 model Category {
   id                BigInt        @id @default(autoincrement())
   categoryName      String        @unique
-  categoryType      String        // E.g., INCOME, EXPENSE
+  categoryType      BigInt
+  type              CategoryType  @relation(fields: [categoryType], references: [id])
   categoryColorCode String
   transactions      Transaction[]
   createdAt         DateTime      @default(now())
@@ -24,7 +34,7 @@ model Category {
 model Transaction {
   id          BigInt   @id @default(autoincrement())
   date        DateTime
-  amount      Int      // Rounded before save
+  amount      Int // Rounded before save
   description String?
   categoryId  BigInt
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)

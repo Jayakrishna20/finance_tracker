@@ -6,6 +6,23 @@
   },
   "item": [
     {
+      "name": "Category Types",
+      "item": [
+        {
+          "name": "Get Active Category Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/category-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["category-types"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Categories",
       "item": [
         {
