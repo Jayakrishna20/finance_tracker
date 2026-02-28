@@ -12,12 +12,24 @@ export class CategoryService {
 
     async getAllCategories() {
         return this.prisma.category.findMany({
+            select: {
+                id: true,
+                categoryName: true,
+                categoryColorCode: true,
+                categoryType: true,
+            },
             orderBy: { createdAt: 'desc' },
         });
     }
 
     async getCategoryById(id: bigint) {
         return this.prisma.category.findUnique({
+            select: {
+                id: true,
+                categoryName: true,
+                categoryColorCode: true,
+                categoryType: true,
+            },
             where: { id },
         });
     }

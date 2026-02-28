@@ -37,7 +37,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryName\": \"Groceries\",\n  \"categoryType\": \"EXPENSE\",\n  \"categoryColorCode\": \"#FF5733\"\n}"
+              "raw": "{\n  \"categoryName\": \"Groceries\",\n  \"categoryType\": 1,\n  \"categoryColorCode\": \"#FF5733\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/categories",
@@ -79,7 +79,7 @@
               "variable": [
                 {
                   "key": "categoryId",
-                  "value": "ENTER_CATEGORY_UUID_HERE"
+                  "value": "ENTER_CATEGORY_ID_HERE"
                 }
               ]
             }
@@ -97,7 +97,7 @@
               "variable": [
                 {
                   "key": "categoryId",
-                  "value": "ENTER_CATEGORY_UUID_HERE"
+                  "value": "ENTER_CATEGORY_ID_HERE"
                 }
               ]
             }
@@ -120,7 +120,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"date\": \"2024-03-15T10:00:00Z\",\n  \"amount\": 150.75,\n  \"description\": \"Weekly groceries\",\n  \"categoryId\": \"ENTER_CATEGORY_UUID_HERE\"\n}"
+              "raw": "{\n  \"date\": \"2024-03-15T10:00:00Z\",\n  \"amount\": 150.75,\n  \"description\": \"Weekly groceries\",\n  \"categoryId\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/transactions",
@@ -135,26 +135,21 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/transactions?page=1&limit=10",
+              "raw": "{{baseUrl}}/transactions?skip=0&take=10&categoryTypeName=EXPENSE",
               "host": ["{{baseUrl}}"],
               "path": ["transactions"],
               "query": [
                 {
-                  "key": "page",
-                  "value": "1"
+                  "key": "skip",
+                  "value": "0"
                 },
                 {
-                  "key": "limit",
+                  "key": "take",
                   "value": "10"
                 },
                 {
-                  "key": "from",
-                  "value": "2024-03-01T00:00:00Z",
-                  "disabled": true
-                },
-                {
-                  "key": "to",
-                  "value": "2024-03-31T23:59:59Z",
+                  "key": "categoryTypeName",
+                  "value": "EXPENSE",
                   "disabled": true
                 }
               ]
@@ -182,7 +177,7 @@
               "variable": [
                 {
                   "key": "transactionId",
-                  "value": "ENTER_TRANSACTION_UUID_HERE"
+                  "value": "ENTER_TRANSACTION_ID_HERE"
                 }
               ]
             }
@@ -200,7 +195,7 @@
               "variable": [
                 {
                   "key": "transactionId",
-                  "value": "ENTER_TRANSACTION_UUID_HERE"
+                  "value": "ENTER_TRANSACTION_ID_HERE"
                 }
               ]
             }
@@ -317,19 +312,7 @@
           }
         }
       ]
-    },
-    {
-      "name": "Health Check",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/health",
-          "host": ["{{baseUrl}}"],
-          "path": ["health"]
-        }
-      }
-    }
+    } 
   ],
   "variable": [
     {

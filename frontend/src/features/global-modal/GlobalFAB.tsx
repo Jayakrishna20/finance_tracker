@@ -10,7 +10,7 @@ export const GlobalFAB: React.FC = () => {
 
   const isCreditPage = location.pathname === "/credit";
   const handleOpen = () => {
-    openModal(undefined, isCreditPage ? "credit" : "normal");
+    openModal(undefined, isCreditPage ? "Credit" : "Normal");
   };
 
   return (

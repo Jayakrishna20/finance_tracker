@@ -2,57 +2,57 @@
   "categories": [
     {
       "id": "cat-1",
-      "name": "Food",
-      "color": "#FF6B6B",
-      "type": "normal"
+      "categoryName": "Food",
+      "categoryColorCode": "#FF6B6B",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-2",
-      "name": "Rent",
-      "color": "#4DABF7",
-      "type": "normal"
+      "categoryName": "Rent",
+      "categoryColorCode": "#4DABF7",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-3",
-      "name": "Salary",
-      "color": "#51CF66",
-      "type": "credit"
+      "categoryName": "Salary",
+      "categoryColorCode": "#51CF66",
+      "categoryType": "Credit"
     },
     {
       "id": "cat-4",
-      "name": "Travel",
-      "color": "#FCC419",
-      "type": "normal"
+      "categoryName": "Travel",
+      "categoryColorCode": "#FCC419",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-5",
-      "name": "Entertainment",
-      "color": "#B197FC",
-      "type": "normal"
+      "categoryName": "Entertainment",
+      "categoryColorCode": "#B197FC",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-6",
-      "name": "Shopping",
-      "color": "#FF922B",
-      "type": "normal"
+      "categoryName": "Shopping",
+      "categoryColorCode": "#FF922B",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-7",
-      "name": "Health",
-      "color": "#20C997",
-      "type": "normal"
+      "categoryName": "Health",
+      "categoryColorCode": "#20C997",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-8",
-      "name": "Miscellaneous",
-      "color": "#868E96",
-      "type": "normal"
+      "categoryName": "Miscellaneous",
+      "categoryColorCode": "#868E96",
+      "categoryType": "Normal"
     },
     {
       "id": "cat-9",
-      "name": "Investment",
-      "color": "#748FFC",
-      "type": "credit"
+      "categoryName": "Investment",
+      "categoryColorCode": "#748FFC",
+      "categoryType": "Credit"
     }
   ],
   "transactions": [
