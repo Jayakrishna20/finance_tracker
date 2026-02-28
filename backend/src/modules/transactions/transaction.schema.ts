@@ -14,10 +14,9 @@ export const TransactionParamsSchema = z.object({
 });
 
 export const TransactionQuerySchema = z.object({
-    from: z.coerce.date().optional(),
-    to: z.coerce.date().optional(),
-    page: z.coerce.number().min(1).default(1),
-    limit: z.coerce.number().min(1).max(100).default(20),
+    categoryTypeName: z.string().optional(),
+    skip: z.coerce.number().min(0).default(0),
+    take: z.coerce.number().min(1).max(100).default(10),
 });
 
 export type CreateTransactionInput = z.infer<typeof CreateTransactionSchema>;

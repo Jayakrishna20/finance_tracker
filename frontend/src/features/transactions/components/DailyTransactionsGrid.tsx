@@ -8,18 +8,14 @@ import { Edit2, Trash2 } from "lucide-react";
 import { format, getISOWeek } from "date-fns";
 import { useTransactions } from "../hooks/useTransactions";
 import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
-import type { Transaction } from "../../../types";
+import type { DailyTransactionsGridProps, Transaction } from "../../../types";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { useConfirmStore } from "../../../store/useConfirmStore";
 import { formatCurrency } from "../../../utils/formatters";
 
-interface DailyTransactionsGridProps {
-  type?: "normal" | "credit" | "all";
-}
-
 export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
-  type = "normal",
+  type = "Normal",
 }) => {
   const { data: allTransactions, isLoading } = useTransactions();
 
@@ -52,13 +48,13 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         headerName: "Category",
         width: 140,
         valueGetter: (_value, row) =>
-          row.category?.name ||
-          categories.find((c) => c.id === row.categoryId)?.name || //TODO: change here when view for daily/credit grid comes
-          "Uncategorized",
+          row.category?.categoryName || "Uncategorized",
         renderCell: (params) => {
           const categoryName = params.value;
-          const category = categories.find((c) => c.name === categoryName);
-          const matchedColor = category?.color || "#6B7280";
+          const category = categories.find(
+            (c) => c.categoryName === categoryName,
+          );
+          const matchedColor = category?.categoryColorCode || "#6B7280";
           return (
             <div className="flex items-center gap-2 h-full">
               <div

@@ -1,26 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { PrismaClient } from '@prisma/client';
 import { CategoryTypeService } from './categoryType.service.js';
+import { successResponse } from '../../utils/responseBuilder.js';
 
 export class CategoryTypeController {
-    private service: CategoryTypeService;
+    constructor(private categoryTypeService: CategoryTypeService) { }
 
-    constructor(prisma: PrismaClient) {
-        this.service = new CategoryTypeService(prisma);
-    }
-
-    async getActiveCategoryTypes(req: FastifyRequest, reply: FastifyReply) {
-        try {
-            const types = await this.service.getActiveCategoryTypes();
-            const serializedTypes = types.map(t => ({
-                ...t,
-                id: String(t.id)
-            }));
-
-            reply.status(200).send(serializedTypes);
-        } catch (error) {
-            req.server.log.error(error);
-            reply.status(500).send({ message: 'Internal Server Error' });
-        }
+    getActiveCategoryTypes = async (request: FastifyRequest, reply: FastifyReply) => {
+        const types = await this.categoryTypeService.getActiveCategoryTypes();
+        return reply.send(successResponse('Category types fetched successfully', types));
     }
 }

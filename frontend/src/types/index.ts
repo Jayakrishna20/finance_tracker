@@ -1,10 +1,10 @@
-export type TransactionType = 'normal' | 'credit';
+export type TransactionType = 'Normal' | 'Credit';
 
 export interface Category {
     id: string;
-    name: string;
-    type: TransactionType;
-    color: string;
+    categoryName: string;
+    categoryType: TransactionType;
+    categoryColorCode: string;
 }
 
 export interface Transaction {
@@ -27,3 +27,7 @@ export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
 
 export type CreateTransactionPayload = Omit<Transaction, 'id' | 'category' | 'dayName' | 'weekNumber' | 'monthYear'>;
 export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;
+
+export interface DailyTransactionsGridProps {
+    type?: TransactionType;
+}

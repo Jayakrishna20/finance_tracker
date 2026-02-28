@@ -97,7 +97,7 @@ export const TransactionModal: React.FC = () => {
 
   const onSubmit = (data: FormData) => {
     const payload: CreateTransactionPayload = {
-      type: activeType || "normal",
+      type: activeType || "Normal",
       date: data.date.toISOString(),
       amount: Math.round(data.amount),
       categoryId: data.categoryId,
@@ -180,15 +180,15 @@ export const TransactionModal: React.FC = () => {
                   error={!!errors.categoryId}
                   helperText={errors.categoryId?.message}>
                   {categories
-                    .filter((c) => c.type === activeType)
+                    .filter((c) => c.categoryType === activeType)
                     .map((cat) => (
                       <MenuItem key={cat.id} value={cat.id}>
                         <div className="flex items-center gap-2">
                           <div
                             className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: cat.color }}
+                            style={{ backgroundColor: cat.categoryColorCode }}
                           />
-                          {cat.name}
+                          {cat.categoryName}
                         </div>
                       </MenuItem>
                     ))}

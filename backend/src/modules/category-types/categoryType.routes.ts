@@ -1,8 +1,10 @@
 import { FastifyInstance } from 'fastify';
 import { CategoryTypeController } from './categoryType.controller.js';
+import { CategoryTypeService } from './categoryType.service.js';
 
 export default async function categoryTypeRoutes(app: FastifyInstance) {
-    const controller = new CategoryTypeController(app.prisma);
+    const categoryTypeService = new CategoryTypeService(app.prisma);
+    const categoryTypeController = new CategoryTypeController(categoryTypeService);
 
     app.get(
         '/',
@@ -12,6 +14,6 @@ export default async function categoryTypeRoutes(app: FastifyInstance) {
                 description: 'Get all active category types',
             },
         },
-        controller.getActiveCategoryTypes.bind(controller)
+        categoryTypeController.getActiveCategoryTypes
     );
 }

@@ -24,25 +24,31 @@ export const CategorySettingsPage: React.FC = () => {
   const { openConfirm } = useConfirmStore();
   const [newCat, setNewCat] = useState("");
   const [newCatColor, setNewCatColor] = useState("#3B82F6");
-  const [newCatType, setNewCatType] = useState<"normal" | "credit">("normal");
+  const [newCatType, setNewCatType] = useState<"Normal" | "Credit">("Normal");
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editColor, setEditColor] = useState("");
-  const [editType, setEditType] = useState<"normal" | "credit">("normal");
+  const [editType, setEditType] = useState<"Normal" | "Credit">("Normal");
 
   const handleAdd = () => {
     const trimmed = newCat.trim();
     if (!trimmed) return;
     if (
-      categories.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())
+      categories.some(
+        (c) => c.categoryName.toLowerCase() === trimmed.toLowerCase(),
+      )
     ) {
       toast.error("Category already exists.");
       return;
     }
-    addCategory({ name: trimmed, color: newCatColor, type: newCatType });
+    addCategory({
+      categoryName: trimmed,
+      categoryColorCode: newCatColor,
+      categoryType: newCatType,
+    });
     setNewCat("");
     setNewCatColor("#3B82F6");
-    setNewCatType("normal");
+    setNewCatType("Normal");
     toast.success("Category added.");
   };
 
@@ -61,7 +67,7 @@ export const CategorySettingsPage: React.FC = () => {
     id: string,
     catName: string,
     catColor: string,
-    catType: "normal" | "credit" = "normal",
+    catType: "Normal" | "Credit" = "Normal",
   ) => {
     setEditingCatId(id);
     setEditValue(catName);
@@ -80,16 +86,16 @@ export const CategorySettingsPage: React.FC = () => {
       categories.some(
         (c) =>
           c.id !== editingCatId &&
-          c.name.toLowerCase() === trimmed.toLowerCase(),
+          c.categoryName.toLowerCase() === trimmed.toLowerCase(),
       )
     ) {
       toast.error("This category name already exists.");
       return;
     }
     updateCategory(editingCatId, {
-      name: trimmed,
-      color: editColor,
-      type: editType,
+      categoryName: trimmed,
+      categoryColorCode: editColor,
+      categoryType: editType,
     });
     setEditingCatId(null);
     toast.success("Category updated.");
@@ -99,7 +105,7 @@ export const CategorySettingsPage: React.FC = () => {
     setEditingCatId(null);
     setEditValue("");
     setEditColor("");
-    setEditType("normal");
+    setEditType("Normal");
   };
 
   return (
@@ -145,7 +151,7 @@ export const CategorySettingsPage: React.FC = () => {
           <Select
             value={newCatType}
             onChange={(e) =>
-              setNewCatType(e.target.value as "normal" | "credit")
+              setNewCatType(e.target.value as "Normal" | "Credit")
             }>
             <MenuItem value="normal">Normal</MenuItem>
             <MenuItem value="credit">Credit</MenuItem>
@@ -169,34 +175,39 @@ export const CategorySettingsPage: React.FC = () => {
               className="flex flex-col gap-3 bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
               <div
                 className="absolute top-0 left-0 w-full h-1"
-                style={{ backgroundColor: cat.color }}
+                style={{ backgroundColor: cat.categoryColorCode }}
               />
               <div className="flex w-full items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: cat.color }}
+                    style={{ backgroundColor: cat.categoryColorCode }}
                   />
                   <span className="font-semibold text-gray-800 text-lg">
-                    {cat.name}
+                    {cat.categoryName}
                   </span>
                   <span
-                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.type === "credit" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
-                    {cat.type}
+                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === "Credit" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
+                    {cat.categoryType}
                   </span>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <IconButton
                     size="small"
                     onClick={() =>
-                      handleStartEdit(cat.id, cat.name, cat.color, cat.type)
+                      handleStartEdit(
+                        cat.id,
+                        cat.categoryName,
+                        cat.categoryColorCode,
+                        cat.categoryType,
+                      )
                     }
                     className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors">
                     <Edit2 size={16} />
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={() => handleDelete(cat.id, cat.name)}
+                    onClick={() => handleDelete(cat.id, cat.categoryName)}
                     className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={16} />
                   </IconButton>
@@ -260,7 +271,7 @@ export const CategorySettingsPage: React.FC = () => {
               <Select
                 value={editType}
                 onChange={(e) =>
-                  setEditType(e.target.value as "normal" | "credit")
+                  setEditType(e.target.value as "Normal" | "Credit")
                 }>
                 <MenuItem value="normal">Normal</MenuItem>
                 <MenuItem value="credit">Credit</MenuItem>

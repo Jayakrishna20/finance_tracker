@@ -1,10 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { TransactionService } from './transaction.service.js';
-import {
-    CreateTransactionInput,
-    UpdateTransactionInput,
-    TransactionQueryInput,
-} from './transaction.schema.js';
+import { CreateTransactionInput, UpdateTransactionInput, TransactionQueryInput } from './transaction.schema.js';
 import { successResponse } from '../../utils/responseBuilder.js';
 
 export class TransactionController {
@@ -14,16 +10,16 @@ export class TransactionController {
         request: FastifyRequest<{ Body: CreateTransactionInput }>,
         reply: FastifyReply
     ) => {
-        const transaction = await this.transactionService.createTransaction(request.body);
-        return reply.status(201).send(successResponse(transaction, 'Transaction created successfully'));
+        await this.transactionService.createTransaction(request.body);
+        return reply.status(201).send(successResponse('Transaction created successfully'));
     };
 
     getTransactions = async (
         request: FastifyRequest<{ Querystring: TransactionQueryInput }>,
         reply: FastifyReply
     ) => {
-        const result = await this.transactionService.getTransactions(request.query);
-        return reply.send({ success: true, ...result });
+        const { data, meta } = await this.transactionService.getTransactions(request.query);
+        return reply.send(successResponse('Transactions fetched successfully', data, meta));
     };
 
     updateTransaction = async (
@@ -31,8 +27,8 @@ export class TransactionController {
         reply: FastifyReply
     ) => {
         const { id } = request.params;
-        const transaction = await this.transactionService.updateTransaction(id, request.body);
-        return reply.send(successResponse(transaction, 'Transaction updated successfully'));
+        await this.transactionService.updateTransaction(id, request.body);
+        return reply.send(successResponse('Transaction updated successfully'));
     };
 
     deleteTransaction = async (
@@ -41,6 +37,6 @@ export class TransactionController {
     ) => {
         const { id } = request.params;
         await this.transactionService.deleteTransaction(id);
-        return reply.send(successResponse(null, 'Transaction deleted successfully'));
+        return reply.send(successResponse('Transaction deleted successfully'));
     };
 }

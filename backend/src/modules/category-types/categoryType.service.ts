@@ -5,6 +5,11 @@ export class CategoryTypeService {
 
     async getActiveCategoryTypes() {
         return this.prisma.categoryType.findMany({
+            select: {
+                id: true,
+                categoryTypeName: true,
+                isActive: true,
+            },
             where: { isActive: true },
             orderBy: { categoryTypeName: 'asc' },
         });

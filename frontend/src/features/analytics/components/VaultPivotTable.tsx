@@ -27,7 +27,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
       new Set(
         transactions.map(
           (t) =>
-            categories.find((c) => c.id === t.categoryId)?.name ||
+            categories.find((c) => c.id === t.categoryId)?.categoryName ||
             "Uncategorized",
         ),
       ),
@@ -41,7 +41,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
 
     transactions.forEach((t) => {
       const catName =       
-        categories.find((c) => c.id === t.categoryId)?.name ||
+        categories.find((c) => c.id === t.categoryId)?.categoryName ||
         "Uncategorized";
       let rowKey = "";
       if (periodType === "WEEKLY") rowKey = (t.weekNumber || 0).toString();

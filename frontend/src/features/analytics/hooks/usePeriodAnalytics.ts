@@ -25,7 +25,7 @@ export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) 
         let grandTotal = 0;
 
         filtered.forEach(t => {
-            const catName = t.category?.name || categories.find(c => c.id === t.categoryId)?.name || 'Unknown';
+            const catName = t.category?.categoryName || categories.find(c => c.id === t.categoryId)?.categoryName || 'Unknown';
             categoryTotals[catName] = (categoryTotals[catName] || 0) + t.amount;
             grandTotal += t.amount;
         });

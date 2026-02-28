@@ -51,10 +51,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<DailyTransactionsGrid type="normal" />} />
+              <Route index element={<DailyTransactionsGrid type="Normal" />} />
               <Route
                 path="credit"
-                element={<DailyTransactionsGrid type="credit" />}
+                element={<DailyTransactionsGrid type="Credit" />}
               />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />

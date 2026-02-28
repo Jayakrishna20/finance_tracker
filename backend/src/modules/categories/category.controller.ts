@@ -10,8 +10,8 @@ export class CategoryController {
         request: FastifyRequest<{ Body: CreateCategoryInput }>,
         reply: FastifyReply
     ) => {
-        const category = await this.categoryService.createCategory(request.body);
-        return reply.status(201).send(successResponse(category, 'Category created successfully'));
+        await this.categoryService.createCategory(request.body);
+        return reply.status(201).send(successResponse('Category created successfully'));
     };
 
     getAllCategories = async (
@@ -19,7 +19,16 @@ export class CategoryController {
         reply: FastifyReply
     ) => {
         const categories = await this.categoryService.getAllCategories();
-        return reply.send(successResponse(categories));
+        return reply.send(successResponse('Categories fetched successfully', categories));
+    };
+
+    getCategoryById = async (
+        request: FastifyRequest<{ Params: { id: bigint } }>,
+        reply: FastifyReply
+    ) => {
+        const { id } = request.params;
+        const category = await this.categoryService.getCategoryById(id);
+        return reply.send(successResponse('Category fetched successfully', category));
     };
 
     updateCategory = async (
@@ -27,8 +36,8 @@ export class CategoryController {
         reply: FastifyReply
     ) => {
         const { id } = request.params;
-        const category = await this.categoryService.updateCategory(id, request.body);
-        return reply.send(successResponse(category, 'Category updated successfully'));
+        await this.categoryService.updateCategory(id, request.body);
+        return reply.send(successResponse('Category updated successfully'));
     };
 
     deleteCategory = async (
@@ -37,6 +46,6 @@ export class CategoryController {
     ) => {
         const { id } = request.params;
         await this.categoryService.deleteCategory(id);
-        return reply.send(successResponse(null, 'Category deleted successfully'));
+        return reply.send(successResponse('Category deleted successfully'));
     };
 }

@@ -21,13 +21,15 @@ export class TransactionService {
     }
 
     async getTransactions(query: TransactionQueryInput) {
-        const { from, to, page, limit } = query;
+        const { categoryTypeName, skip, take } = query;
 
         const where: Prisma.TransactionWhereInput = {};
-        if (from || to) {
-            where.date = {};
-            if (from) where.date.gte = from;
-            if (to) where.date.lte = to;
+        if (categoryTypeName) {
+            where.category = {
+                type: {
+                    categoryTypeName
+                }
+            };
         }
 
         const [total, data] = await Promise.all([
@@ -35,11 +37,21 @@ export class TransactionService {
             this.prisma.transaction.findMany({
                 where,
                 orderBy: { date: 'desc' },
-                skip: (page - 1) * limit,
-                take: limit,
-                include: {
-                    category: true,
-                },
+                skip,
+                take,
+                select: {
+                    id: true,
+                    amount: true,
+                    date: true,
+                    description: true,
+                    category: {
+                        select: {
+                            id: true,
+                            categoryName: true,
+                            categoryColorCode: true,
+                        }
+                    }
+                }
             }),
         ]);
 
@@ -47,9 +59,8 @@ export class TransactionService {
             data,
             meta: {
                 total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit),
+                skip,
+                take,
             },
         };
     }
@@ -57,8 +68,18 @@ export class TransactionService {
     async getTransactionById(id: bigint) {
         return this.prisma.transaction.findUnique({
             where: { id },
-            include: {
-                category: true,
+            select: {
+                id: true,
+                amount: true,
+                date: true,
+                description: true,
+                category: {
+                    select: {
+                        id: true,
+                        categoryName: true,
+                        categoryColorCode: true,
+                    }
+                }
             },
         });
     }
