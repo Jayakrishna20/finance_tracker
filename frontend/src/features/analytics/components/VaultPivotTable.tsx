@@ -27,7 +27,6 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
       new Set(
         transactions.map(
           (t) =>
-            t.category?.name ||
             categories.find((c) => c.id === t.categoryId)?.name ||
             "Uncategorized",
         ),
@@ -109,7 +108,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
     cols.push({
       field: "total",
       headerName: "Grand Total",
-      width: 160,
+      width: 140,
       type: "number",
       sortable: false,
       valueFormatter: (val) => formatCurrency(val),

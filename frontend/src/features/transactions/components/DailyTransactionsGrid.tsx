@@ -25,15 +25,13 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
 
   const transactions = React.useMemo(() => {
     if (!allTransactions) return [];
-    if (type === "all") return allTransactions;
-    return allTransactions.filter((t) => (t.type || "normal") === type);
+    return allTransactions.filter((t) => t.type === type);
   }, [allTransactions, type]);
   const deleteTxMutation = useDeleteTransaction();
   const { categories } = useCategoryStore();
   const { openModal } = useModalStore();
   const { openConfirm } = useConfirmStore();
 
-  // useMemo ensures column definition doesn't re-render heavily if grid repaints
   const columns: GridColDef<Transaction>[] = useMemo(
     () => [
       {
@@ -41,7 +39,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         headerName: "Date",
         width: 130,
         valueGetter: (value: Date) => new Date(value),
-        valueFormatter: (value: Date) => format(value, "MMM dd, yyyy"),
+        valueFormatter: (value: Date) => format(value, "dd/MM/yyyy"),
       },
       {
         field: "dayName",
@@ -55,7 +53,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         width: 140,
         valueGetter: (_value, row) =>
           row.category?.name ||
-          categories.find((c) => c.id === row.categoryId)?.name ||
+          categories.find((c) => c.id === row.categoryId)?.name || //TODO: change here when view for daily/credit grid comes
           "Uncategorized",
         renderCell: (params) => {
           const categoryName = params.value;

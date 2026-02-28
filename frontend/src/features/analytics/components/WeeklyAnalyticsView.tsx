@@ -11,7 +11,7 @@ export const WeeklyAnalyticsView: React.FC = () => {
     if (!transactions) return [currentWeek];
     const weeks = Array.from(
       new Set(transactions.map((t) => getISOWeek(new Date(t.date)).toString())),
-    ).sort((a, b) => parseInt(b) - parseInt(a));
+    ).sort((a, b) => parseInt(a) - parseInt(b));
     return weeks.includes(currentWeek) ? weeks : [currentWeek, ...weeks];
   }, [transactions, currentWeek]);
 
