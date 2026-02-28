@@ -6,10 +6,7 @@ export const ArchiveView: React.FC = () => {
 
   return (
     <div className="space-y-6 h-full flex flex-col">
-      <div className="shrink-0">
-        <h2 className="text-2xl font-bold text-secondary-main">
-          Vault / Archive
-        </h2>
+      <div className="shrink-0">       
         <p className="text-gray-500">
           Review your entire historical data categorized by distinct time
           boundaries.
