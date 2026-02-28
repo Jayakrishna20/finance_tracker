@@ -1,39 +1,56 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { CategoriesAPI } from "../api/categories";
 import type { Category, CreateCategoryPayload } from "../types";
-import dummyData from "../api/dummyData.json";
 
 interface CategoryState {
     categories: Category[];
-    addCategory: (payload: CreateCategoryPayload) => void;
-    removeCategory: (id: string) => void;
-    updateCategory: (id: string, payload: Partial<CreateCategoryPayload>) => void;
+    isLoading: boolean;
+    error: Error | null;
+    fetchCategories: () => Promise<void>;
+    addCategory: (payload: CreateCategoryPayload) => Promise<void>;
+    removeCategory: (id: string) => Promise<void>;
+    updateCategory: (id: string, payload: Partial<CreateCategoryPayload>) => Promise<void>;
 }
 
-export const useCategoryStore = create<CategoryState>()(
-    persist(
-        (set) => ({
-            categories: dummyData.categories as Category[],
-            addCategory: (payload) =>
-                set((state) => ({
-                    categories: [
-                        ...state.categories,
-                        { ...payload, id: crypto.randomUUID() },
-                    ],
-                })),
-            removeCategory: (id) =>
-                set((state) => ({
-                    categories: state.categories.filter((c) => c.id !== id),
-                })),
-            updateCategory: (id, payload) =>
-                set((state) => ({
-                    categories: state.categories.map((c) =>
-                        c.id === id ? { ...c, ...payload } : c
-                    ),
-                })),
-        }),
-        {
-            name: "category-storage",
+export const useCategoryStore = create<CategoryState>((set, get) => ({
+    categories: [],
+    isLoading: false,
+    error: null,
+    fetchCategories: async () => {
+        set({ isLoading: true });
+        try {
+            const categories = await CategoriesAPI.getAll();
+            set({ categories, isLoading: false, error: null });
+        } catch (error) {
+            console.error("Failed to fetch categories", error);
+            set({ error: error as Error, isLoading: false });
         }
-    )
-);
+    },
+    addCategory: async (payload) => {
+        try {
+            await CategoriesAPI.create(payload);
+            await get().fetchCategories();
+        } catch (error) {
+            console.error("Failed to add category", error);
+            throw error;
+        }
+    },
+    removeCategory: async (id) => {
+        try {
+            await CategoriesAPI.delete(id);
+            await get().fetchCategories();
+        } catch (error) {
+            console.error("Failed to delete category", error);
+            throw error;
+        }
+    },
+    updateCategory: async (id, payload) => {
+        try {
+            await CategoriesAPI.update(id, payload as any);
+            await get().fetchCategories();
+        } catch (error) {
+            console.error("Failed to update category", error);
+            throw error;
+        }
+    },
+}));

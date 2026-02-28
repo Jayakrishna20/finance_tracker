@@ -7,7 +7,6 @@ export const useCategories = () => {
     return useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
-            // In prod userId would be from auth, using DEMO-USER here
             const response = await axiosClient.get<{ data: Category[] }>(
                 API_ROUTES.CATEGORIES.GET_ALL
             );
