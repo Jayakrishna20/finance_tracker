@@ -49,6 +49,11 @@ export class TransactionService {
                             id: true,
                             categoryName: true,
                             categoryColorCode: true,
+                            type: {
+                                select: {
+                                    categoryTypeName: true
+                                }
+                            }
                         }
                     }
                 }

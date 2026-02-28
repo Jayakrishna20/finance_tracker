@@ -1,17 +1,17 @@
 export const API_ROUTES = {
     TRANSACTIONS: {
-        GET_ALL: '/api/transactions',
-        CREATE: '/api/transactions',
-        UPDATE: (id: string) => `/api/transactions/${id}`,
-        DELETE: (id: string) => `/api/transactions/${id}`,
+        GET_ALL: '/transactions',
+        CREATE: '/transactions',
+        UPDATE: (id: string) => `/transactions/${id}`,
+        DELETE: (id: string) => `/transactions/${id}`,
     },
     ANALYTICS: {
-        GET_SUMMARY: '/api/analytics/summary',
+        GET_SUMMARY: '/analytics/summary',
     },
     CATEGORIES: {
-        GET_ALL: '/api/categories',
-        CREATE: '/api/categories',
-        UPDATE: (id: string) => `/api/categories/${id}`,
-        DELETE: (id: string) => `/api/categories/${id}`,
+        GET_ALL: '/categories',
+        CREATE: '/categories',
+        UPDATE: (id: string) => `/categories/${id}`,
+        DELETE: (id: string) => `/categories/${id}`,
     }
 } as const;

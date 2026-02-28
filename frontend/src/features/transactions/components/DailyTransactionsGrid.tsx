@@ -17,12 +17,12 @@ import { formatCurrency } from "../../../utils/formatters";
 export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
   type = "Normal",
 }) => {
-  const { data: allTransactions, isLoading } = useTransactions();
+  const { data: allTransactions, isLoading } = useTransactions({
+    skip: 0,
+    take: 10,
+    categoryTypeName: type,
+  });
 
-  const transactions = React.useMemo(() => {
-    if (!allTransactions) return [];
-    return allTransactions.filter((t) => t.type === type);
-  }, [allTransactions, type]);
   const deleteTxMutation = useDeleteTransaction();
   const { categories } = useCategoryStore();
   const { openModal } = useModalStore();
@@ -136,7 +136,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
     <div className="h-full w-full flex flex-col">
       <div className="flex-1 min-h-0 w-full">
         <DataGrid
-          rows={transactions || []}
+          rows={allTransactions || []}
           columns={columns}
           loading={isLoading}
           initialState={{
