@@ -8,14 +8,18 @@ import { Edit2, Trash2 } from "lucide-react";
 import { format, getISOWeek } from "date-fns";
 import { useTransactions } from "../hooks/useTransactions";
 import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
-import type { DailyTransactionsGridProps, Transaction } from "../../../types";
+import {
+  TransactionTypes,
+  type DailyTransactionsGridProps,
+  type Transaction,
+} from "../../../types";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useModalStore } from "../../../store/useModalStore";
 import { useConfirmStore } from "../../../store/useConfirmStore";
 import { formatCurrency } from "../../../utils/formatters";
 
 export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
-  type = "Normal",
+  type = TransactionTypes.Normal,
 }) => {
   const { data: allTransactions, isLoading } = useTransactions({
     skip: 0,
@@ -103,7 +107,9 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
               />
             }
             label="Edit"
-            onClick={() => openModal(params.row)}
+            onClick={() => {
+              openModal(params.row);
+            }}
           />,
           <GridActionsCellItem
             key="delete"
@@ -117,7 +123,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
                 message:
                   "Are you sure you want to delete this transaction? This action cannot be undone.",
                 onConfirm: () => {
-                  deleteTxMutation.mutate(params.id as string);
+                  deleteTxMutation.mutate(params.row.transactionId);
                 },
               });
             }}

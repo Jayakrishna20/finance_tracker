@@ -4,14 +4,14 @@ import type { Category, CreateCategoryPayload } from "../types";
 
 interface CategoryState {
     categories: Category[];
-    categoryTypes: { id: string, categoryTypeName: string }[];
+    categoryTypes: { id: number, categoryTypeName: string }[];
     isLoading: boolean;
     error: Error | null;
     fetchCategories: (force?: boolean) => Promise<void>;
     fetchCategoryTypes: () => Promise<void>;
     addCategory: (payload: CreateCategoryPayload) => Promise<void>;
-    removeCategory: (id: string) => Promise<void>;
-    updateCategory: (id: string, payload: Partial<CreateCategoryPayload>) => Promise<void>;
+    removeCategory: (id: number) => Promise<void>;
+    updateCategory: (id: number, payload: Partial<CreateCategoryPayload>) => Promise<void>;
 }
 
 import { CategoryTypesAPI } from "../api/categoryTypes";

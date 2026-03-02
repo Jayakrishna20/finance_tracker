@@ -1,31 +1,45 @@
-export type TransactionType = 'Normal' | 'Credit';
+export const TransactionTypes = {
+    Normal: 1,
+    Credit: 2
+} as const;
+
+export type TransactionType =
+    (typeof TransactionTypes)[keyof typeof TransactionTypes];
 
 export interface Category {
-    id: string;
+    categoryId: number;
     categoryName: string;
     categoryType: TransactionType;
     categoryColorCode: string;
+    type: CategoryTypeName
+}
+
+export interface CategoryTypeName {
+    categoryTypeName: string;
 }
 
 export interface Transaction {
-    id: string;
+    transactionId: number;
     type: TransactionType;
-    date: string; // ISO String
-    categoryId: string;
+    date: string;
     category?: Category;
     amount: number;
     description: string;
-
-    // Derived/UI fields
     dayName?: string;
     weekNumber?: number;
     monthYear?: string;
 }
 
-export type CreateCategoryPayload = Omit<Category, 'id'>;
+export type CreateCategoryPayload = Omit<Category, 'CategoryId'>;
 export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
 
-export type CreateTransactionPayload = Omit<Transaction, 'id' | 'category' | 'dayName' | 'weekNumber' | 'monthYear'>;
+export type CreateTransactionPayload = {
+    type: TransactionType,
+    date: string,
+    amount: number,
+    categoryId?: number,
+    description: string,
+}
 export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;
 
 export interface DailyTransactionsGridProps {

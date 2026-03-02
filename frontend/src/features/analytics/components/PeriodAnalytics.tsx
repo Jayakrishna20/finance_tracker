@@ -113,9 +113,9 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
                   outerRadius={120}
                   paddingAngle={5}
                   dataKey="value">
-                  {chartData.map((_entry, index) => {
+                  {chartData.map((entry: any, index: number) => {
                     const matchedColor = categories.find(
-                      (c) => c.categoryName === _entry.name,
+                      (c) => c.categoryName === entry.name,
                     )?.categoryColorCode;
                     return (
                       <Cell

@@ -12,6 +12,7 @@ import { DailyTransactionsGrid } from "./features/transactions/components/DailyT
 
 import { Toaster } from "react-hot-toast";
 import { COLORS } from "./config/constants";
+import { TransactionTypes } from "./types";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -51,10 +52,15 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<DailyTransactionsGrid type="Normal" />} />
+              <Route
+                index
+                element={
+                  <DailyTransactionsGrid type={TransactionTypes.Normal} />
+                }
+              />
               <Route
                 path="credit"
-                element={<DailyTransactionsGrid type="Credit" />}
+                element={<DailyTransactionsGrid type={TransactionTypes.Credit} />}
               />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />

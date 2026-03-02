@@ -3,6 +3,7 @@ import { Fab } from "@mui/material";
 import { Plus } from "lucide-react";
 import { useModalStore } from "../../store/useModalStore";
 import { useLocation } from "react-router-dom";
+import { TransactionTypes } from "../../types";
 
 export const GlobalFAB: React.FC = () => {
   const location = useLocation();
@@ -10,7 +11,7 @@ export const GlobalFAB: React.FC = () => {
 
   const isCreditPage = location.pathname === "/credit";
   const handleOpen = () => {
-    openModal(undefined, isCreditPage ? "Credit" : "Normal");
+    openModal(undefined, isCreditPage ? TransactionTypes.Credit : TransactionTypes.Normal);
   };
 
   return (

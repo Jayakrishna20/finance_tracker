@@ -1,19 +1,19 @@
 import { create } from 'zustand';
-import type { Transaction } from '../types';
+import { TransactionTypes, type Transaction, type TransactionType } from '../types';
 
 interface ModalState {
     isOpen: boolean;
     editingTransaction: Transaction | null;
-    transactionType: "Normal" | "Credit";
-    openModal: (tx?: Transaction, type?: "Normal" | "Credit") => void;
+    transactionType: TransactionType;
+    openModal: (tx?: Transaction, type?: TransactionType) => void;
     closeModal: () => void;
 }
 
 export const useModalStore = create<ModalState>((set) => ({
     isOpen: false,
     editingTransaction: null,
-    transactionType: "Normal",
-    openModal: (tx?: Transaction, type: "Normal" | "Credit" = "Normal") =>
+    transactionType: TransactionTypes.Normal,
+    openModal: (tx?: Transaction, type: TransactionType = TransactionTypes.Normal) =>
         set({ isOpen: true, editingTransaction: tx || null, transactionType: type }),
-    closeModal: () => set({ isOpen: false, editingTransaction: null, transactionType: "Normal" }),
+    closeModal: () => set({ isOpen: false, editingTransaction: null, transactionType: TransactionTypes.Normal }),
 }));

@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
-import toast from 'react-hot-toast';
 import type { Transaction, CreateTransactionPayload } from '../../../types';
 import { useCategoryStore } from '../../../store/useCategoryStore';
 
@@ -18,7 +17,7 @@ export const useCreateTransaction = () => {
             if (previousTxs) {
                 queryClient.setQueryData<Transaction[]>(['transactions'], [
                     ...previousTxs,
-                    { ...newTx, id: `temp-${Date.now()}` } as Transaction
+                    { ...newTx, transactionId: 0 }
                 ]);
             }
 
@@ -28,14 +27,12 @@ export const useCreateTransaction = () => {
             if (context?.previousTxs) {
                 queryClient.setQueryData(['transactions'], context.previousTxs);
             }
-            toast.error("Failed to add transaction.");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
         },
         onSuccess: () => {
             fetchCategories();
-            toast.success("Transaction added successfully!");
         }
     });
 };
