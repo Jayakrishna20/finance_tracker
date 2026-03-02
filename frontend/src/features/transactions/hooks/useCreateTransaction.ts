@@ -2,9 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
 import toast from 'react-hot-toast';
 import type { Transaction, CreateTransactionPayload } from '../../../types';
+import { useCategoryStore } from '../../../store/useCategoryStore';
 
 export const useCreateTransaction = () => {
     const queryClient = useQueryClient();
+    const fetchCategories = useCategoryStore((state) => state.fetchCategories);
 
     return useMutation({
         mutationFn: TransactionsAPI.create,
@@ -32,6 +34,7 @@ export const useCreateTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
         },
         onSuccess: () => {
+            fetchCategories();
             toast.success("Transaction added successfully!");
         }
     });

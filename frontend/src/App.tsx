@@ -1,14 +1,14 @@
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import positivusTheme from "./config/theme";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
+import positivusTheme from "./config/theme";
 
-import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
 import { AnalyticsContainer } from "./features/analytics/components/AnalyticsContainer";
 import { ArchiveView } from "./features/analytics/components/ArchiveView";
-import { SettingsPage } from "./features/settings/SettingsPage";
 import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
+import { SettingsPage } from "./features/settings/SettingsPage";
+import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
 
 import { Toaster } from "react-hot-toast";
 import { COLORS } from "./config/constants";

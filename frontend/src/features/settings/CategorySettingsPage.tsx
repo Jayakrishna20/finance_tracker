@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Edit2, X, ArrowLeft } from "lucide-react";
 import { useCategoryStore } from "../../store/useCategoryStore";
 import { useConfirmStore } from "../../store/useConfirmStore";
+import { CategoriesAPI } from "../../api/categories";
 import {
   TextField,
   IconButton,
@@ -9,6 +10,7 @@ import {
   Select,
   MenuItem,
   FormControl,
+  InputLabel,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -16,19 +18,34 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import type { TransactionType } from "../../types";
 
 export const CategorySettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { categories, addCategory, removeCategory, updateCategory } =
-    useCategoryStore();
+  const {
+    categories,
+    categoryTypes,
+    addCategory,
+    removeCategory,
+    updateCategory,
+    fetchCategories,
+    fetchCategoryTypes,
+  } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchCategoryTypes();
+  }, [fetchCategories, fetchCategoryTypes]);
+
   const { openConfirm } = useConfirmStore();
   const [newCat, setNewCat] = useState("");
   const [newCatColor, setNewCatColor] = useState("#3B82F6");
-  const [newCatType, setNewCatType] = useState<"Normal" | "Credit">("Normal");
+  const [newCatType, setNewCatType] = useState<string>("Normal");
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [isFetchingDetail, setIsFetchingDetail] = useState(false);
   const [editValue, setEditValue] = useState("");
   const [editColor, setEditColor] = useState("");
-  const [editType, setEditType] = useState<"Normal" | "Credit">("Normal");
+  const [editType, setEditType] = useState<TransactionType>("Normal");
 
   const handleAdd = () => {
     const trimmed = newCat.trim();
@@ -45,7 +62,7 @@ export const CategorySettingsPage: React.FC = () => {
       categoryName: trimmed,
       categoryColorCode: newCatColor,
       categoryType: newCatType,
-    });
+    } as any);
     setNewCat("");
     setNewCatColor("#3B82F6");
     setNewCatType("Normal");
@@ -63,16 +80,25 @@ export const CategorySettingsPage: React.FC = () => {
     });
   };
 
-  const handleStartEdit = (
-    id: string,
-    catName: string,
-    catColor: string,
-    catType: "Normal" | "Credit" = "Normal",
-  ) => {
+  const handleStartEdit = async (id: string) => {
     setEditingCatId(id);
-    setEditValue(catName);
-    setEditColor(catColor);
-    setEditType(catType);
+    setIsFetchingDetail(true);
+    try {
+      // Ensure types are loaded for the edit modal as well
+      await Promise.all([
+        CategoriesAPI.getById(id).then((category) => {
+          setEditValue(category.categoryName);
+          setEditColor(category.categoryColorCode);
+          setEditType(category.categoryType || "Normal");
+        }),
+        fetchCategoryTypes(),
+      ]);
+    } catch (error) {
+      toast.error("Failed to fetch category details.");
+      setEditingCatId(null);
+    } finally {
+      setIsFetchingDetail(false);
+    }
   };
 
   const handleSaveEdit = () => {
@@ -148,13 +174,22 @@ export const CategorySettingsPage: React.FC = () => {
           />
         </div>
         <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Type</InputLabel>
           <Select
             value={newCatType}
-            onChange={(e) =>
-              setNewCatType(e.target.value as "Normal" | "Credit")
-            }>
-            <MenuItem value="normal">Normal</MenuItem>
-            <MenuItem value="credit">Credit</MenuItem>
+            label="Type"
+            onChange={(e) => setNewCatType(e.target.value as string)}>
+            {categoryTypes.map((t) => (
+              <MenuItem key={t.id} value={t.categoryTypeName}>
+                {t.categoryTypeName}
+              </MenuItem>
+            ))}
+            {categoryTypes.length === 0 && (
+              <>
+                <MenuItem value="Normal">Normal</MenuItem>
+                <MenuItem value="Credit">Credit</MenuItem>
+              </>
+            )}
           </Select>
         </FormControl>
         <Button
@@ -194,14 +229,7 @@ export const CategorySettingsPage: React.FC = () => {
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <IconButton
                     size="small"
-                    onClick={() =>
-                      handleStartEdit(
-                        cat.id,
-                        cat.categoryName,
-                        cat.categoryColorCode,
-                        cat.categoryType,
-                      )
-                    }
+                    onClick={() => handleStartEdit(cat.id)}
                     className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors">
                     <Edit2 size={16} />
                   </IconButton>
@@ -241,7 +269,14 @@ export const CategorySettingsPage: React.FC = () => {
           </IconButton>
         </div>
 
-        <DialogContent className="space-y-6 !p-6 flex flex-col gap-4">
+        <DialogContent className="space-y-6 !p-6 flex flex-col gap-4 relative">
+          {isFetchingDetail && (
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10 transition-all">
+              <span className="text-sm font-semibold text-primary-main">
+                Loading details...
+              </span>
+            </div>
+          )}
           <TextField
             label="Category Name"
             size="small"
@@ -268,19 +303,32 @@ export const CategorySettingsPage: React.FC = () => {
               />
             </div>
             <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Type</InputLabel>
               <Select
                 value={editType}
-                onChange={(e) =>
-                  setEditType(e.target.value as "Normal" | "Credit")
-                }>
-                <MenuItem value="normal">Normal</MenuItem>
-                <MenuItem value="credit">Credit</MenuItem>
+                label="Type"
+                onChange={(e) => setEditType(e.target.value)}>
+                {categoryTypes.map((t) => (
+                  <MenuItem key={t.id} value={t.categoryTypeName}>
+                    {t.categoryTypeName}
+                  </MenuItem>
+                ))}
+                {categoryTypes.length === 0 && (
+                  <>
+                    <MenuItem value="Normal">Normal</MenuItem>
+                    <MenuItem value="Credit">Credit</MenuItem>
+                  </>
+                )}
               </Select>
             </FormControl>
           </div>
         </DialogContent>
         <DialogActions className="px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-          <Button onClick={handleCancelEdit} color="inherit">
+          <Button
+            onClick={handleCancelEdit}
+            color="inherit"
+            variant="outlined"
+            className="border-2">
             Cancel
           </Button>
           <Button

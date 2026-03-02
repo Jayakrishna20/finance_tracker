@@ -47,14 +47,10 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         field: "category",
         headerName: "Category",
         width: 140,
-        valueGetter: (_value, row) =>
-          row.category?.categoryName || "Uncategorized",
+        valueGetter: (_value, row) => row.category?.categoryName,
         renderCell: (params) => {
           const categoryName = params.value;
-          const category = categories.find(
-            (c) => c.categoryName === categoryName,
-          );
-          const matchedColor = category?.categoryColorCode || "#6B7280";
+          const matchedColor = params.row.category?.categoryColorCode;
           return (
             <div className="flex items-center gap-2 h-full">
               <div
@@ -136,7 +132,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
     <div className="h-full w-full flex flex-col">
       <div className="flex-1 min-h-0 w-full">
         <DataGrid
-          rows={allTransactions || []}
+          rows={allTransactions}
           columns={columns}
           loading={isLoading}
           initialState={{

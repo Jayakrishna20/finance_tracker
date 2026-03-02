@@ -40,7 +40,11 @@ export const GlobalConfirmModal: React.FC = () => {
       <DialogContent className="!p-6 text-gray-600">{message}</DialogContent>
 
       <DialogActions className="px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl gap-2">
-        <Button onClick={closeConfirm} color="inherit" className="!font-medium">
+        <Button
+          onClick={closeConfirm}
+          variant="outlined"
+          color="inherit"
+          className="!font-medium border-2">
           Cancel
         </Button>
         <Button

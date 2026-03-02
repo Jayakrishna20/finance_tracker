@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { useTransactions } from "../../transactions/hooks/useTransactions";
 import { formatCurrency } from "../../../utils/formatters";
-import { useCategoryStore } from "../../../store/useCategoryStore";
+import { useArchive } from "../hooks/useArchive";
+import { format } from "date-fns";
 
 interface VaultPivotTableProps {
   periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
@@ -11,10 +11,10 @@ interface VaultPivotTableProps {
 export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
   periodType,
 }) => {
-  const { data: transactions, isLoading } = useTransactions();
-  const { categories } = useCategoryStore();
+  const { data: archiveData, isLoading } = useArchive(periodType);
+
   const { rows, columns, categoryGrandTotals, totalGrand } = useMemo(() => {
-    if (!transactions)
+    if (!archiveData || !Array.isArray(archiveData))
       return {
         rows: [],
         columns: [],
@@ -22,58 +22,41 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
         totalGrand: 0,
       };
 
-    // Extract unique categories for columns
     const uniqueCategories = Array.from(
-      new Set(
-        transactions.map(
-          (t) =>
-            t.category?.categoryName ||
-            "Uncategorized",
-        ),
-      ),
+      new Set(archiveData.map((d: any) => d.categoryName)),
     ).sort();
 
-    const pivotMap = new Map<string, Record<string, number | string>>();
+    const pivotMap = new Map<string, Record<string, any>>();
     let totalGrand = 0;
     const categoryGrandTotals: Record<string, number> = {};
-
     uniqueCategories.forEach((c) => (categoryGrandTotals[c] = 0));
 
-    transactions.forEach((t) => {
-      const catName =       
-        t.category?.categoryName ||
-        "Uncategorized";
+    archiveData.forEach((d: any) => {
       let rowKey = "";
-      if (periodType === "WEEKLY") rowKey = (t.weekNumber || 0).toString();
-      else if (periodType === "MONTHLY") rowKey = t.monthYear || "";
-      else if (periodType === "YEARLY")
-        rowKey = new Date(t.date).getFullYear().toString();
+      const date = new Date(d.period);
+      if (periodType === "WEEKLY") {
+        rowKey = format(date, "w");
+      } else if (periodType === "MONTHLY") {
+        rowKey = format(date, "MMM yyyy");
+      } else {
+        rowKey = format(date, "yyyy");
+      }
 
       if (!pivotMap.has(rowKey)) {
-        pivotMap.set(rowKey, { rowKey, total: 0 });
+        pivotMap.set(rowKey, { rowKey, total: d.periodTotal });
         uniqueCategories.forEach((c) => (pivotMap.get(rowKey)![c] = 0));
+        totalGrand += d.periodTotal;
       }
 
       const rowData = pivotMap.get(rowKey)!;
-      (rowData[catName] as number) += t.amount;
-      (rowData.total as number) += t.amount;
-
-      categoryGrandTotals[catName] += t.amount;
-      totalGrand += t.amount;
+      rowData[d.categoryName] = d.total;
+      categoryGrandTotals[d.categoryName] += d.total;
     });
 
-    let rowList = Array.from(pivotMap.values());
-
-    // Sort rows appropriately
-    rowList.sort((a, b) => {
-      if (periodType === "WEEKLY" || periodType === "YEARLY") {
-        return parseInt(a.rowKey as string) - parseInt(b.rowKey as string);
-      }
-      // Basic string fallback for MONTHLY
-      return (b.rowKey as string).localeCompare(a.rowKey as string);
-    });
-
-    const finalRows = rowList.map((r, i) => ({ id: i, ...r }));
+    const finalRows = Array.from(pivotMap.values()).map((r, i) => ({
+      id: i,
+      ...r,
+    }));
 
     const periodLabel =
       periodType === "WEEKLY"
@@ -86,7 +69,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
       {
         field: "rowKey",
         headerName: periodLabel,
-        width: 120,
+        width: 150,
         sortable: false,
         headerClassName: "pivot-header pivot-header-first",
       },
@@ -100,7 +83,7 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
         minWidth: 160,
         type: "number",
         sortable: false,
-        valueFormatter: (val) => formatCurrency(val),
+        valueFormatter: (value) => formatCurrency(value),
         headerClassName: "pivot-header",
       });
     });
@@ -111,12 +94,12 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
       width: 140,
       type: "number",
       sortable: false,
-      valueFormatter: (val) => formatCurrency(val),
+      valueFormatter: (value) => formatCurrency(value),
       headerClassName: "pivot-header pivot-header-last",
     });
 
     return { rows: finalRows, columns: cols, categoryGrandTotals, totalGrand };
-  }, [transactions, periodType, categories]);
+  }, [archiveData, periodType]);
 
   const summaryData = useMemo(() => {
     return {

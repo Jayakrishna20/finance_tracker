@@ -38,7 +38,7 @@ type FormData = z.infer<typeof schema>;
 export const TransactionModal: React.FC = () => {
   const { isOpen, closeModal, editingTransaction, transactionType } =
     useModalStore();
-  const { categories } = useCategoryStore();
+  const { categories, fetchCategories } = useCategoryStore();
 
   const activeType = editingTransaction
     ? editingTransaction.type
@@ -66,6 +66,7 @@ export const TransactionModal: React.FC = () => {
 
   useEffect(() => {
     if (isOpen) {
+      fetchCategories();
       if (editingTransaction) {
         reset({
           date: new Date(editingTransaction.date),
@@ -274,7 +275,7 @@ export const TransactionModal: React.FC = () => {
         </DialogContent>
 
         <DialogActions className="px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-          <Button onClick={handleClose} color="inherit">
+          <Button onClick={handleClose} variant="outlined" color="inherit" className="border-2">
             Cancel
           </Button>
           <Button

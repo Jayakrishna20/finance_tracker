@@ -1,48 +1,51 @@
 import { useMemo } from 'react';
-import { useTransactions } from '../../transactions/hooks/useTransactions';
-import type { Transaction } from '../../../types';
+import { useQuery } from '@tanstack/react-query';
 import type { PeriodType } from '../../../config/constants';
-import { getISOWeek, format } from 'date-fns';
-import { useCategoryStore } from '../../../store/useCategoryStore';
+import { parse, getYear } from 'date-fns';
+import { AnalyticsAPI } from '../../../api/analytics';
 
-export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string) => {
-    const { data: transactions, isLoading } = useTransactions();
-    const { categories } = useCategoryStore();
+export const usePeriodAnalytics = (periodType: PeriodType, periodValue: string, yearValue?: number) => {
+    const { data: analyticsData, isLoading } = useQuery({
+        queryKey: ['analytics', periodType, periodValue, yearValue],
+        queryFn: async () => {
+            const now = new Date();
+            if (periodType === 'WEEKLY') {
+                return AnalyticsAPI.getWeekly({
+                    week: parseInt(periodValue),
+                    year: yearValue || getYear(now)
+                });
+            } else if (periodType === 'MONTHLY') {
+                const date = parse(periodValue, "MMM-yyyy", now);
+                return AnalyticsAPI.getMonthly({
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear()
+                });
+            } else {
+                return AnalyticsAPI.getYearly({
+                    year: parseInt(periodValue)
+                });
+            }
+        }
+    });
 
     const aggregatedData = useMemo(() => {
-        if (!transactions) return { chartData: [], gridData: [], total: 0 };
+        if (!analyticsData) return { chartData: [], gridData: [], total: 0 };
 
-        let filtered: Transaction[] = [];
-        if (periodType === 'WEEKLY') {
-            filtered = transactions.filter(t => (t.weekNumber || getISOWeek(new Date(t.date))).toString() === periodValue);
-        } else if (periodType === 'MONTHLY') {
-            filtered = transactions.filter(t => (t.monthYear || format(new Date(t.date), "MMM-yyyy")) === periodValue);
-        } else {
-            filtered = transactions.filter(t => t.date.startsWith(periodValue));
-        }
+        const { categories, grandTotal } = analyticsData;
 
-        const categoryTotals: Record<string, number> = {};
-        let grandTotal = 0;
-
-        filtered.forEach(t => {
-            const catName = t.category?.categoryName || categories.find(c => c.id === t.categoryId)?.categoryName || 'Unknown';
-            categoryTotals[catName] = (categoryTotals[catName] || 0) + t.amount;
-            grandTotal += t.amount;
-        });
-
-        const chartData = Object.entries(categoryTotals).map(([name, value]) => ({
-            name,
-            value,
+        const chartData = categories.map((c: any) => ({
+            name: c.categoryName,
+            value: c.total,
         }));
 
-        const gridData = Object.entries(categoryTotals).map(([category, amount], i) => ({
+        const gridData = categories.map((c: any, i: number) => ({
             id: i,
-            category,
-            amount,
+            category: c.categoryName,
+            amount: c.total,
         }));
 
         return { chartData, gridData, total: grandTotal };
-    }, [transactions, periodType, periodValue, categories]);
+    }, [analyticsData]);
 
     return { ...aggregatedData, isLoading };
 };

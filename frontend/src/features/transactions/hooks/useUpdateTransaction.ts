@@ -2,9 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
 import toast from 'react-hot-toast';
 import type { Transaction, UpdateTransactionPayload } from '../../../types';
+import { useCategoryStore } from '../../../store/useCategoryStore';
 
 export const useUpdateTransaction = () => {
     const queryClient = useQueryClient();
+    const fetchCategories = useCategoryStore((state) => state.fetchCategories);
 
     return useMutation({
         mutationFn: ({ id, payload }: { id: string; payload: UpdateTransactionPayload }) =>
@@ -32,6 +34,7 @@ export const useUpdateTransaction = () => {
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
         },
         onSuccess: () => {
+            fetchCategories();
             toast.success("Transaction updated successfully!");
         }
     });

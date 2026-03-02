@@ -17,7 +17,7 @@ export const TransactionsAPI = {
             ...payload,
             amount: payload.amount !== undefined ? Math.round(payload.amount) : undefined
         };
-        const res = await axiosClient.patch(API_ROUTES.TRANSACTIONS.UPDATE(id), roundedPayload);
+        const res = await axiosClient.put(API_ROUTES.TRANSACTIONS.UPDATE(id), roundedPayload);
         return res.data.data;
     },
     delete: async (id: string): Promise<void> => {

@@ -11,8 +11,12 @@ export const CategoriesAPI = {
         const res = await axiosClient.get(API_ROUTES.CATEGORIES.GET_ALL);
         return res.data.data;
     },
+    getById: async (id: string): Promise<Category> => {
+        const res = await axiosClient.get(API_ROUTES.CATEGORIES.GET_BY_ID(id));
+        return res.data.data;
+    },
     update: async (id: string, payload: UpdateCategoryPayload): Promise<Category> => {
-        const res = await axiosClient.patch(API_ROUTES.CATEGORIES.UPDATE(id), payload);
+        const res = await axiosClient.put(API_ROUTES.CATEGORIES.UPDATE(id), payload);
         return res.data.data;
     },
     delete: async (id: string): Promise<void> => {
