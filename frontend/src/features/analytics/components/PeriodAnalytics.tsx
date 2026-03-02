@@ -25,12 +25,24 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
   defaultPeriod,
   availablePeriods,
 }) => {
+  const currentYear = new Date().getFullYear();
   const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
   const { chartData, gridData, total, isLoading } = usePeriodAnalytics(
     periodType,
     selectedPeriod,
+    periodType === "WEEKLY" ? selectedYear : undefined,
   );
   const { categories } = useCategoryStore();
+
+  const availableYears = React.useMemo(() => {
+    const years = [];
+    for (let y = currentYear; y >= currentYear - 5; y--) {
+      years.push(y);
+    }
+    return years;
+  }, [currentYear]);
 
   const columns: GridColDef[] = [
     { field: "category", headerName: "Category", flex: 1 },
@@ -50,19 +62,39 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
           {periodType.toLowerCase()} Analytics
         </h3>
 
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel>Select Period</InputLabel>
-          <Select
-            value={selectedPeriod}
-            label="Select Period"
-            onChange={(e) => setSelectedPeriod(e.target.value)}>
-            {availablePeriods.map((p) => (
-              <MenuItem key={p} value={p}>
-                {p}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <div className="flex gap-4">
+          {periodType === "WEEKLY" && (
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Year</InputLabel>
+              <Select
+                value={selectedYear}
+                label="Year"
+                onChange={(e) => setSelectedYear(e.target.value as number)}>
+                {availableYears.map((y) => (
+                  <MenuItem key={y} value={y}>
+                    {y}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>
+              {periodType === "WEEKLY" ? "Select Week" : "Select Period"}
+            </InputLabel>
+            <Select
+              value={selectedPeriod}
+              label={periodType === "WEEKLY" ? "Select Week" : "Select Period"}
+              onChange={(e) => setSelectedPeriod(e.target.value)}>
+              {availablePeriods.map((p) => (
+                <MenuItem key={p} value={p}>
+                  {periodType === "WEEKLY" ? `Week ${p}` : p}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[400px]">
@@ -81,9 +113,9 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
                   outerRadius={120}
                   paddingAngle={5}
                   dataKey="value">
-                  {chartData.map((_entry, index) => {
+                  {chartData.map((entry: any, index: number) => {
                     const matchedColor = categories.find(
-                      (c) => c.categoryName === _entry.name,
+                      (c) => c.categoryName === entry.name,
                     )?.categoryColorCode;
                     return (
                       <Cell

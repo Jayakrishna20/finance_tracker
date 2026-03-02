@@ -21,13 +21,13 @@ export class TransactionService {
     }
 
     async getTransactions(query: TransactionQueryInput) {
-        const { categoryTypeName, skip, take } = query;
+        const { categoryTypeId, skip, take } = query;
 
         const where: Prisma.TransactionWhereInput = {};
-        if (categoryTypeName) {
+        if (categoryTypeId) {
             where.category = {
                 type: {
-                    categoryTypeName
+                    id: categoryTypeId
                 }
             };
         }

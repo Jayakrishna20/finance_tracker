@@ -1,3 +1,5 @@
+import { TransactionTypes } from "../types";
+
 export const APP_CONFIG = {
     CURRENCY: 'INR',
     LOCALE: 'en-IN',
@@ -12,6 +14,7 @@ export const COLORS = {
     MUTED: '#CCCCCC',
     ERROR: '#EF4444',
     SUCCESS: '#10B981',
+    DEFAULT_COLOR: '#3B82F6',
 };
 
 export const CHART_COLORS = [
@@ -30,3 +33,10 @@ export const PERIOD_TYPES = {
 } as const;
 
 export type PeriodType = keyof typeof PERIOD_TYPES;
+
+export const transactionTypeOptions = Object.entries(TransactionTypes).map(
+  ([label, value]) => ({
+    label,
+    value
+  })
+);

@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TransactionsAPI } from '../../../api/transactions';
-import toast from 'react-hot-toast';
 import type { Transaction, UpdateTransactionPayload } from '../../../types';
+import { useCategoryStore } from '../../../store/useCategoryStore';
 
 export const useUpdateTransaction = () => {
     const queryClient = useQueryClient();
+    const fetchCategories = useCategoryStore((state) => state.fetchCategories);
 
     return useMutation({
-        mutationFn: ({ id, payload }: { id: string; payload: UpdateTransactionPayload }) =>
+        mutationFn: ({ id, payload }: { id: number; payload: UpdateTransactionPayload }) =>
             TransactionsAPI.update(id, payload),
         onMutate: async ({ id, payload }) => {
             await queryClient.cancelQueries({ queryKey: ['transactions'] });
@@ -16,7 +17,7 @@ export const useUpdateTransaction = () => {
 
             if (previousTxs) {
                 queryClient.setQueryData<Transaction[]>(['transactions'], (old) =>
-                    old?.map((tx) => (tx.id === id ? { ...tx, ...payload } : tx)) || []
+                    old?.map((tx) => (tx.transactionId === id ? { ...tx, ...payload } : tx)) || []
                 );
             }
 
@@ -26,13 +27,12 @@ export const useUpdateTransaction = () => {
             if (context?.previousTxs) {
                 queryClient.setQueryData(['transactions'], context.previousTxs);
             }
-            toast.error("Failed to update transaction.");
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
         },
         onSuccess: () => {
-            toast.success("Transaction updated successfully!");
+            fetchCategories();
         }
     });
 };

@@ -1,17 +1,18 @@
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import positivusTheme from "./config/theme";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
+import positivusTheme from "./config/theme";
 
-import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
 import { AnalyticsContainer } from "./features/analytics/components/AnalyticsContainer";
 import { ArchiveView } from "./features/analytics/components/ArchiveView";
-import { SettingsPage } from "./features/settings/SettingsPage";
 import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
+import { SettingsPage } from "./features/settings/SettingsPage";
+import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
 
 import { Toaster } from "react-hot-toast";
 import { COLORS } from "./config/constants";
+import { TransactionTypes } from "./types";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -51,10 +52,15 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<DailyTransactionsGrid type="Normal" />} />
+              <Route
+                index
+                element={
+                  <DailyTransactionsGrid type={TransactionTypes.Normal} />
+                }
+              />
               <Route
                 path="credit"
-                element={<DailyTransactionsGrid type="Credit" />}
+                element={<DailyTransactionsGrid type={TransactionTypes.Credit} />}
               />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />

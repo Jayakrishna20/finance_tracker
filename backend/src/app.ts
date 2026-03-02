@@ -58,10 +58,6 @@ export const buildApp = async (): Promise<FastifyInstance> => {
         routePrefix: '/docs',
     });
 
-    app.get('/health', async () => {
-        return { status: 'ok', timestamp: new Date().toISOString() };
-    });
-
     await app.register(categoryRoutes, { prefix: '/categories' });
     await app.register(transactionRoutes, { prefix: '/transactions' });
     await app.register(analyticsRoutes, { prefix: '/analytics' });

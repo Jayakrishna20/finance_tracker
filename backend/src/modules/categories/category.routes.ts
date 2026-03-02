@@ -34,6 +34,18 @@ const categoryRoutes: FastifyPluginAsyncZod = async (fastify) => {
         categoryController.getAllCategories
     );
 
+    fastify.get(
+        '/:id',
+        {
+            schema: {
+                params: CategoryParamsSchema,
+                tags: ['Categories'],
+                summary: 'Get a category by ID',
+            },
+        },
+        categoryController.getCategoryById
+    );
+
     fastify.put(
         '/:id',
         {

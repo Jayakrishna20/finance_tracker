@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Edit2, X, ArrowLeft } from "lucide-react";
 import { useCategoryStore } from "../../store/useCategoryStore";
 import { useConfirmStore } from "../../store/useConfirmStore";
+import { CategoriesAPI } from "../../api/categories";
 import {
   TextField,
   IconButton,
@@ -9,6 +10,7 @@ import {
   Select,
   MenuItem,
   FormControl,
+  InputLabel,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -16,19 +18,38 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { TransactionTypes, type TransactionType } from "../../types";
+import { COLORS, transactionTypeOptions } from "../../config/constants";
 
 export const CategorySettingsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { categories, addCategory, removeCategory, updateCategory } =
-    useCategoryStore();
+  const {
+    categories,
+    addCategory,
+    removeCategory,
+    updateCategory,
+    fetchCategories,
+    fetchCategoryTypes,
+  } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchCategoryTypes();
+  }, [fetchCategories, fetchCategoryTypes]);
+
   const { openConfirm } = useConfirmStore();
   const [newCat, setNewCat] = useState("");
-  const [newCatColor, setNewCatColor] = useState("#3B82F6");
-  const [newCatType, setNewCatType] = useState<"Normal" | "Credit">("Normal");
-  const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [newCatColor, setNewCatColor] = useState(COLORS.DEFAULT_COLOR);
+  const [newCatType, setNewCatType] = useState<TransactionType>(
+    TransactionTypes.Normal,
+  );
+  const [editingCatId, setEditingCatId] = useState<number | null>(null);
+  const [isFetchingDetail, setIsFetchingDetail] = useState(false);
   const [editValue, setEditValue] = useState("");
   const [editColor, setEditColor] = useState("");
-  const [editType, setEditType] = useState<"Normal" | "Credit">("Normal");
+  const [editType, setEditType] = useState<TransactionType>(
+    TransactionTypes.Normal,
+  );
 
   const handleAdd = () => {
     const trimmed = newCat.trim();
@@ -45,34 +66,41 @@ export const CategorySettingsPage: React.FC = () => {
       categoryName: trimmed,
       categoryColorCode: newCatColor,
       categoryType: newCatType,
-    });
+    } as any);
     setNewCat("");
-    setNewCatColor("#3B82F6");
-    setNewCatType("Normal");
-    toast.success("Category added.");
+    setNewCatColor(COLORS.DEFAULT_COLOR);
+    setNewCatType(TransactionTypes.Normal);
   };
 
-  const handleDelete = (id: string, catName: string) => {
+  const handleDelete = (id: number, catName: string) => {
     openConfirm({
       title: "Delete Category",
       message: `Are you sure you want to delete the "${catName}" category?`,
       onConfirm: () => {
         removeCategory(id);
-        toast.success("Category deleted.");
       },
     });
   };
 
-  const handleStartEdit = (
-    id: string,
-    catName: string,
-    catColor: string,
-    catType: "Normal" | "Credit" = "Normal",
-  ) => {
+  const handleStartEdit = async (id: number) => {
     setEditingCatId(id);
-    setEditValue(catName);
-    setEditColor(catColor);
-    setEditType(catType);
+    setIsFetchingDetail(true);
+    try {
+      // Ensure types are loaded for the edit modal as well
+      await Promise.all([
+        CategoriesAPI.getById(id).then((category) => {
+          setEditValue(category.categoryName);
+          setEditColor(category.categoryColorCode);
+          setEditType(category.categoryType || "Normal");
+        }),
+        fetchCategoryTypes(),
+      ]);
+    } catch (error) {
+      toast.error("Failed to fetch category details.");
+      setEditingCatId(null);
+    } finally {
+      setIsFetchingDetail(false);
+    }
   };
 
   const handleSaveEdit = () => {
@@ -85,7 +113,7 @@ export const CategorySettingsPage: React.FC = () => {
     if (
       categories.some(
         (c) =>
-          c.id !== editingCatId &&
+          c.categoryId !== editingCatId &&
           c.categoryName.toLowerCase() === trimmed.toLowerCase(),
       )
     ) {
@@ -98,14 +126,13 @@ export const CategorySettingsPage: React.FC = () => {
       categoryType: editType,
     });
     setEditingCatId(null);
-    toast.success("Category updated.");
   };
 
   const handleCancelEdit = () => {
     setEditingCatId(null);
     setEditValue("");
     setEditColor("");
-    setEditType("Normal");
+    setEditType(TransactionTypes.Normal);
   };
 
   return (
@@ -148,13 +175,16 @@ export const CategorySettingsPage: React.FC = () => {
           />
         </div>
         <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Type</InputLabel>
           <Select
             value={newCatType}
-            onChange={(e) =>
-              setNewCatType(e.target.value as "Normal" | "Credit")
-            }>
-            <MenuItem value="normal">Normal</MenuItem>
-            <MenuItem value="credit">Credit</MenuItem>
+            label="Type"
+            onChange={(e) => setNewCatType(e.target.value)}>
+            {transactionTypeOptions.map((t) => (
+              <MenuItem key={t.value} value={t.value}>
+                {t.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <Button
@@ -171,7 +201,7 @@ export const CategorySettingsPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {categories.map((cat) => (
             <div
-              key={cat.id}
+              key={cat.categoryId}
               className="flex flex-col gap-3 bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
               <div
                 className="absolute top-0 left-0 w-full h-1"
@@ -187,27 +217,20 @@ export const CategorySettingsPage: React.FC = () => {
                     {cat.categoryName}
                   </span>
                   <span
-                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === "Credit" ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
-                    {cat.categoryType}
+                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === TransactionTypes.Credit ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
+                    {cat.type.categoryTypeName}
                   </span>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <IconButton
                     size="small"
-                    onClick={() =>
-                      handleStartEdit(
-                        cat.id,
-                        cat.categoryName,
-                        cat.categoryColorCode,
-                        cat.categoryType,
-                      )
-                    }
+                    onClick={() => handleStartEdit(cat.categoryId)}
                     className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors">
                     <Edit2 size={16} />
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={() => handleDelete(cat.id, cat.categoryName)}
+                    onClick={() => handleDelete(cat.categoryId, cat.categoryName)}
                     className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={16} />
                   </IconButton>
@@ -241,7 +264,14 @@ export const CategorySettingsPage: React.FC = () => {
           </IconButton>
         </div>
 
-        <DialogContent className="space-y-6 !p-6 flex flex-col gap-4">
+        <DialogContent className="space-y-6 !p-6 flex flex-col gap-4 relative">
+          {isFetchingDetail && (
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10 transition-all">
+              <span className="text-sm font-semibold text-primary-main">
+                Loading details...
+              </span>
+            </div>
+          )}
           <TextField
             label="Category Name"
             size="small"
@@ -268,19 +298,26 @@ export const CategorySettingsPage: React.FC = () => {
               />
             </div>
             <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Type</InputLabel>
               <Select
                 value={editType}
-                onChange={(e) =>
-                  setEditType(e.target.value as "Normal" | "Credit")
-                }>
-                <MenuItem value="normal">Normal</MenuItem>
-                <MenuItem value="credit">Credit</MenuItem>
+                label="Type"
+                onChange={(e) => setEditType(e.target.value)}>
+                {transactionTypeOptions.map((t) => (
+                  <MenuItem key={t.value} value={t.value}>
+                    {t.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </div>
         </DialogContent>
         <DialogActions className="px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-          <Button onClick={handleCancelEdit} color="inherit">
+          <Button
+            onClick={handleCancelEdit}
+            color="inherit"
+            variant="outlined"
+            className="border-2">
             Cancel
           </Button>
           <Button
