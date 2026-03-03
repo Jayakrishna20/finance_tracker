@@ -14,6 +14,7 @@ import transactionRoutes from './modules/transactions/transaction.routes.js';
 import analyticsRoutes from './modules/analytics/analytics.routes.js';
 import archiveRoutes from './modules/archive/archive.routes.js';
 import categoryTypeRoutes from './modules/category-types/categoryType.routes.js';
+import creditRoutes from './modules/credits/credit.routes.js';
 
 export const buildApp = async (): Promise<FastifyInstance> => {
     const app = Fastify({
@@ -63,6 +64,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
     await app.register(analyticsRoutes, { prefix: '/analytics' });
     await app.register(archiveRoutes, { prefix: '/archive' });
     await app.register(categoryTypeRoutes, { prefix: '/category-types' });
+    await app.register(creditRoutes, { prefix: '/credits' });
 
     return app;
 };
