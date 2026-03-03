@@ -11,8 +11,8 @@ export class ArchiveService {
         c."categoryName",
         CAST(SUM(t.amount) AS INTEGER) AS total,
         CAST(SUM(SUM(t.amount)) OVER (PARTITION BY date_trunc('week', t."date")) AS INTEGER) AS "periodTotal"
-      FROM "Transaction" t
-      JOIN "Category" c ON t."categoryId" = c.id
+      FROM "Transactions" t
+      JOIN "Categories" c ON t."categoryId" = c.id
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;
@@ -26,8 +26,8 @@ export class ArchiveService {
         c."categoryName",
         CAST(SUM(t.amount) AS INTEGER) AS total,
         CAST(SUM(SUM(t.amount)) OVER (PARTITION BY date_trunc('month', t."date")) AS INTEGER) AS "periodTotal"
-      FROM "Transaction" t
-      JOIN "Category" c ON t."categoryId" = c.id
+      FROM "Transactions" t
+      JOIN "Categories" c ON t."categoryId" = c.id
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;
@@ -41,8 +41,8 @@ export class ArchiveService {
         c."categoryName",
         CAST(SUM(t.amount) AS INTEGER) AS total,
         CAST(SUM(SUM(t.amount)) OVER (PARTITION BY date_trunc('year', t."date")) AS INTEGER) AS "periodTotal"
-      FROM "Transaction" t
-      JOIN "Category" c ON t."categoryId" = c.id
+      FROM "Transactions" t
+      JOIN "Categories" c ON t."categoryId" = c.id
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;

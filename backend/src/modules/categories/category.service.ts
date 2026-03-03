@@ -5,15 +5,15 @@ export class CategoryService {
     constructor(private prisma: PrismaClient) { }
 
     async createCategory(data: CreateCategoryInput) {
-        return this.prisma.category.create({
+        return this.prisma.categories.create({
             data,
         });
     }
 
     async getAllCategories() {
-        return this.prisma.category.findMany({
+        return this.prisma.categories.findMany({
             select: {
-                id: true,
+                categoryId: true,
                 categoryName: true,
                 categoryColorCode: true,
                 categoryType: true,
@@ -27,28 +27,28 @@ export class CategoryService {
         });
     }
 
-    async getCategoryById(id: bigint) {
-        return this.prisma.category.findUnique({
+    async getCategoryById(categoryId: bigint) {
+        return this.prisma.categories.findUnique({
             select: {
-                id: true,
+                categoryId: true,
                 categoryName: true,
                 categoryColorCode: true,
                 categoryType: true,
             },
-            where: { id },
+            where: { categoryId },
         });
     }
 
-    async updateCategory(id: bigint, data: UpdateCategoryInput) {
-        return this.prisma.category.update({
-            where: { id },
+    async updateCategory(categoryId: bigint, data: UpdateCategoryInput) {
+        return this.prisma.categories.update({
+            where: { categoryId },
             data,
         });
     }
 
-    async deleteCategory(id: bigint) {
-        return this.prisma.category.delete({
-            where: { id },
+    async deleteCategory(categoryId: bigint) {
+        return this.prisma.categories.delete({
+            where: { categoryId },
         });
     }
 }

@@ -9,7 +9,7 @@ export class TransactionService {
     constructor(private prisma: PrismaClient) { }
 
     async createTransaction(data: CreateTransactionInput) {
-        return this.prisma.transaction.create({
+        return this.prisma.transactions.create({
             data: {
                 ...data,
                 amount: Math.round(data.amount),
@@ -23,30 +23,30 @@ export class TransactionService {
     async getTransactions(query: TransactionQueryInput) {
         const { categoryTypeId, skip, take } = query;
 
-        const where: Prisma.TransactionWhereInput = {};
+        const where: Prisma.TransactionsWhereInput = {};
         if (categoryTypeId) {
             where.category = {
                 type: {
-                    id: categoryTypeId
+                    categoryTypeId
                 }
             };
         }
 
         const [total, data] = await Promise.all([
-            this.prisma.transaction.count({ where }),
-            this.prisma.transaction.findMany({
+            this.prisma.transactions.count({ where }),
+            this.prisma.transactions.findMany({
                 where,
                 orderBy: { date: 'desc' },
                 skip,
                 take,
                 select: {
-                    id: true,
+                    transactionId: true,
                     amount: true,
                     date: true,
                     description: true,
                     category: {
                         select: {
-                            id: true,
+                            categoryId: true,
                             categoryName: true,
                             categoryColorCode: true,
                             type: {
@@ -70,17 +70,17 @@ export class TransactionService {
         };
     }
 
-    async getTransactionById(id: bigint) {
-        return this.prisma.transaction.findUnique({
-            where: { id },
+    async getTransactionById(transactionId: bigint) {
+        return this.prisma.transactions.findUnique({
+            where: { transactionId },
             select: {
-                id: true,
+                transactionId: true,
                 amount: true,
                 date: true,
                 description: true,
                 category: {
                     select: {
-                        id: true,
+                        categoryId: true,
                         categoryName: true,
                         categoryColorCode: true,
                     }
@@ -89,13 +89,13 @@ export class TransactionService {
         });
     }
 
-    async updateTransaction(id: bigint, data: UpdateTransactionInput) {
+    async updateTransaction(transactionId: bigint, data: UpdateTransactionInput) {
         const updateData: any = { ...data };
         if (data.amount !== undefined) {
             updateData.amount = Math.round(data.amount);
         }
-        return this.prisma.transaction.update({
-            where: { id },
+        return this.prisma.transactions.update({
+            where: { transactionId },
             data: updateData,
             include: {
                 category: true,
@@ -103,9 +103,9 @@ export class TransactionService {
         });
     }
 
-    async deleteTransaction(id: bigint) {
-        return this.prisma.transaction.delete({
-            where: { id },
+    async deleteTransaction(transactionId: bigint) {
+        return this.prisma.transactions.delete({
+            where: { transactionId },
         });
     }
 }
