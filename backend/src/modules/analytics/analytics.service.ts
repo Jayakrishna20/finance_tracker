@@ -6,7 +6,7 @@ export class AnalyticsService {
     constructor(private prisma: PrismaClient) { }
 
     private async getAggregatedData(startDate: Date, endDate: Date) {
-        const grouped = await this.prisma.transaction.groupBy({
+        const grouped = await this.prisma.transactions.groupBy({
             by: ['categoryId'],
             _sum: {
                 amount: true,
@@ -24,12 +24,12 @@ export class AnalyticsService {
         }
 
         const categoryIds = grouped.map((g) => g.categoryId);
-        const categories = await this.prisma.category.findMany({
-            where: { id: { in: categoryIds } },
-            select: { id: true, categoryName: true },
+        const categories = await this.prisma.categories.findMany({
+            where: { categoryId: { in: categoryIds } },
+            select: { categoryId: true, categoryName: true },
         });
 
-        const categoryMap = new Map(categories.map((c) => [c.id, c.categoryName]));
+        const categoryMap = new Map(categories.map((c) => [c.categoryId, c.categoryName]));
 
         let grandTotal = 0;
         const formattedCategories = grouped.map((g) => {

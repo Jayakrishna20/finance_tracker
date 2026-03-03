@@ -4,9 +4,9 @@ export class CategoryTypeService {
     constructor(private prisma: PrismaClient) { }
 
     async getActiveCategoryTypes() {
-        return this.prisma.categoryType.findMany({
+        return this.prisma.categoryTypes.findMany({
             select: {
-                id: true,
+                categoryTypeId: true,
                 categoryTypeName: true,
                 isActive: true,
             },

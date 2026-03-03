@@ -9,38 +9,53 @@ datasource db {
   // directUrl = env("DIRECT_URL")
 }
 
-model CategoryType {
-  categoryTypeId               BigInt     @id @default(autoincrement())
+model CategoryTypes {
+  categoryTypeId   BigInt       @id @default(autoincrement())
   categoryTypeName String
-  isActive         Boolean    @default(true)
-  createdAt        DateTime   @default(now())
-  modifiedAt       DateTime   @updatedAt
-  categories       Category[]
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  categories       Categories[]
 }
 
-model Category {
-  categoryId                BigInt        @id @default(autoincrement())
-  categoryName      String        @unique
+model Categories {
+  categoryId        BigInt         @id @default(autoincrement())
+  categoryName      String         @unique
   categoryType      BigInt
-  type              CategoryType  @relation(fields: [categoryType], references: [categoryTypeId])
+  type              CategoryTypes  @relation(fields: [categoryType], references: [categoryTypeId])
   categoryColorCode String
-  transactions      Transaction[]
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+  transactions      Transactions[]
+  credits           Credits[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@index([categoryType])
 }
 
-model Transaction {
-  transactionId          BigInt   @id @default(autoincrement())
-  date        DateTime
-  amount      Int // Rounded before save
-  description String?
-  categoryId  BigInt
-  category    Category @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Transactions {
+  transactionId BigInt     @id @default(autoincrement())
+  date          DateTime
+  amount        Int // Rounded before save
+  description   String?
+  categoryId    BigInt
+  category      Categories @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
   @@index([date])
+  @@index([transactionId])
+}
+
+model Credits {
+  creditId        BigInt     @id @default(autoincrement())
+  description     String
+  categoryId      BigInt
+  category        Categories @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+  billedDate      DateTime
+  lastPaymentDate DateTime
+  paidStatus      Boolean
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
   @@index([categoryId])
 }
