@@ -1,6 +1,6 @@
-import { API_ROUTES } from './routes';
+import type { CreateTransactionPayload, Transaction, UpdateTransactionPayload } from '../types';
 import { axiosClient } from './client';
-import type { Transaction, CreateTransactionPayload, UpdateTransactionPayload, TransactionType } from '../types';
+import { API_ROUTES } from './routes';
 
 export const TransactionsAPI = {
     create: async (payload: CreateTransactionPayload): Promise<Transaction> => {
@@ -8,7 +8,7 @@ export const TransactionsAPI = {
         const res = await axiosClient.post(API_ROUTES.TRANSACTIONS.CREATE, roundedPayload);
         return res.data.data;
     },
-    getAll: async (params?: { skip?: number; take?: number; categoryTypeName?: TransactionType }): Promise<Transaction[]> => {
+    getAll: async (params?: { skip?: number; take?: number; categoryTypeId?: number }): Promise<Transaction[]> => {
         const res = await axiosClient.get(API_ROUTES.TRANSACTIONS.GET_ALL, { params });
         return res.data.data;
     },

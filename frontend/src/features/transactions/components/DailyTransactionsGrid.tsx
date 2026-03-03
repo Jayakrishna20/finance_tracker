@@ -24,7 +24,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
   const { data: allTransactions, isLoading } = useTransactions({
     skip: 0,
     take: 10,
-    categoryTypeName: type,
+    categoryTypeId: type,
   });
 
   const deleteTxMutation = useDeleteTransaction();

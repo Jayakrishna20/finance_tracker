@@ -19,7 +19,7 @@ import {
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { TransactionTypes, type TransactionType } from "../../types";
-import { COLORS, transactionTypeOptions } from "../../config/constants";
+import { COLORS } from "../../config/constants";
 
 export const CategorySettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +30,7 @@ export const CategorySettingsPage: React.FC = () => {
     updateCategory,
     fetchCategories,
     fetchCategoryTypes,
+    categoryTypes,
   } = useCategoryStore();
 
   useEffect(() => {
@@ -82,7 +83,8 @@ export const CategorySettingsPage: React.FC = () => {
     });
   };
 
-  const handleStartEdit = async (id: number) => {
+  const handleStartEdit = async (id: number) => {    
+
     setEditingCatId(id);
     setIsFetchingDetail(true);
     try {
@@ -91,7 +93,7 @@ export const CategorySettingsPage: React.FC = () => {
         CategoriesAPI.getById(id).then((category) => {
           setEditValue(category.categoryName);
           setEditColor(category.categoryColorCode);
-          setEditType(category.categoryType || "Normal");
+          setEditType(category.categoryType);
         }),
         fetchCategoryTypes(),
       ]);
@@ -174,15 +176,15 @@ export const CategorySettingsPage: React.FC = () => {
             className="w-10 h-10 p-0 border-0 rounded-lg cursor-pointer bg-transparent"
           />
         </div>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Type</InputLabel>
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel>Category Type</InputLabel>
           <Select
             value={newCatType}
             label="Type"
-            onChange={(e) => setNewCatType(e.target.value)}>
-            {transactionTypeOptions.map((t) => (
-              <MenuItem key={t.value} value={t.value}>
-                {t.label}
+            onChange={(e) => setNewCatType(e.target.value as TransactionType)}>
+            {categoryTypes.map((t) => (
+              <MenuItem key={t.id} value={t.id}>
+                {t.categoryTypeName}
               </MenuItem>
             ))}
           </Select>
@@ -230,7 +232,9 @@ export const CategorySettingsPage: React.FC = () => {
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={() => handleDelete(cat.categoryId, cat.categoryName)}
+                    onClick={() =>
+                      handleDelete(cat.categoryId, cat.categoryName)
+                    }
                     className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                     <Trash2 size={16} />
                   </IconButton>
@@ -298,14 +302,16 @@ export const CategorySettingsPage: React.FC = () => {
               />
             </div>
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>Type</InputLabel>
+              <InputLabel>Category Type</InputLabel>
               <Select
                 value={editType}
                 label="Type"
-                onChange={(e) => setEditType(e.target.value)}>
-                {transactionTypeOptions.map((t) => (
-                  <MenuItem key={t.value} value={t.value}>
-                    {t.label}
+                onChange={(e) =>
+                  setEditType(e.target.value as TransactionType)
+                }>
+                {categoryTypes.map((t) => (
+                  <MenuItem key={t.id} value={t.id}>
+                    {t.categoryTypeName}
                   </MenuItem>
                 ))}
               </Select>
