@@ -1,5 +1,3 @@
-import { TransactionTypes } from "../types";
-
 export const APP_CONFIG = {
   CURRENCY: 'INR',
   LOCALE: 'en-IN',
