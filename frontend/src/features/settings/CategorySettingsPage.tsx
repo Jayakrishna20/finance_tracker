@@ -83,8 +83,7 @@ export const CategorySettingsPage: React.FC = () => {
     });
   };
 
-  const handleStartEdit = async (id: number) => {    
-
+  const handleStartEdit = async (id: number) => {
     setEditingCatId(id);
     setIsFetchingDetail(true);
     try {
@@ -181,9 +180,11 @@ export const CategorySettingsPage: React.FC = () => {
           <Select
             value={newCatType}
             label="Type"
-            onChange={(e) => setNewCatType(e.target.value as TransactionType)}>
+            onChange={(e) =>
+              setNewCatType(Number(e.target.value) as TransactionType)
+            }>
             {categoryTypes.map((t) => (
-              <MenuItem key={t.id} value={t.id}>
+              <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
                 {t.categoryTypeName}
               </MenuItem>
             ))}
@@ -307,10 +308,10 @@ export const CategorySettingsPage: React.FC = () => {
                 value={editType}
                 label="Type"
                 onChange={(e) =>
-                  setEditType(e.target.value as TransactionType)
+                  setEditType(Number(e.target.value) as TransactionType)
                 }>
                 {categoryTypes.map((t) => (
-                  <MenuItem key={t.id} value={t.id}>
+                  <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
                     {t.categoryTypeName}
                   </MenuItem>
                 ))}

@@ -4,7 +4,7 @@ import type { Category, CreateCategoryPayload } from "../types";
 
 interface CategoryState {
     categories: Category[];
-    categoryTypes: { id: number, categoryTypeName: string }[];
+    categoryTypes: { categoryTypeId: number, categoryTypeName: string }[];
     isLoading: boolean;
     error: Error | null;
     fetchCategories: (force?: boolean) => Promise<void>;
@@ -22,7 +22,7 @@ export const useCategoryStore = create<CategoryState>((set, get) => ({
     isLoading: false,
     error: null,
     fetchCategoryTypes: async (force = false) => {
-        if (!force && (get().isLoading || get().categoryTypes.length > 0)) return;
+        if (!force && get().categoryTypes.length > 0) return;
         try {
             const types = await CategoryTypesAPI.getAll();
             set({ categoryTypes: types });

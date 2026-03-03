@@ -141,6 +141,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
           rows={allTransactions}
           columns={columns}
           loading={isLoading}
+          getRowId={(row) => row.transactionId}
           initialState={{
             sorting: {
               sortModel: [{ field: "date", sort: "desc" }],
