@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -58,4 +59,15 @@ model Credits {
   updatedAt       DateTime   @updatedAt
 
   @@index([categoryId])
+}
+
+view TransactionView {
+  transactionId     BigInt   @unique
+  amount            Int
+  date              DateTime
+  description       String?
+  categoryId        BigInt
+  categoryName      String
+  categoryColorCode String
+  categoryTypeName  String
 }

@@ -28,11 +28,14 @@ export const Sidebar: React.FC = () => {
     <aside
       className={`fixed inset-y-0 left-0 bg-secondary-main text-secondary-contrastText shadow-xl flex flex-col z-20 transition-all duration-300 ${
         isCollapsed ? "w-20 px-4 py-6" : "w-64 p-6"
-      }`}>
+      }`}
+    >
       <div
-        className={`mb-8 flex items-center ${isCollapsed ? "justify-center" : "justify-between"}`}>
+        className={`mb-8 flex items-center ${isCollapsed ? "justify-center" : "justify-between"}`}
+      >
         <div
-          className={`flex items-center gap-3 overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
+          className={`flex items-center gap-3 overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}
+        >
           <div className="w-8 h-8 rounded-lg bg-primary-main flex shrink-0 items-center justify-center text-secondary-main font-bold">
             T
           </div>
@@ -43,7 +46,8 @@ export const Sidebar: React.FC = () => {
 
         <button
           onClick={toggleSidebar}
-          className={`p-2 rounded-lg text-gray-400 hover:bg-secondary-light hover:text-white transition-all shrink-0`}>
+          className={`p-2 rounded-lg text-gray-400 hover:bg-secondary-light hover:text-white transition-all shrink-0`}
+        >
           <Menu
             className={`transition-transform duration-500 ${isCollapsed ? "rotate-180" : "rotate-0"}`}
             size={24}
@@ -65,7 +69,8 @@ export const Sidebar: React.FC = () => {
                   ? "bg-primary-main text-secondary-main shadow-lg shadow-primary-main/20 font-medium"
                   : "text-gray-400 hover:bg-secondary-light hover:text-white"
               }`
-            }>
+            }
+          >
             <div className="shrink-0">{item.icon}</div>
             {!isCollapsed && (
               <span className="whitespace-nowrap">{item.label}</span>
@@ -86,7 +91,8 @@ export const Sidebar: React.FC = () => {
                 ? "bg-primary-main text-secondary-main shadow-lg shadow-primary-main/20 font-medium"
                 : "text-gray-400 hover:bg-secondary-light hover:text-white"
             }`
-          }>
+          }
+        >
           <div className="shrink-0">
             <Settings size={20} />
           </div>

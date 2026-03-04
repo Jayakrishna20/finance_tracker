@@ -6,7 +6,7 @@ export const ArchiveView: React.FC = () => {
 
   return (
     <div className="space-y-6 h-full flex flex-col">
-      <div className="shrink-0">       
+      <div className="shrink-0">
         <p className="text-gray-500">
           Review your entire historical data categorized by distinct time
           boundaries.
@@ -19,7 +19,8 @@ export const ArchiveView: React.FC = () => {
               tabIndex === 0
                 ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
                 : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-            }`}>
+            }`}
+          >
             Weekly
           </button>
           <button
@@ -28,7 +29,8 @@ export const ArchiveView: React.FC = () => {
               tabIndex === 1
                 ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
                 : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-            }`}>
+            }`}
+          >
             Monthly
           </button>
           <button
@@ -37,7 +39,8 @@ export const ArchiveView: React.FC = () => {
               tabIndex === 2
                 ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
                 : "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-            }`}>
+            }`}
+          >
             Yearly
           </button>
         </div>

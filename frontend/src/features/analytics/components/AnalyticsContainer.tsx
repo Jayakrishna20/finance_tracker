@@ -17,7 +17,8 @@ export const AnalyticsContainer: React.FC = () => {
             activeTab === "weekly"
               ? "bg-white text-secondary-main shadow-sm"
               : "text-gray-500 hover:text-secondary-main hover:bg-white/50"
-          }`}>
+          }`}
+        >
           Weekly
         </button>
         <button
@@ -26,7 +27,8 @@ export const AnalyticsContainer: React.FC = () => {
             activeTab === "monthly"
               ? "bg-white text-secondary-main shadow-sm"
               : "text-gray-500 hover:text-secondary-main hover:bg-white/50"
-          }`}>
+          }`}
+        >
           Monthly
         </button>
         <button
@@ -35,7 +37,8 @@ export const AnalyticsContainer: React.FC = () => {
             activeTab === "yearly"
               ? "bg-white text-secondary-main shadow-sm"
               : "text-gray-500 hover:text-secondary-main hover:bg-white/50"
-          }`}>
+          }`}
+        >
           Yearly
         </button>
       </div>

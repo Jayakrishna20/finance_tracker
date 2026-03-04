@@ -1,0 +1,36 @@
+{
+  "name": "finance_tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jayakrishna20/finance_tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jayakrishna20/finance_tracker/issues"
+  },
+  "homepage": "https://github.com/Jayakrishna20/finance_tracker#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2",
+    "prettier": "^3.8.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "prettier --write",
+      "node scripts/check-console.js"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  }
+}
