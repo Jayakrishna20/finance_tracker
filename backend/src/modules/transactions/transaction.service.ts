@@ -23,40 +23,26 @@ export class TransactionService {
     async getTransactions(query: TransactionQueryInput) {
         const { categoryTypeId, skip, take } = query;
 
-        const where: Prisma.TransactionsWhereInput = {};
+        let where: Prisma.TransactionViewWhereInput | undefined = undefined;
+
         if (categoryTypeId) {
-            where.category = {
-                type: {
-                    categoryTypeId
-                }
-            };
+            const categoryType = await this.prisma.categoryTypes.findUnique({
+                where: { categoryTypeId }
+            });
+            if (categoryType) {
+                where = {
+                    categoryTypeName: categoryType.categoryTypeName
+                };
+            }
         }
 
         const [total, data] = await Promise.all([
-            this.prisma.transactions.count({ where }),
-            this.prisma.transactions.findMany({
+            this.prisma.transactionView.count({ where }),
+            this.prisma.transactionView.findMany({
                 where,
                 orderBy: { date: 'desc' },
                 skip,
                 take,
-                select: {
-                    transactionId: true,
-                    amount: true,
-                    date: true,
-                    description: true,
-                    category: {
-                        select: {
-                            categoryId: true,
-                            categoryName: true,
-                            categoryColorCode: true,
-                            type: {
-                                select: {
-                                    categoryTypeName: true
-                                }
-                            }
-                        }
-                    }
-                }
             }),
         ]);
 
@@ -108,4 +94,5 @@ export class TransactionService {
             where: { transactionId },
         });
     }
+
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
-import { GlobalFAB } from "../../features/global-modal/GlobalFAB";
+
 import { TransactionModal } from "../../features/global-modal/TransactionModal";
 import { GlobalConfirmModal } from "../../features/global-modal/GlobalConfirmModal";
 import { useSidebarStore } from "../../store/useSidebarStore";
@@ -46,7 +46,6 @@ export const AppLayout: React.FC = () => {
           </div>
         </div>
 
-        <GlobalFAB />
         <TransactionModal />
         <GlobalConfirmModal />
       </main>

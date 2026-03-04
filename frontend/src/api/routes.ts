@@ -24,5 +24,11 @@ export const API_ROUTES = {
         CREATE: '/categories',
         UPDATE: (id: number) => `/categories/${id}`,
         DELETE: (id: number) => `/categories/${id}`,
+    },
+    CREDITS: {
+        GET_ALL: '/credits',
+        CREATE: '/credits',
+        UPDATE: (id: number) => `/credits/${id}`,
+        DELETE: (id: number) => `/credits/${id}`,
     }
 } as const;

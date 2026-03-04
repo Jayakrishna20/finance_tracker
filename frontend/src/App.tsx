@@ -9,6 +9,7 @@ import { ArchiveView } from "./features/analytics/components/ArchiveView";
 import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
 import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
+import { CreditLogsGrid } from "./features/credits/components/CreditLogsGrid";
 
 import { Toaster } from "react-hot-toast";
 import { COLORS } from "./config/constants";
@@ -58,10 +59,7 @@ function App() {
                   <DailyTransactionsGrid type={TransactionTypes.Normal} />
                 }
               />
-              <Route
-                path="credit"
-                element={<DailyTransactionsGrid type={TransactionTypes.Credit} />}
-              />
+              <Route path="credit" element={<CreditLogsGrid />} />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />
               <Route path="settings" element={<SettingsPage />} />

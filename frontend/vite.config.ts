@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-  ],
+  ], server: {
+    hmr: true
+  },
   build: {
     rollupOptions: {
       output: {

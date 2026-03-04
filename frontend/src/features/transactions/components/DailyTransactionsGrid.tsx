@@ -4,7 +4,8 @@ import {
   type GridColDef,
   GridActionsCellItem,
 } from "@mui/x-data-grid";
-import { Edit2, Trash2 } from "lucide-react";
+import { Button, Toolbar } from "@mui/material";
+import { Edit2, Trash2, Plus } from "lucide-react";
 import { format, getISOWeek } from "date-fns";
 import { useTransactions } from "../hooks/useTransactions";
 import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
@@ -48,13 +49,12 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         valueGetter: (_value, row) => format(new Date(row.date), "EEEE"),
       },
       {
-        field: "category",
+        field: "categoryName",
         headerName: "Category",
         width: 140,
-        valueGetter: (_value, row) => row.category?.categoryName,
         renderCell: (params) => {
-          const categoryName = params.value;
-          const matchedColor = params.row.category?.categoryColorCode;
+          const categoryName = params.row.categoryName;
+          const matchedColor = params.row.categoryColorCode;
           return (
             <div className="flex items-center gap-2 h-full">
               <div
@@ -134,9 +134,31 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
     [categories],
   );
 
+  const CustomToolbar = () => (
+    <Toolbar
+      disableGutters
+      className="flex justify-end p-2 border-b border-gray-100 bg-gray-50/50 w-full"
+      sx={{ minHeight: "auto !important" }}></Toolbar>
+  );
+
   return (
     <div className="h-full w-full flex flex-col">
       <div className="flex-1 min-h-0 w-full">
+        <div className="flex justify-end mb-4">
+          <Button
+            variant="contained"
+            startIcon={<Plus size={18} />}
+            onClick={() => openModal(undefined, type)}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              fontWeight: 600,
+              boxShadow: "none",
+              "&:hover": { boxShadow: "0 4px 12px rgba(185, 255, 102, 0.4)" },
+            }}>
+            Add Transaction
+          </Button>
+        </div>
         <DataGrid
           rows={allTransactions}
           columns={columns}
@@ -149,6 +171,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
           }}
           hideFooter
           disableRowSelectionOnClick
+          slots={{ toolbar: CustomToolbar }}
           sx={{
             border: 0,
             "& .MuiDataGrid-columnHeaders": {

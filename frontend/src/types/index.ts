@@ -20,11 +20,13 @@ export interface CategoryTypeName {
 
 export interface Transaction {
     transactionId: number;
-    type: TransactionType;
-    date: string;
-    category?: Category;
     amount: number;
+    date: string;
     description: string;
+    categoryId: number;
+    categoryName: string;
+    categoryColorCode: string;
+    categoryTypeName: string;
     dayName?: string;
     weekNumber?: number;
     monthYear?: string;
@@ -45,3 +47,27 @@ export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;
 export interface DailyTransactionsGridProps {
     type?: TransactionType;
 }
+
+export interface Credit {
+    creditId: number;
+    description: string;
+    categoryId: number;
+    category?: {
+        categoryId: number;
+        categoryName: string;
+        categoryColorCode: string;
+    };
+    billedDate: string;
+    lastPaymentDate: string;
+    paidStatus: boolean;
+}
+
+export type CreateCreditPayload = {
+    description: string;
+    categoryId: number;
+    billedDate: string;
+    lastPaymentDate: string;
+    paidStatus: boolean;
+}
+
+export type UpdateCreditPayload = Partial<CreateCreditPayload>;

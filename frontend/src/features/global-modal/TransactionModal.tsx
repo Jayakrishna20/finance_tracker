@@ -30,9 +30,7 @@ export const TransactionModal: React.FC = () => {
     useModalStore();
   const { categories, fetchCategories } = useCategoryStore();
 
-  const activeType = editingTransaction
-    ? editingTransaction.type
-    : transactionType;
+  const activeType = transactionType;
 
   const createTxMutation = useCreateTransaction();
   const updateTxMutation = useUpdateTransaction();
@@ -49,7 +47,7 @@ export const TransactionModal: React.FC = () => {
       setErrors({});
       if (editingTransaction) {
         setDate(new Date(editingTransaction.date));
-        setCategoryId(editingTransaction.category?.categoryId || null);
+        setCategoryId(editingTransaction.categoryId || null);
         setAmount(editingTransaction.amount);
         setDescription(editingTransaction.description || "");
       } else {

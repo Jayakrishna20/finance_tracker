@@ -17,7 +17,7 @@ export const useCreateTransaction = () => {
             if (previousTxs) {
                 queryClient.setQueryData<Transaction[]>(['transactions'], [
                     ...previousTxs,
-                    { ...newTx, transactionId: 0 }
+                    { ...newTx, transactionId: 0 } as unknown as Transaction
                 ]);
             }
 
