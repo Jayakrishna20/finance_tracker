@@ -31,9 +31,11 @@ export const CreditLogsGrid: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
-    const selectedCredits = credits.filter((c) =>
-      selectionModel?.ids.has(c.creditId),
-    );
+    const selectedCredits =
+      selectionModel?.type === "exclude"
+        ? credits
+        : credits.filter((c) => selectionModel?.ids.has(c.creditId));
+
     const paidCount = selectedCredits.filter((c) => c.paidStatus).length;
     const unpaidCount = selectedCredits.filter((c) => !c.paidStatus).length;
 
@@ -62,6 +64,7 @@ export const CreditLogsGrid: React.FC = () => {
         }
       }
     }
+
     setButtonAction(action);
     setButtonLabel(label);
     setShowWarning(warning);
@@ -191,38 +194,40 @@ export const CreditLogsGrid: React.FC = () => {
       <div className="flex-1 min-h-0 w-full animate-in fade-in duration-500">
         <div className="flex items-center justify-end mb-4 gap-4">
           {!selectionModel ||
-            (selectionModel.ids.size > 0 && buttonAction && (
-              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-300">
-                {showWarning && (
-                  <span className="text-sm text-amber-600 font-medium flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-100">
-                    <Info size={16} /> Mixed paid/unpaid selection. Proceed with
-                    caution.
-                  </span>
-                )}
-                <Button
-                  variant="outlined"
-                  color={buttonAction === "markPaid" ? "success" : "error"}
-                  size="small"
-                  onClick={handleBatchAction}
-                  disabled={batchUpdateMutation.isPending}
-                  sx={{
-                    borderRadius: "4px",
-                    textTransform: "none",
-                    fontWeight: 500,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    padding: "4px 8px",
-                  }}>
-                  {buttonAction === "markPaid" ? (
-                    <Check size={16} strokeWidth={2.5} />
-                  ) : (
-                    <X size={16} strokeWidth={2.5} />
+            ((selectionModel.ids.size > 0 ||
+              selectionModel.type === "exclude") &&
+              buttonAction && (
+                <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-300">
+                  {showWarning && (
+                    <span className="text-sm text-amber-600 font-medium flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-100">
+                      <Info size={16} /> Mixed paid/unpaid selection. Proceed
+                      with caution.
+                    </span>
                   )}
-                  <span className="mx-1">{buttonLabel}</span>
-                </Button>
-              </div>
-            ))}
+                  <Button
+                    variant="outlined"
+                    color={buttonAction === "markPaid" ? "success" : "error"}
+                    size="small"
+                    onClick={handleBatchAction}
+                    disabled={batchUpdateMutation.isPending}
+                    sx={{
+                      borderRadius: "4px",
+                      textTransform: "none",
+                      fontWeight: 500,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      padding: "4px 8px",
+                    }}>
+                    {buttonAction === "markPaid" ? (
+                      <Check size={16} strokeWidth={2.5} />
+                    ) : (
+                      <X size={16} strokeWidth={2.5} />
+                    )}
+                    <span className="mx-1">{buttonLabel}</span>
+                  </Button>
+                </div>
+              ))}
           <Button
             variant="contained"
             startIcon={<Plus size={18} />}
