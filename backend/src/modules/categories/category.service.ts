@@ -1,54 +1,54 @@
-import { PrismaClient } from '@prisma/client';
-import { CreateCategoryInput, UpdateCategoryInput } from './category.schema.js';
+import { PrismaClient } from "@prisma/client";
+import { CreateCategoryInput, UpdateCategoryInput } from "./category.schema.js";
 
 export class CategoryService {
-    constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
-    async createCategory(data: CreateCategoryInput) {
-        return this.prisma.categories.create({
-            data,
-        });
-    }
+  async createCategory(data: CreateCategoryInput) {
+    return this.prisma.categories.create({
+      data,
+    });
+  }
 
-    async getAllCategories() {
-        return this.prisma.categories.findMany({
-            select: {
-                categoryId: true,
-                categoryName: true,
-                categoryColorCode: true,
-                categoryType: true,
-                type: {
-                    select: {
-                        categoryTypeName: true,
-                    },
-                },
-            },
-            orderBy: { createdAt: 'desc' },
-        });
-    }
+  async getAllCategories() {
+    return this.prisma.categories.findMany({
+      select: {
+        categoryId: true,
+        categoryName: true,
+        categoryColorCode: true,
+        categoryType: true,
+        type: {
+          select: {
+            categoryTypeName: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
 
-    async getCategoryById(categoryId: bigint) {
-        return this.prisma.categories.findUnique({
-            select: {
-                categoryId: true,
-                categoryName: true,
-                categoryColorCode: true,
-                categoryType: true,
-            },
-            where: { categoryId },
-        });
-    }
+  async getCategoryById(categoryId: bigint) {
+    return this.prisma.categories.findUnique({
+      select: {
+        categoryId: true,
+        categoryName: true,
+        categoryColorCode: true,
+        categoryType: true,
+      },
+      where: { categoryId },
+    });
+  }
 
-    async updateCategory(categoryId: bigint, data: UpdateCategoryInput) {
-        return this.prisma.categories.update({
-            where: { categoryId },
-            data,
-        });
-    }
+  async updateCategory(categoryId: bigint, data: UpdateCategoryInput) {
+    return this.prisma.categories.update({
+      where: { categoryId },
+      data,
+    });
+  }
 
-    async deleteCategory(categoryId: bigint) {
-        return this.prisma.categories.delete({
-            where: { categoryId },
-        });
-    }
+  async deleteCategory(categoryId: bigint) {
+    return this.prisma.categories.delete({
+      where: { categoryId },
+    });
+  }
 }

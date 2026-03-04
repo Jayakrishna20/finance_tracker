@@ -142,7 +142,8 @@ export const CategorySettingsPage: React.FC = () => {
         <IconButton
           onClick={() => navigate("/settings")}
           size="small"
-          className="text-gray-500 hover:bg-gray-100">
+          className="text-gray-500 hover:bg-gray-100"
+        >
           <ArrowLeft size={20} />
         </IconButton>
         <div>
@@ -182,7 +183,8 @@ export const CategorySettingsPage: React.FC = () => {
             label="Type"
             onChange={(e) =>
               setNewCatType(Number(e.target.value) as TransactionType)
-            }>
+            }
+          >
             {categoryTypes.map((t) => (
               <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
                 {t.categoryTypeName}
@@ -195,7 +197,8 @@ export const CategorySettingsPage: React.FC = () => {
           onClick={handleAdd}
           disabled={!newCat.trim()}
           startIcon={<Plus size={18} />}
-          className="!rounded-lg !py-2 !px-4">
+          className="!rounded-lg !py-2 !px-4"
+        >
           Add
         </Button>
       </div>
@@ -205,7 +208,8 @@ export const CategorySettingsPage: React.FC = () => {
           {categories.map((cat) => (
             <div
               key={cat.categoryId}
-              className="flex flex-col gap-3 bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+              className="flex flex-col gap-3 bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group"
+            >
               <div
                 className="absolute top-0 left-0 w-full h-1"
                 style={{ backgroundColor: cat.categoryColorCode }}
@@ -220,7 +224,8 @@ export const CategorySettingsPage: React.FC = () => {
                     {cat.categoryName}
                   </span>
                   <span
-                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === TransactionTypes.Credit ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}>
+                    className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === TransactionTypes.Credit ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}
+                  >
                     {cat.type.categoryTypeName}
                   </span>
                 </div>
@@ -228,7 +233,8 @@ export const CategorySettingsPage: React.FC = () => {
                   <IconButton
                     size="small"
                     onClick={() => handleStartEdit(cat.categoryId)}
-                    className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors">
+                    className="text-gray-400 hover:text-primary-main hover:bg-blue-50 transition-colors"
+                  >
                     <Edit2 size={16} />
                   </IconButton>
                   <IconButton
@@ -236,7 +242,8 @@ export const CategorySettingsPage: React.FC = () => {
                     onClick={() =>
                       handleDelete(cat.categoryId, cat.categoryName)
                     }
-                    className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                    className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  >
                     <Trash2 size={16} />
                   </IconButton>
                 </div>
@@ -259,7 +266,8 @@ export const CategorySettingsPage: React.FC = () => {
         fullWidth
         PaperProps={{
           sx: { borderRadius: "16px", overflow: "visible" },
-        }}>
+        }}
+      >
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
           <DialogTitle className="!p-0 !text-xl !font-bold">
             Edit Category
@@ -309,7 +317,8 @@ export const CategorySettingsPage: React.FC = () => {
                 label="Type"
                 onChange={(e) =>
                   setEditType(Number(e.target.value) as TransactionType)
-                }>
+                }
+              >
                 {categoryTypes.map((t) => (
                   <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
                     {t.categoryTypeName}
@@ -324,14 +333,16 @@ export const CategorySettingsPage: React.FC = () => {
             onClick={handleCancelEdit}
             color="inherit"
             variant="outlined"
-            className="border-2">
+            className="border-2"
+          >
             Cancel
           </Button>
           <Button
             onClick={handleSaveEdit}
             variant="contained"
             color="primary"
-            className="!rounded-xl">
+            className="!rounded-xl"
+          >
             Save Changes
           </Button>
         </DialogActions>

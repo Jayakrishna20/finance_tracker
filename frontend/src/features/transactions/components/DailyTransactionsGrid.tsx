@@ -138,7 +138,8 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
     <Toolbar
       disableGutters
       className="flex justify-end p-2 border-b border-gray-100 bg-gray-50/50 w-full"
-      sx={{ minHeight: "auto !important" }}></Toolbar>
+      sx={{ minHeight: "auto !important" }}
+    ></Toolbar>
   );
 
   return (
@@ -155,7 +156,8 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
               fontWeight: 600,
               boxShadow: "none",
               "&:hover": { boxShadow: "0 4px 12px rgba(185, 255, 102, 0.4)" },
-            }}>
+            }}
+          >
             Add Transaction
           </Button>
         </div>

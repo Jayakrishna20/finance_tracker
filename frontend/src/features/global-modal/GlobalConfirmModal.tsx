@@ -26,7 +26,8 @@ export const GlobalConfirmModal: React.FC = () => {
       fullWidth
       PaperProps={{
         sx: { borderRadius: "16px" },
-      }}>
+      }}
+    >
       <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
         <DialogTitle className="!p-0 !text-lg !font-bold flex items-center gap-2 text-gray-800">
           <AlertTriangle className="text-red-500" size={24} />
@@ -44,13 +45,15 @@ export const GlobalConfirmModal: React.FC = () => {
           onClick={closeConfirm}
           variant="outlined"
           color="inherit"
-          className="!font-medium border-2">
+          className="!font-medium border-2"
+        >
           Cancel
         </Button>
         <Button
           onClick={handleConfirm}
           variant="contained"
-          className="!bg-red-500 hover:!bg-red-600 !rounded-xl text-white shadow-sm">
+          className="!bg-red-500 hover:!bg-red-600 !rounded-xl text-white shadow-sm"
+        >
           Confirm Delete
         </Button>
       </DialogActions>

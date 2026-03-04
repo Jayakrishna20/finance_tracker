@@ -144,7 +144,8 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
             return (
               <div
                 className="flex border-t-2 border-black font-bold bg-[#F9FAFB] items-center shrink-0 pr-[10px]"
-                style={{ minHeight: "48px" }}>
+                style={{ minHeight: "48px" }}
+              >
                 {columns.map((col) => {
                   const rawVal =
                     summaryData[col.field as keyof typeof summaryData];
@@ -164,7 +165,8 @@ export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
                           ? `${col.minWidth}px`
                           : undefined,
                         textAlign: col.type === "number" ? "right" : "left",
-                      }}>
+                      }}
+                    >
                       {cellValue as React.ReactNode}
                     </div>
                   );

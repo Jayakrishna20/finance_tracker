@@ -136,7 +136,8 @@ export const CreditLogsGrid: React.FC = () => {
                 isPaid
                   ? "border-[#4caf50] text-[#2e7d32]"
                   : "border-[#f44336] text-[#c62828]"
-              }`}>
+              }`}
+            >
               {isPaid ? (
                 <Check size={14} strokeWidth={2.5} />
               ) : (
@@ -218,7 +219,8 @@ export const CreditLogsGrid: React.FC = () => {
                       alignItems: "center",
                       gap: "4px",
                       padding: "4px 8px",
-                    }}>
+                    }}
+                  >
                     {buttonAction === "markPaid" ? (
                       <Check size={16} strokeWidth={2.5} />
                     ) : (
@@ -238,7 +240,8 @@ export const CreditLogsGrid: React.FC = () => {
               fontWeight: 600,
               boxShadow: "none",
               "&:hover": { boxShadow: "0 4px 12px rgba(185, 255, 102, 0.4)" },
-            }}>
+            }}
+          >
             Add Credit Tx
           </Button>
         </div>

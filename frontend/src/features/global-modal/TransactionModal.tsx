@@ -113,7 +113,8 @@ export const TransactionModal: React.FC = () => {
       fullWidth
       PaperProps={{
         sx: { borderRadius: "16px", overflow: "visible" },
-      }}>
+      }}
+    >
       <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
         <DialogTitle className="!p-0 !text-xl !font-bold">
           {editingTransaction ? "Edit Transaction" : "Add Transaction"}
@@ -148,7 +149,8 @@ export const TransactionModal: React.FC = () => {
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value as number)}
                 labelId="category-select-label"
-                label="Category">
+                label="Category"
+              >
                 {categories.map((cat) => (
                   <MenuItem key={cat.categoryId} value={cat.categoryId}>
                     <div className="flex items-center gap-2">
@@ -235,7 +237,8 @@ export const TransactionModal: React.FC = () => {
             onClick={handleClose}
             variant="outlined"
             color="inherit"
-            className="border-2">
+            className="border-2"
+          >
             Cancel
           </Button>
           <Button
@@ -243,7 +246,8 @@ export const TransactionModal: React.FC = () => {
             variant="contained"
             color="primary"
             disabled={createTxMutation.isPending || updateTxMutation.isPending}
-            className="!rounded-xl">
+            className="!rounded-xl"
+          >
             {createTxMutation.isPending || updateTxMutation.isPending
               ? "Saving..."
               : "Save Transaction"}

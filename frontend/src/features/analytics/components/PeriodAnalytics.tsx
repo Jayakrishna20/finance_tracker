@@ -69,7 +69,8 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
               <Select
                 value={selectedYear}
                 label="Year"
-                onChange={(e) => setSelectedYear(e.target.value as number)}>
+                onChange={(e) => setSelectedYear(e.target.value as number)}
+              >
                 {availableYears.map((y) => (
                   <MenuItem key={y} value={y}>
                     {y}
@@ -86,7 +87,8 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
             <Select
               value={selectedPeriod}
               label={periodType === "WEEKLY" ? "Select Week" : "Select Period"}
-              onChange={(e) => setSelectedPeriod(e.target.value)}>
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+            >
               {availablePeriods.map((p) => (
                 <MenuItem key={p} value={p}>
                   {periodType === "WEEKLY" ? `Week ${p}` : p}
@@ -112,7 +114,8 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
                   innerRadius={80}
                   outerRadius={120}
                   paddingAngle={5}
-                  dataKey="value">
+                  dataKey="value"
+                >
                   {chartData.map((entry: any, index: number) => {
                     const matchedColor = categories.find(
                       (c) => c.categoryName === entry.name,

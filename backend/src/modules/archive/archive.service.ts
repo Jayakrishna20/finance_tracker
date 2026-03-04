@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 export class ArchiveService {
-    constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
-    async getWeeklyArchive() {
-        return this.prisma.$queryRaw`
+  async getWeeklyArchive() {
+    return this.prisma.$queryRaw`
       SELECT
         date_trunc('week', t."date") AS period,
         t."categoryId",
@@ -16,10 +16,10 @@ export class ArchiveService {
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;
-    }
+  }
 
-    async getMonthlyArchive() {
-        return this.prisma.$queryRaw`
+  async getMonthlyArchive() {
+    return this.prisma.$queryRaw`
       SELECT
         date_trunc('month', t."date") AS period,
         t."categoryId",
@@ -31,10 +31,10 @@ export class ArchiveService {
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;
-    }
+  }
 
-    async getYearlyArchive() {
-        return this.prisma.$queryRaw`
+  async getYearlyArchive() {
+    return this.prisma.$queryRaw`
       SELECT
         date_trunc('year', t."date") AS period,
         t."categoryId",
@@ -46,5 +46,5 @@ export class ArchiveService {
       GROUP BY 1, 2, 3
       ORDER BY 1 DESC;
     `;
-    }
+  }
 }

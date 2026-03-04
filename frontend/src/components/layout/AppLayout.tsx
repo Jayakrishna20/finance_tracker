@@ -32,7 +32,8 @@ export const AppLayout: React.FC = () => {
     <div className="h-screen w-screen overflow-hidden flex bg-background-default font-sans">
       <Sidebar />
       <main
-        className={`${isCollapsed ? "ml-20" : "ml-64"} transition-all duration-300 flex-1 p-8 relative h-screen flex flex-col overflow-hidden`}>
+        className={`${isCollapsed ? "ml-20" : "ml-64"} transition-all duration-300 flex-1 p-8 relative h-screen flex flex-col overflow-hidden`}
+      >
         <div className="w-full h-full flex flex-col overflow-hidden">
           {/* Topbar/Header info could go here */}
           <header className="mb-8 flex justify-between items-center shrink-0">
