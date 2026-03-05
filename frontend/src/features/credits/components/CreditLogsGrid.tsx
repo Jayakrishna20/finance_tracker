@@ -1,12 +1,26 @@
 import { Button } from "@mui/material";
 import {
-  DataGrid,
-  GridActionsCellItem,
-  type GridColDef,
-  type GridRowSelectionModel,
-} from "@mui/x-data-grid";
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  type ColumnDef,
+  type SortingState,
+  type RowSelectionState,
+} from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Check, Edit2, Info, Plus, Trash2, X } from "lucide-react";
+import {
+  Check,
+  Edit2,
+  Info,
+  Plus,
+  Trash2,
+  X,
+  ChevronDown,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useConfirmStore } from "../../../store/useConfirmStore";
 import { useModalStore } from "../../../store/useModalStore";
@@ -23,18 +37,25 @@ export const CreditLogsGrid: React.FC = () => {
   const { openModal } = useModalStore();
   const { openConfirm } = useConfirmStore();
 
-  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "billedDate", desc: true },
+  ]);
+
   const [buttonAction, setButtonAction] = useState<
     "markPaid" | "markUnpaid" | null
   >(null);
   const [buttonLabel, setButtonLabel] = useState("");
   const [showWarning, setShowWarning] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {},
+  );
 
   useEffect(() => {
-    const selectedCredits =
-      selectionModel?.type === "exclude"
-        ? credits
-        : credits.filter((c) => selectionModel?.ids.has(c.creditId));
+    const selectedIds = Object.keys(rowSelection);
+    const selectedCredits = credits.filter((c) =>
+      selectedIds.includes(c.creditId.toString()),
+    );
 
     const paidCount = selectedCredits.filter((c) => c.paidStatus).length;
     const unpaidCount = selectedCredits.filter((c) => !c.paidStatus).length;
@@ -68,80 +89,273 @@ export const CreditLogsGrid: React.FC = () => {
     setButtonAction(action);
     setButtonLabel(label);
     setShowWarning(warning);
-  }, [selectionModel, credits]);
+  }, [rowSelection, credits]);
+
+  const toggleGroup = (month: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [month]: !prev[month],
+    }));
+  };
 
   const handleBatchAction = () => {
-    if (!buttonAction || !selectionModel || selectionModel.ids.size === 0)
-      return;
+    if (!buttonAction || Object.keys(rowSelection).length === 0) return;
 
     const targetStatus = buttonAction === "markPaid";
 
     batchUpdateMutation.mutate({
-      ids: Array.from(selectionModel.ids).map(Number),
-      payload: { paidStatus: targetStatus },
+      ids: Object.keys(rowSelection).map(Number),
+      paidStatus: targetStatus,
     });
 
-    setSelectionModel(undefined);
+    setRowSelection({});
   };
 
-  const columns: GridColDef<Credit>[] = useMemo(
+  const sortedCredits = useMemo(() => {
+    const sorted = [...credits];
+    if (sorting.length > 0) {
+      const { id, desc } = sorting[0];
+      sorted.sort((a, b) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let valA: any = a[id as keyof Credit];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let valB: any = b[id as keyof Credit];
+
+        if (id === "category") {
+          valA = a.category?.categoryName || "";
+          valB = b.category?.categoryName || "";
+        } else if (id === "billedDate" || id === "lastPaymentDate") {
+          valA = valA ? new Date(valA).getTime() : 0;
+          valB = valB ? new Date(valB).getTime() : 0;
+        }
+
+        if (valA === valB) return 0;
+        if (valA === null || valA === undefined) return desc ? 1 : -1;
+        if (valB === null || valB === undefined) return desc ? -1 : 1;
+
+        const res = valA > valB ? 1 : -1;
+        return desc ? -res : res;
+      });
+    } else {
+      sorted.sort((a, b) => {
+        const dateA = new Date(a.billedDate).getTime();
+        const dateB = new Date(b.billedDate).getTime();
+        return dateB - dateA;
+      });
+    }
+    return sorted;
+  }, [credits, sorting]);
+
+  const groupedRows = useMemo(() => {
+    const groups: Record<string, Credit[]> = {};
+    const groupOrder: string[] = [];
+
+    sortedCredits.forEach((credit) => {
+      const monthKey = format(new Date(credit.billedDate), "MMMM yyyy");
+      if (!groupOrder.includes(monthKey)) groupOrder.push(monthKey);
+
+      if (!groups[monthKey]) groups[monthKey] = [];
+      groups[monthKey].push(credit);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: any[] = [];
+
+    groupOrder.forEach((month) => {
+      const items = groups[month];
+      const isAllPaid =
+        items.length > 0 && items.every((item) => item.paidStatus === true);
+
+      result.push({
+        id: `group-${month}`,
+        isGroup: true,
+        groupMonth: month,
+        isAllPaid,
+        itemsCount: items.length,
+      });
+
+      if (expandedGroups[month] !== false) {
+        result.push(...items);
+      }
+    });
+
+    return result;
+  }, [sortedCredits, expandedGroups]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const columns: ColumnDef<any>[] = useMemo(
     () => [
       {
-        field: "description",
-        headerName: "Description",
-        flex: 1,
-        minWidth: 150,
+        id: "select",
+        header: ({ table }) => {
+          const nonGroupSelected = table
+            .getRowModel()
+            .rows.filter(
+              (r) => !r.original.isGroup && r.getIsSelected(),
+            ).length;
+          const nonGroupTotal = table
+            .getRowModel()
+            .rows.filter((r) => !r.original.isGroup).length;
+          const allSelected =
+            nonGroupTotal > 0 && nonGroupSelected === nonGroupTotal;
+          const isIndeterminate =
+            nonGroupSelected > 0 && nonGroupSelected < nonGroupTotal;
+
+          return (
+            <div className="flex items-center justify-center w-full h-full">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-primary-main focus:ring-primary-main cursor-pointer"
+                checked={allSelected}
+                ref={(input) => {
+                  if (input) input.indeterminate = isIndeterminate;
+                }}
+                onChange={table.getToggleAllRowsSelectedHandler()}
+              />
+            </div>
+          );
+        },
+        cell: ({ row }) => {
+          if (row.original.isGroup) return null;
+          return (
+            <div className="flex items-center justify-center w-full h-full">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-primary-main focus:ring-primary-main cursor-pointer"
+                checked={row.getIsSelected()}
+                disabled={!row.getCanSelect()}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  row.toggleSelected();
+                }}
+              />
+            </div>
+          );
+        },
+        size: 50,
       },
       {
-        field: "category",
-        headerName: "Category",
-        width: 140,
-        renderCell: (params) => {
-          const categoryName = params.row.category?.categoryName || "Unknown";
-          const matchedColor = params.row.category?.categoryColorCode || "#ccc";
+        accessorKey: "description",
+        header: "Description",
+        size: 250,
+        cell: (info) => {
+          if (info.row.original.isGroup) return null;
+          return (
+            <span className="text-gray-900">{info.getValue() as string}</span>
+          );
+        },
+      },
+      {
+        accessorKey: "category",
+        header: "Category",
+        size: 140,
+        cell: (info) => {
+          if (info.row.original.isGroup) return null;
+          const category = info.getValue() as Credit["category"];
+          const categoryName = category?.categoryName || "Unknown";
+          const matchedColor = category?.categoryColorCode || "#ccc";
           return (
             <div className="flex items-center gap-2 h-full">
               <div
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: matchedColor }}
               />
-              {categoryName}
+              <span className="truncate">{categoryName}</span>
             </div>
           );
         },
       },
       {
-        field: "billedDate",
-        headerName: "Billed Date",
-        width: 130,
-        valueGetter: (value: string | Date) => new Date(value),
-        valueFormatter: (value: Date) => format(value, "dd/MM/yyyy"),
+        accessorKey: "billedDate",
+        header: "Billed Date",
+        size: 160,
+        cell: (info) => {
+          if (info.row.original.isGroup) {
+            const month = info.row.original.groupMonth;
+            const expanded = expandedGroups[month] !== false;
+            const isAllPaid = info.row.original.isAllPaid;
+
+            return (
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex items-center gap-2 font-semibold text-gray-800 cursor-pointer py-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleGroup(month);
+                  }}
+                >
+                  <span className="text-gray-500">
+                    {expanded ? (
+                      <ChevronDown size={14} />
+                    ) : (
+                      <ChevronRight size={14} />
+                    )}
+                  </span>
+                  <span>{month}</span>
+                </div>
+                <div
+                  className={`inline-flex items-center gap-1.5 pl-2 pr-0.5 py-0.5 rounded-[3px] border border-solid text-xs font-medium ${
+                    isAllPaid
+                      ? "border-[#4caf50] text-[#00796b] bg-white"
+                      : "border-[#ef5350] text-[#c62828] bg-white"
+                  }`}
+                >
+                  {isAllPaid ? (
+                    <Check
+                      size={14}
+                      strokeWidth={2.5}
+                      className="text-[#00796b]"
+                    />
+                  ) : (
+                    <X size={14} strokeWidth={2.5} className="text-[#c62828]" />
+                  )}
+                  <span className="mr-1">{isAllPaid ? "Paid" : "Unpaid"}</span>
+                </div>
+              </div>
+            );
+          }
+          const value = info.getValue() as string;
+          return (
+            <span className="text-gray-700">
+              {format(new Date(value), "dd/MM/yyyy")}
+            </span>
+          );
+        },
       },
       {
-        field: "lastPaymentDate",
-        headerName: "Last Payment",
-        width: 130,
-        valueGetter: (value: string | Date) => new Date(value),
-        valueFormatter: (value: Date) => format(value, "dd/MM/yyyy"),
+        accessorKey: "lastPaymentDate",
+        header: "Last Payment",
+        size: 130,
+        cell: (info) => {
+          if (info.row.original.isGroup) return null;
+          const value = info.getValue() as string;
+          if (!value) return <span className="text-gray-500">-</span>;
+          return (
+            <span className="text-gray-700">
+              {format(new Date(value), "dd/MM/yyyy")}
+            </span>
+          );
+        },
       },
       {
-        field: "paidStatus",
-        headerName: "Status",
-        width: 120,
-        renderCell: (params) => {
-          const isPaid = params.value;
+        accessorKey: "paidStatus",
+        header: "Status",
+        size: 120,
+        cell: (info) => {
+          if (info.row.original.isGroup) return null;
+          const isPaid = info.getValue() as boolean;
           return (
             <div
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border border-solid text-xs font-medium ${
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] border border-solid text-xs font-medium ${
                 isPaid
-                  ? "border-[#4caf50] text-[#2e7d32]"
-                  : "border-[#f44336] text-[#c62828]"
+                  ? "border-[#4caf50] text-[#00796b] bg-white"
+                  : "border-[#ef5350] text-[#c62828] bg-white"
               }`}
             >
               {isPaid ? (
-                <Check size={14} strokeWidth={2.5} />
+                <Check size={14} strokeWidth={2.5} className="text-[#00796b]" />
               ) : (
-                <X size={14} strokeWidth={2.5} />
+                <X size={14} strokeWidth={2.5} className="text-[#c62828]" />
               )}
               {isPaid ? "Paid" : "Unpaid"}
             </div>
@@ -149,87 +363,101 @@ export const CreditLogsGrid: React.FC = () => {
         },
       },
       {
-        field: "actions",
-        type: "actions",
-        headerName: "Actions",
-        width: 100,
-        getActions: (params) => [
-          <GridActionsCellItem
-            key="edit"
-            icon={
-              <Edit2
-                size={18}
-                className="text-gray-500 hover:text-primary-main"
-              />
-            }
-            label="Edit"
-            onClick={() => {
-              openModal(params.row, TransactionTypes.Credit);
-            }}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={
-              <Trash2 size={18} className="text-red-500 hover:text-red-600" />
-            }
-            label="Delete"
-            onClick={() => {
-              openConfirm({
-                title: "Delete Credit",
-                message:
-                  "Are you sure you want to delete this credit log? This action cannot be undone.",
-                onConfirm: () => {
-                  deleteCreditMutation.mutate(params.row.creditId);
-                },
-              });
-            }}
-          />,
-        ],
+        id: "actions",
+        header: "Actions",
+        size: 100,
+        enableSorting: false,
+        cell: ({ row }) => {
+          if (row.original.isGroup) return null;
+          return (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal(row.original, TransactionTypes.Credit);
+                }}
+                className="text-gray-500 hover:text-primary-main transition-colors p-1 rounded-md hover:bg-gray-100"
+                title="Edit"
+              >
+                <Edit2 size={16} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openConfirm({
+                    title: "Delete Credit",
+                    message:
+                      "Are you sure you want to delete this credit log? This action cannot be undone.",
+                    onConfirm: () => {
+                      deleteCreditMutation.mutate(row.original.creditId);
+                    },
+                  });
+                }}
+                className="text-red-500 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50"
+                title="Delete"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          );
+        },
       },
     ],
-    [],
+    [expandedGroups, openModal, openConfirm, deleteCreditMutation],
   );
+
+  const table = useReactTable({
+    data: groupedRows,
+    columns,
+    state: {
+      sorting,
+      rowSelection,
+    },
+    enableRowSelection: (row) => !row.original.isGroup,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    manualSorting: true,
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.creditId?.toString() ?? row.id,
+  });
 
   return (
     <div className="h-full w-full flex flex-col">
-      <div className="flex-1 min-h-0 w-full animate-in fade-in duration-500">
-        <div className="flex items-center justify-end mb-4 gap-4">
-          {!selectionModel ||
-            ((selectionModel.ids.size > 0 ||
-              selectionModel.type === "exclude") &&
-              buttonAction && (
-                <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-300">
-                  {showWarning && (
-                    <span className="text-sm text-amber-600 font-medium flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-100">
-                      <Info size={16} /> Mixed paid/unpaid selection. Proceed
-                      with caution.
-                    </span>
-                  )}
-                  <Button
-                    variant="outlined"
-                    color={buttonAction === "markPaid" ? "success" : "error"}
-                    size="small"
-                    onClick={handleBatchAction}
-                    disabled={batchUpdateMutation.isPending}
-                    sx={{
-                      borderRadius: "4px",
-                      textTransform: "none",
-                      fontWeight: 500,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      padding: "4px 8px",
-                    }}
-                  >
-                    {buttonAction === "markPaid" ? (
-                      <Check size={16} strokeWidth={2.5} />
-                    ) : (
-                      <X size={16} strokeWidth={2.5} />
-                    )}
-                    <span className="mx-1">{buttonLabel}</span>
-                  </Button>
-                </div>
-              ))}
+      <div className="flex-1 min-h-0 w-full animate-in fade-in duration-500 flex flex-col">
+        <div className="flex items-center justify-end mb-4 gap-4 shrink-0">
+          {Object.keys(rowSelection).length > 0 && buttonAction && (
+            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-300">
+              {showWarning && (
+                <span className="text-sm text-amber-600 font-medium flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-md border border-amber-100">
+                  <Info size={16} /> Mixed paid/unpaid selection. Proceed with
+                  caution.
+                </span>
+              )}
+              <Button
+                variant="outlined"
+                color={buttonAction === "markPaid" ? "success" : "error"}
+                size="small"
+                onClick={handleBatchAction}
+                disabled={batchUpdateMutation.isPending}
+                sx={{
+                  borderRadius: "4px",
+                  textTransform: "none",
+                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "4px 8px",
+                }}
+              >
+                {buttonAction === "markPaid" ? (
+                  <Check size={16} strokeWidth={2.5} />
+                ) : (
+                  <X size={16} strokeWidth={2.5} />
+                )}
+                <span className="mx-1">{buttonLabel}</span>
+              </Button>
+            </div>
+          )}
           <Button
             variant="contained"
             startIcon={<Plus size={18} />}
@@ -245,34 +473,146 @@ export const CreditLogsGrid: React.FC = () => {
             Add Credit Tx
           </Button>
         </div>
-        <DataGrid
-          rows={credits}
-          columns={columns}
-          loading={isLoading}
-          getRowId={(row) => row.creditId}
-          checkboxSelection
-          disableRowSelectionOnClick
-          onRowSelectionModelChange={(newSelectionModel) => {
-            setSelectionModel(newSelectionModel);
-          }}
-          rowSelectionModel={selectionModel}
-          initialState={{
-            sorting: {
-              sortModel: [{ field: "billedDate", sort: "desc" }],
-            },
-          }}
-          hideFooter
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#F9FAFB",
-              borderBottom: "1px solid #F3F4F6",
-            },
-            "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid #F3F4F6",
-            },
-          }}
-        />
+
+        <div className="flex-1 min-h-0 border border-[#F3F4F6] rounded-lg overflow-hidden flex flex-col bg-white shadow-sm">
+          <div className="overflow-auto flex-1 h-full min-h-0 relative">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="bg-[#F9FAFB] sticky top-0 z-10">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      const styleWidth =
+                        header.getSize() !== 150
+                          ? { width: header.getSize() }
+                          : {};
+                      return (
+                        <th
+                          key={header.id}
+                          className={`px-4 py-3 text-xs font-semibold text-gray-600 tracking-wider ${header.column.getCanSort() ? "cursor-pointer hover:bg-gray-100 transition-colors" : ""} border-b border-[#F3F4F6] shadow-[0_1px_0_0_#F3F4F6]`}
+                          style={styleWidth}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <div
+                            className={`flex items-center gap-1.5 ${header.id === "select" ? "justify-center" : ""}`}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                            {header.column.getCanSort() && (
+                              <span className="text-gray-400">
+                                {{
+                                  asc: (
+                                    <ArrowUp
+                                      size={14}
+                                      className="text-gray-700"
+                                    />
+                                  ),
+                                  desc: (
+                                    <ArrowDown
+                                      size={14}
+                                      className="text-gray-700"
+                                    />
+                                  ),
+                                }[header.column.getIsSorted() as string] ?? (
+                                  <ArrowUpDown
+                                    size={14}
+                                    className="opacity-50"
+                                  />
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={columns.length}
+                      className="px-4 py-8 text-center text-gray-500"
+                    >
+                      Loading credits...
+                    </td>
+                  </tr>
+                ) : table.getRowModel().rows.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={columns.length}
+                      className="px-4 py-8 text-center text-gray-500"
+                    >
+                      No credits found.
+                    </td>
+                  </tr>
+                ) : (
+                  table.getRowModel().rows.map((row) => {
+                    const isGroup = row.original.isGroup;
+                    return (
+                      <tr
+                        key={row.id}
+                        className={`border-b border-[#F3F4F6] transition-colors ${
+                          isGroup
+                            ? "bg-gray-50/80 hover:bg-gray-100"
+                            : row.getIsSelected()
+                              ? "bg-primary-main/5 hover:bg-primary-main/10"
+                              : "hover:bg-gray-50"
+                        }`}
+                        onClick={() => {
+                          if (!isGroup && row.getCanSelect()) {
+                            row.toggleSelected();
+                          }
+                        }}
+                      >
+                        {isGroup ? (
+                          <td
+                            colSpan={columns.length}
+                            className="px-4 py-2 border-b border-[#F3F4F6]"
+                          >
+                            {flexRender(
+                              row
+                                .getVisibleCells()
+                                .find((c) => c.column.id === "billedDate")
+                                ?.column.columnDef.cell,
+                              row
+                                .getVisibleCells()
+                                .find((c) => c.column.id === "billedDate")
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                ?.getContext() as any,
+                            )}
+                          </td>
+                        ) : (
+                          row.getVisibleCells().map((cell) => (
+                            <td
+                              key={cell.id}
+                              className={`px-4 py-3 text-sm ${!isGroup ? "cursor-pointer" : ""}`}
+                              onClick={(e) => {
+                                if (
+                                  cell.column.id === "select" ||
+                                  cell.column.id === "actions"
+                                ) {
+                                  e.stopPropagation();
+                                }
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))
+                        )}
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

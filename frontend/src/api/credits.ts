@@ -19,7 +19,15 @@ export const CreditsAPI = {
     const res = await axiosClient.put(API_ROUTES.CREDITS.UPDATE(id), payload);
     return res.data.data;
   },
-  delete: async (id: number): Promise<void> => {
-    await axiosClient.delete(API_ROUTES.CREDITS.DELETE(id));
+  updateStatusBatch: async (
+    ids: number[],
+    paidStatus: boolean,
+  ): Promise<void> => {
+    await axiosClient.patch(
+      API_ROUTES.CREDITS.UPDATE_STATUS_BATCH(paidStatus),
+      {
+        ids,
+      },
+    );
   },
 };

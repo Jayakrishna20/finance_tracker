@@ -1,0 +1,135 @@
+
+> trackmint@0.0.0 lint
+> eslint .
+
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\analytics\components\PeriodAnalytics.tsx
+  119:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\analytics\components\VaultPivotTable.tsx
+  26:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\analytics\hooks\usePeriodAnalytics.ts
+  40:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\credits\components\CreditLogsGrid.tsx
+  119:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  120:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  159:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  177:28  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  375:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\credits\components\CreditLogsGrid.tsx:375:17
+  373 |   );
+  374 |
+> 375 |   const table = useReactTable({
+      |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  376 |     data: groupedRows,
+  377 |     columns,
+  378 |     state: {  react-hooks/incompatible-library
+  541:51  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\global-modal\TransactionModal.tsx
+  47:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\global-modal\TransactionModal.tsx:47:7
+  45 |     if (isOpen) {
+  46 |       fetchCategories();
+> 47 |       setErrors({});
+     |       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  48 |       if (editingTransaction) {
+  49 |         setDate(new Date(editingTransaction.date));
+  50 |         setCategoryId(editingTransaction.categoryId || null);  react-hooks/set-state-in-effect
+  60:6  warning  React Hook useEffect has a missing dependency: 'fetchCategories'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/exhaustive-deps
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\settings\CategorySettingsPage.tsx
+  70:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  99:14  error  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\transactions\components\DailyTransactionsGrid.tsx
+   37:5  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `openModal`, but the source dependencies were [categories]. Inferred different dependency than source.
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\transactions\components\DailyTransactionsGrid.tsx:37:5
+   35 |
+   36 |   const columns: GridColDef<Transaction>[] = useMemo(
+>  37 |     () => [
+      |     ^^^^^^^
+>  38 |       {
+      | ^^^^^^^
+>  39 |         field: "date",
+      ΓÇª
+      | ^^^^^^^
+> 132 |       },
+      | ^^^^^^^
+> 133 |     ],
+      | ^^^^^^ Could not preserve existing manual memoization
+  134 |     [categories],
+  135 |   );
+  136 |         react-hooks/preserve-manual-memoization
+   37:5  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `deleteTxMutation`, but the source dependencies were [categories]. Inferred different dependency than source.
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\transactions\components\DailyTransactionsGrid.tsx:37:5
+   35 |
+   36 |   const columns: GridColDef<Transaction>[] = useMemo(
+>  37 |     () => [
+      |     ^^^^^^^
+>  38 |       {
+      | ^^^^^^^
+>  39 |         field: "date",
+      ΓÇª
+      | ^^^^^^^
+> 132 |       },
+      | ^^^^^^^
+> 133 |     ],
+      | ^^^^^^ Could not preserve existing manual memoization
+  134 |     [categories],
+  135 |   );
+  136 |  react-hooks/preserve-manual-memoization
+   37:5  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `openConfirm`, but the source dependencies were [categories]. Inferred different dependency than source.
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\features\transactions\components\DailyTransactionsGrid.tsx:37:5
+   35 |
+   36 |   const columns: GridColDef<Transaction>[] = useMemo(
+>  37 |     () => [
+      |     ^^^^^^^
+>  38 |       {
+      | ^^^^^^^
+>  39 |         field: "date",
+      ΓÇª
+      | ^^^^^^^
+> 132 |       },
+      | ^^^^^^^
+> 133 |     ],
+      | ^^^^^^ Could not preserve existing manual memoization
+  134 |     [categories],
+  135 |   );
+  136 |       react-hooks/preserve-manual-memoization
+  134:5  warning  React Hook useMemo has missing dependencies: 'deleteTxMutation', 'openConfirm', and 'openModal'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\store\useCategoryStore.ts
+  67:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\jayak\Documents\finance_tracker\frontend\src\store\useModalStore.ts
+   6:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 24 problems (21 errors, 3 warnings)
+

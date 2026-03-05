@@ -30,5 +30,7 @@ export const API_ROUTES = {
     CREATE: "/credits",
     UPDATE: (id: number) => `/credits/${id}`,
     DELETE: (id: number) => `/credits/${id}`,
+    UPDATE_STATUS_BATCH: (paidStatus: boolean) =>
+      `/credits/status/${paidStatus}`,
   },
 } as const;
