@@ -5,6 +5,8 @@ import {
   CreateCreditSchema,
   UpdateCreditSchema,
   CreditParamsSchema,
+  UpdateCreditStatusParamsSchema,
+  UpdateCreditStatusBodySchema,
 } from "./credit.schema.js";
 
 const creditRoutes: FastifyPluginAsyncZod = async (fastify) => {
@@ -69,6 +71,19 @@ const creditRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     creditController.deleteCredit,
+  );
+
+  fastify.patch(
+    "/status/:paidStatus",
+    {
+      schema: {
+        params: UpdateCreditStatusParamsSchema,
+        body: UpdateCreditStatusBodySchema,
+        tags: ["Credits"],
+        summary: "Batch update the paid status of multiple credits",
+      },
+    },
+    creditController.updateCreditStatus,
   );
 };
 

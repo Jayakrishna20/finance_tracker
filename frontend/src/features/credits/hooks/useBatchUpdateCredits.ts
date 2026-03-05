@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreditsAPI } from "../../../api/credits";
-import type { UpdateCreditPayload } from "../../../types";
 
 export const useBatchUpdateCredits = () => {
   const queryClient = useQueryClient();
@@ -8,13 +7,12 @@ export const useBatchUpdateCredits = () => {
   return useMutation({
     mutationFn: async ({
       ids,
-      payload,
+      paidStatus,
     }: {
       ids: number[];
-      payload: UpdateCreditPayload;
+      paidStatus: boolean;
     }) => {
-      const promises = ids.map((id) => CreditsAPI.update(id, payload));
-      await Promise.all(promises);
+      await CreditsAPI.updateStatusBatch(ids, paidStatus);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["credits"] });

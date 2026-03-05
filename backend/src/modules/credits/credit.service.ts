@@ -47,6 +47,17 @@ export class CreditService {
     });
   }
 
+  async updateCreditStatus(creditIds: bigint[], paidStatus: boolean) {
+    return this.prisma.credits.updateMany({
+      where: {
+        creditId: {
+          in: creditIds,
+        },
+      },
+      data: { paidStatus },
+    });
+  }
+
   async deleteCredit(creditId: bigint) {
     return this.prisma.credits.delete({
       where: { creditId },

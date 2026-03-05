@@ -1,6 +1,11 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { CreditService } from "./credit.service.js";
-import { CreateCreditInput, UpdateCreditInput } from "./credit.schema.js";
+import {
+  CreateCreditInput,
+  UpdateCreditInput,
+  UpdateCreditStatusParamsInput, // Import new params input
+  UpdateCreditStatusBodyInput,
+} from "./credit.schema.js";
 import { successResponse } from "../../utils/responseBuilder.js";
 
 export class CreditController {
@@ -45,6 +50,23 @@ export class CreditController {
     const { id } = request.params;
     await this.creditService.updateCredit(id, request.body);
     return reply.send(successResponse("Credit updated successfully"));
+  };
+
+  updateCreditStatus = async (
+    request: FastifyRequest<{
+      Params: UpdateCreditStatusParamsInput;
+      Body: UpdateCreditStatusBodyInput;
+    }>,
+    reply: FastifyReply,
+  ) => {
+    const { paidStatus } = request.params;
+    const { ids } = request.body;
+
+    // Convert incoming numeric IDs to BigInt for Prisma
+    const bigIntIds = ids.map((id) => BigInt(id));
+
+    await this.creditService.updateCreditStatus(bigIntIds, paidStatus);
+    return reply.send(successResponse("Credit status updated successfully"));
   };
 
   deleteCredit = async (
