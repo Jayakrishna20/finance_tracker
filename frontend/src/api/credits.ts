@@ -30,4 +30,7 @@ export const CreditsAPI = {
       },
     );
   },
+  delete: async (id: number): Promise<void> => {
+    await axiosClient.delete(API_ROUTES.CREDITS.DELETE(id));
+  },
 };
