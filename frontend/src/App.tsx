@@ -6,14 +6,13 @@ import positivusTheme from "./config/theme";
 
 import { AnalyticsContainer } from "./features/analytics/components/AnalyticsContainer";
 import { ArchiveView } from "./features/analytics/components/ArchiveView";
+import { CreditLogsGrid } from "./features/credits/components/CreditLogsGrid";
 import { CategorySettingsPage } from "./features/settings/CategorySettingsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
 import { DailyTransactionsGrid } from "./features/transactions/components/DailyTransactionsGrid";
-import { CreditLogsGrid } from "./features/credits/components/CreditLogsGrid";
 
 import { Toaster } from "react-hot-toast";
 import { COLORS } from "./config/constants";
-import { TransactionTypes } from "./types";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -53,12 +52,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route
-                index
-                element={
-                  <DailyTransactionsGrid type={TransactionTypes.Normal} />
-                }
-              />
+              <Route index element={<DailyTransactionsGrid />} />
               <Route path="credit" element={<CreditLogsGrid />} />
               <Route path="analytics" element={<AnalyticsContainer />} />
               <Route path="archive" element={<ArchiveView />} />

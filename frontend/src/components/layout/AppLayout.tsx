@@ -2,7 +2,8 @@ import React from "react";
 import { Sidebar } from "./Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 
-import { TransactionModal } from "../../features/global-modal/TransactionModal";
+import { TransactionModal } from "../../features/transactions/components/TransactionModal";
+import { CreditModal } from "../../features/credits/components/CreditModal";
 import { GlobalConfirmModal } from "../../features/global-modal/GlobalConfirmModal";
 import { useSidebarStore } from "../../store/useSidebarStore";
 
@@ -48,6 +49,7 @@ export const AppLayout: React.FC = () => {
         </div>
 
         <TransactionModal />
+        <CreditModal />
         <GlobalConfirmModal />
       </main>
     </div>

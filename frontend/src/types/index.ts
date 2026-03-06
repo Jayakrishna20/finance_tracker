@@ -60,6 +60,7 @@ export interface Credit {
   billedDate: string;
   lastPaymentDate: string;
   paidStatus: boolean;
+  paymentDate: string;
 }
 
 export type CreateCreditPayload = {
@@ -68,6 +69,8 @@ export type CreateCreditPayload = {
   billedDate: string;
   lastPaymentDate: string;
   paidStatus: boolean;
+  paymentDate: string;
+  amount: number;
 };
 
 export type UpdateCreditPayload = Partial<CreateCreditPayload>;

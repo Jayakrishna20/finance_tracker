@@ -6,7 +6,6 @@ import {
   DialogTitle,
   FormControl,
   FormHelperText,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -16,21 +15,19 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format, getISOWeek } from "date-fns";
-import { X } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useModalStore } from "../../store/useModalStore";
-
-import { useCategoryStore } from "../../store/useCategoryStore";
-import type { CreateTransactionPayload } from "../../types";
-import { useCreateTransaction } from "../transactions/hooks/useCreateTransaction.ts";
-import { useUpdateTransaction } from "../transactions/hooks/useUpdateTransaction.ts";
+import { useTransactionModalStore } from "../store/useTransactionModalStore";
+import { useCategoryStore } from "../../../store/useCategoryStore";
+import { useCreateTransaction } from "../hooks/useCreateTransaction";
+import { useUpdateTransaction } from "../hooks/useUpdateTransaction";
+import { useEffect, useState } from "react";
+import {
+  TransactionTypes,
+  type CreateTransactionPayload,
+} from "../../../types";
 
 export const TransactionModal: React.FC = () => {
-  const { isOpen, closeModal, editingTransaction, transactionType } =
-    useModalStore();
+  const { isOpen, closeModal, editingTransaction } = useTransactionModalStore();
   const { categories, fetchCategories } = useCategoryStore();
-
-  const activeType = transactionType;
 
   const createTxMutation = useCreateTransaction();
   const updateTxMutation = useUpdateTransaction();
@@ -80,7 +77,7 @@ export const TransactionModal: React.FC = () => {
     if (!validate()) return;
 
     const payload: CreateTransactionPayload = {
-      type: activeType,
+      type: TransactionTypes.Normal,
       date: date!.toISOString(),
       amount: Math.round(Number(amount)),
       categoryId: categoryId as number,
@@ -119,9 +116,6 @@ export const TransactionModal: React.FC = () => {
         <DialogTitle className="!p-0 !text-xl !font-bold">
           {editingTransaction ? "Edit Transaction" : "Add Transaction"}
         </DialogTitle>
-        <IconButton onClick={handleClose} size="small">
-          <X size={20} />
-        </IconButton>
       </div>
 
       <form onSubmit={onSubmit}>

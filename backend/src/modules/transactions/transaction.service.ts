@@ -21,20 +21,9 @@ export class TransactionService {
   }
 
   async getTransactions(query: TransactionQueryInput) {
-    const { categoryTypeId, skip, take } = query;
+    const { skip, take } = query;
 
     let where: Prisma.TransactionViewWhereInput | undefined = undefined;
-
-    if (categoryTypeId) {
-      const categoryType = await this.prisma.categoryTypes.findUnique({
-        where: { categoryTypeId },
-      });
-      if (categoryType) {
-        where = {
-          categoryTypeName: categoryType.categoryTypeName,
-        };
-      }
-    }
 
     const [total, data] = await Promise.all([
       this.prisma.transactionView.count({ where }),

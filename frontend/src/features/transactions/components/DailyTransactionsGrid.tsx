@@ -1,43 +1,41 @@
-import React, { useMemo, useState } from "react";
+import { Button } from "@mui/material";
 import {
-  useReactTable,
-  getCoreRowModel,
   flexRender,
+  getCoreRowModel,
+  useReactTable,
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { Button } from "@mui/material";
-import {
-  Edit2,
-  Trash2,
-  Plus,
-  ArrowUp,
-  ArrowDown,
-  ArrowUpDown,
-} from "lucide-react";
 import { format, getISOWeek } from "date-fns";
-import { useTransactions } from "../hooks/useTransactions";
-import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
 import {
-  TransactionTypes,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Edit2,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { useConfirmStore } from "../../../store/useConfirmStore";
+import {
   type DailyTransactionsGridProps,
   type Transaction,
 } from "../../../types";
-import { useModalStore } from "../../../store/useModalStore";
-import { useConfirmStore } from "../../../store/useConfirmStore";
 import { formatCurrency } from "../../../utils/formatters";
+import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
+import { useTransactions } from "../hooks/useTransactions";
+import { useTransactionModalStore } from "../store/useTransactionModalStore";
 
-export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
-  type = TransactionTypes.Normal,
-}) => {
+export const DailyTransactionsGrid: React.FC<
+  DailyTransactionsGridProps
+> = ({}) => {
   const { data: allTransactions = [], isLoading } = useTransactions({
     skip: 0,
     take: 10,
-    categoryTypeId: type,
   });
 
   const deleteTxMutation = useDeleteTransaction();
-  const { openModal } = useModalStore();
+  const { openModal } = useTransactionModalStore();
   const { openConfirm } = useConfirmStore();
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -182,7 +180,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  openModal(row.original, type);
+                  openModal(row.original);
                 }}
                 className="text-gray-500 hover:text-primary-main transition-colors p-1 rounded-md hover:bg-gray-100"
                 title="Edit"
@@ -211,7 +209,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
         },
       },
     ],
-    [openModal, openConfirm, deleteTxMutation, type],
+    [openModal, openConfirm, deleteTxMutation],
   );
 
   const table = useReactTable({
@@ -233,7 +231,7 @@ export const DailyTransactionsGrid: React.FC<DailyTransactionsGridProps> = ({
           <Button
             variant="contained"
             startIcon={<Plus size={18} />}
-            onClick={() => openModal(undefined, type)}
+            onClick={() => openModal()}
             sx={{
               borderRadius: "8px",
               textTransform: "none",

@@ -1,5 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import { CreateCreditInput, UpdateCreditInput } from "./credit.schema.js";
+import { Prisma, PrismaClient } from "@prisma/client";
+import {
+  CreateCreditInput,
+  CreditQueryInput,
+  UpdateCreditInput,
+} from "./credit.schema.js";
 
 export class CreditService {
   constructor(private prisma: PrismaClient) {}
@@ -10,19 +14,29 @@ export class CreditService {
     });
   }
 
-  async getAllCredits() {
-    return this.prisma.credits.findMany({
-      include: {
-        category: {
-          select: {
-            categoryId: true,
-            categoryName: true,
-            categoryColorCode: true,
-          },
-        },
+  async getAllCredits(query: CreditQueryInput) {
+    const { skip, take } = query;
+
+    let where: Prisma.CreditsWhereInput | undefined = undefined;
+
+    const [total, data] = await Promise.all([
+      this.prisma.credits.count({ where }),
+      this.prisma.credits.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take,
+      }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        skip,
+        take,
       },
-      orderBy: { createdAt: "desc" },
-    });
+    };
   }
 
   async getCreditById(creditId: bigint) {

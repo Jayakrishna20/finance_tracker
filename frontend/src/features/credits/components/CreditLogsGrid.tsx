@@ -22,19 +22,18 @@ import {
   ArrowDown,
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import { useConfirmStore } from "../../../store/useConfirmStore";
-import { useModalStore } from "../../../store/useModalStore";
+import { useCreditModalStore } from "../store/useCreditModalStore";
 import type { Credit } from "../../../types";
-import { TransactionTypes } from "../../../types";
 import { useBatchUpdateCredits } from "../hooks/useBatchUpdateCredits";
 import { useCredits } from "../hooks/useCredits";
 import { useDeleteCredit } from "../hooks/useDeleteCredit";
+import { useConfirmStore } from "../../../store/useConfirmStore";
 
 export const CreditLogsGrid: React.FC = () => {
-  const { data: credits = [], isLoading } = useCredits();
+  const { data: credits = [], isLoading } = useCredits({ skip: 0, take: 10 });
   const deleteCreditMutation = useDeleteCredit();
   const batchUpdateMutation = useBatchUpdateCredits();
-  const { openModal } = useModalStore();
+  const { openModal } = useCreditModalStore();
   const { openConfirm } = useConfirmStore();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -124,7 +123,11 @@ export const CreditLogsGrid: React.FC = () => {
         if (id === "category") {
           valA = a.category?.categoryName || "";
           valB = b.category?.categoryName || "";
-        } else if (id === "billedDate" || id === "lastPaymentDate") {
+        } else if (
+          id === "billedDate" ||
+          id === "lastPaymentDate" ||
+          id === "paymentDate"
+        ) {
           valA = valA ? new Date(valA).getTime() : 0;
           valB = valB ? new Date(valB).getTime() : 0;
         }
@@ -338,6 +341,21 @@ export const CreditLogsGrid: React.FC = () => {
         },
       },
       {
+        accessorKey: "paymentDate",
+        header: "Payment Date",
+        size: 130,
+        cell: (info) => {
+          if (info.row.original.isGroup) return null;
+          const value = info.getValue() as string;
+          if (!value) return <span className="text-gray-500">-</span>;
+          return (
+            <span className="text-gray-700">
+              {format(new Date(value), "dd/MM/yyyy")}
+            </span>
+          );
+        },
+      },
+      {
         accessorKey: "paidStatus",
         header: "Status",
         size: 120,
@@ -374,7 +392,7 @@ export const CreditLogsGrid: React.FC = () => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  openModal(row.original, TransactionTypes.Credit);
+                  openModal(row.original);
                 }}
                 className="text-gray-500 hover:text-primary-main transition-colors p-1 rounded-md hover:bg-gray-100"
                 title="Edit"
@@ -461,7 +479,7 @@ export const CreditLogsGrid: React.FC = () => {
           <Button
             variant="contained"
             startIcon={<Plus size={18} />}
-            onClick={() => openModal(undefined, TransactionTypes.Credit)}
+            onClick={() => openModal()}
             sx={{
               borderRadius: "8px",
               textTransform: "none",

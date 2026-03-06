@@ -18,7 +18,6 @@ export const TransactionParamsSchema = z.object({
 });
 
 export const TransactionQuerySchema = z.object({
-  categoryTypeId: z.coerce.bigint(),
   skip: z.coerce.number().min(0).default(0),
   take: z.coerce.number().min(1).max(100).default(10),
 });

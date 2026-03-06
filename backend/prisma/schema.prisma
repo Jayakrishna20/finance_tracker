@@ -1,11 +1,10 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views"]
+  previewFeatures = ["views", "driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
   // If using Supabase and PgBouncer, uncomment this:
   // directUrl = env("DIRECT_URL")
 }
@@ -55,6 +54,7 @@ model Credits {
   billedDate      DateTime
   lastPaymentDate DateTime
   paidStatus      Boolean
+  paymentDate     DateTime
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
