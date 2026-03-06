@@ -6,6 +6,7 @@ export const CreateCreditSchema = z.object({
   billedDate: z.coerce.date(),
   lastPaymentDate: z.coerce.date(),
   paidStatus: z.boolean(),
+  paymentDate: z.coerce.date(),
 });
 
 export const UpdateCreditSchema = CreateCreditSchema.partial();
@@ -21,7 +22,12 @@ export const UpdateCreditStatusParamsSchema = z.object({
 });
 
 export const UpdateCreditStatusBodySchema = z.object({
-  ids: z.array(z.number()),
+  ids: z.array(z.coerce.bigint()),
+});
+
+export const CreditQuerySchema = z.object({
+  skip: z.coerce.number().min(0).default(0),
+  take: z.coerce.number().min(1).max(100).default(10),
 });
 
 export type CreateCreditInput = z.infer<typeof CreateCreditSchema>;
@@ -32,3 +38,4 @@ export type UpdateCreditStatusParamsInput = z.infer<
 export type UpdateCreditStatusBodyInput = z.infer<
   typeof UpdateCreditStatusBodySchema
 >;
+export type CreditQueryInput = z.infer<typeof CreditQuerySchema>;

@@ -11,8 +11,13 @@ export const CreditsAPI = {
     const res = await axiosClient.post(API_ROUTES.CREDITS.CREATE, payload);
     return res.data.data;
   },
-  getAll: async (): Promise<Credit[]> => {
-    const res = await axiosClient.get(API_ROUTES.CREDITS.GET_ALL);
+  getAll: async (params?: {
+    skip?: number;
+    take?: number;
+  }): Promise<Credit[]> => {
+    const res = await axiosClient.get(API_ROUTES.CREDITS.GET_ALL, {
+      params,
+    });
     return res.data.data;
   },
   update: async (id: number, payload: UpdateCreditPayload): Promise<Credit> => {
