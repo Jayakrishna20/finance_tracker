@@ -15,8 +15,6 @@ const start = async () => {
       port: env.PORT,
       host: env.HOST,
     });
-
-    logger.info(`🚀 Server listening on http://${env.HOST}:${env.PORT}`);
   } catch (err) {
     logger.error(err);
     process.exit(1);

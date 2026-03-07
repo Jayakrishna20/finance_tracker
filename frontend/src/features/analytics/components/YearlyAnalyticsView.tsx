@@ -1,7 +1,7 @@
 import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
-import { useTransactions } from "../../transactions/hooks/useTransactions";
+import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
 
 export const YearlyAnalyticsView: React.FC = () => {
   const currentYear = format(new Date(), "yyyy");

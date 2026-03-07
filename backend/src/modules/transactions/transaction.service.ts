@@ -21,14 +21,12 @@ export class TransactionService {
   }
 
   async getTransactions(query: TransactionQueryInput) {
-    const { skip, take } = query;
-
-    let where: Prisma.TransactionViewWhereInput | undefined = undefined;
+    const skip = query.skip !== undefined ? Number(query.skip) : 0;
+    const take = query.take !== undefined ? Number(query.take) : 10;
 
     const [total, data] = await Promise.all([
-      this.prisma.transactionView.count({ where }),
+      this.prisma.transactionView.count(),
       this.prisma.transactionView.findMany({
-        where,
         orderBy: { date: "desc" },
         skip,
         take,
@@ -43,25 +41,6 @@ export class TransactionService {
         take,
       },
     };
-  }
-
-  async getTransactionById(transactionId: bigint) {
-    return this.prisma.transactions.findUnique({
-      where: { transactionId },
-      select: {
-        transactionId: true,
-        amount: true,
-        date: true,
-        description: true,
-        category: {
-          select: {
-            categoryId: true,
-            categoryName: true,
-            categoryColorCode: true,
-          },
-        },
-      },
-    });
   }
 
   async updateTransaction(transactionId: bigint, data: UpdateTransactionInput) {

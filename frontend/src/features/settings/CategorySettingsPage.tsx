@@ -42,14 +42,14 @@ export const CategorySettingsPage: React.FC = () => {
   const [newCat, setNewCat] = useState("");
   const [newCatColor, setNewCatColor] = useState(COLORS.DEFAULT_COLOR);
   const [newCatType, setNewCatType] = useState<TransactionType>(
-    TransactionTypes.Normal,
+    TransactionTypes.Cash,
   );
   const [editingCatId, setEditingCatId] = useState<number | null>(null);
   const [isFetchingDetail, setIsFetchingDetail] = useState(false);
   const [editValue, setEditValue] = useState("");
   const [editColor, setEditColor] = useState("");
   const [editType, setEditType] = useState<TransactionType>(
-    TransactionTypes.Normal,
+    TransactionTypes.Cash,
   );
 
   const handleAdd = () => {
@@ -70,7 +70,7 @@ export const CategorySettingsPage: React.FC = () => {
     } as any);
     setNewCat("");
     setNewCatColor(COLORS.DEFAULT_COLOR);
-    setNewCatType(TransactionTypes.Normal);
+    setNewCatType(TransactionTypes.Cash);
   };
 
   const handleDelete = (id: number, catName: string) => {
@@ -133,7 +133,7 @@ export const CategorySettingsPage: React.FC = () => {
     setEditingCatId(null);
     setEditValue("");
     setEditColor("");
-    setEditType(TransactionTypes.Normal);
+    setEditType(TransactionTypes.Cash);
   };
 
   return (

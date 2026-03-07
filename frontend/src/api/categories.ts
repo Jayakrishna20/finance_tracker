@@ -19,6 +19,12 @@ export const CategoriesAPI = {
     const res = await axiosClient.get(API_ROUTES.CATEGORIES.GET_BY_ID(id));
     return res.data.data;
   },
+  getByType: async (typeId: number): Promise<Category[]> => {
+    const res = await axiosClient.get(
+      API_ROUTES.CATEGORIES.GET_BY_TYPE(typeId),
+    );
+    return res.data.data;
+  },
   update: async (
     id: number,
     payload: UpdateCategoryPayload,

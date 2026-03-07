@@ -1,4 +1,5 @@
 DROP VIEW IF EXISTS "TransactionView";
+DROP VIEW IF EXISTS "CreditView";
 
 CREATE VIEW "TransactionView" AS
 SELECT
@@ -8,8 +9,21 @@ SELECT
   t."description",
   c."categoryId",
   c."categoryName",
-  c."categoryColorCode",
-  ct."categoryTypeName"
+  c."categoryColorCode"
 FROM "Transactions" t
 JOIN "Categories" c ON t."categoryId" = c."categoryId"
-JOIN "CategoryTypes" ct ON c."categoryType" = ct."categoryTypeId";
+
+CREATE VIEW "CreditView" AS
+SELECT
+  c."creditId",
+  c."amount",
+  c."billedDate",
+  c."lastPaymentDate",
+  c."paidStatus",
+  c."paymentDate",
+  c."description",
+  ct."categoryId",
+  ct."categoryName",
+  ct."categoryColorCode"
+FROM "Credits" c
+JOIN "Categories" ct ON c."categoryId" = ct."categoryId"

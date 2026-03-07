@@ -1,5 +1,5 @@
 export const TransactionTypes = {
-  Normal: 1,
+  Cash: 1,
   Credit: 2,
 } as const;
 
@@ -32,7 +32,7 @@ export interface Transaction {
   monthYear?: string;
 }
 
-export type CreateCategoryPayload = Omit<Category, "CategoryId">;
+export type CreateCategoryPayload = Omit<Category, "categoryId">;
 export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
 
 export type CreateTransactionPayload = {
@@ -52,11 +52,9 @@ export interface Credit {
   creditId: number;
   description: string;
   categoryId: number;
-  category?: {
-    categoryId: number;
-    categoryName: string;
-    categoryColorCode: string;
-  };
+  categoryName: string;
+  categoryColorCode: string;
+  amount: number;
   billedDate: string;
   lastPaymentDate: string;
   paidStatus: boolean;

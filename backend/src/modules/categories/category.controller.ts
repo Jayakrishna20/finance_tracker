@@ -23,6 +23,18 @@ export class CategoryController {
     );
   };
 
+  getCategoriesByType = async (
+    request: FastifyRequest<{ Params: { categoryTypeId: bigint } }>,
+    reply: FastifyReply,
+  ) => {
+    const { categoryTypeId } = request.params;
+    const categories =
+      await this.categoryService.getCategoriesByType(categoryTypeId);
+    return reply.send(
+      successResponse("Categories fetched successfully", categories),
+    );
+  };
+
   getCategoryById = async (
     request: FastifyRequest<{ Params: { id: bigint } }>,
     reply: FastifyReply,

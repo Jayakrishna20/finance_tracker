@@ -18,13 +18,13 @@ import { addMonths, setDate as setDateFn } from "date-fns";
 import { useEffect, useState } from "react";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import type { CreateCreditPayload } from "../../../types";
-import { useCreateCredit } from "../hooks/useCreateCredit";
-import { useUpdateCredit } from "../hooks/useUpdateCredit";
+import { useCreateCredit, useUpdateCredit } from "../hooks/useCreditHooks";
 import { useCreditModalStore } from "../store/useCreditModalStore";
+import { TransactionTypes } from "../../../types";
 
 export const CreditModal: React.FC = () => {
   const { isOpen, closeModal, editingCredit } = useCreditModalStore();
-  const { categories, fetchCategories } = useCategoryStore();
+  const { categories, fetchCategoriesByType } = useCategoryStore();
 
   const createCreditMutation = useCreateCredit();
   const updateCreditMutation = useUpdateCredit();
@@ -34,13 +34,13 @@ export const CreditModal: React.FC = () => {
   const [lastPaymentDate, setLastPaymentDate] = useState<Date | null>(null);
 
   const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<number | "">("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isOpen) {
-      fetchCategories();
+      fetchCategoriesByType(TransactionTypes.Credit, true);
       setErrors({});
       if (editingCredit) {
         setPaymentDate(
@@ -64,22 +64,20 @@ export const CreditModal: React.FC = () => {
         setBilledDate(null);
         setLastPaymentDate(null);
         setCategoryId(null);
-        setAmount(0);
+        setAmount("");
         setDescription("");
       }
     }
-  }, [isOpen, editingCredit, fetchCategories]);
+  }, [isOpen, editingCredit, fetchCategoriesByType]);
 
   const handlePaymentDateChange = (newDate: Date | null) => {
     setPaymentDate(newDate);
 
     if (newDate) {
-      // Billed date is the 15th of the next month
       const nextMonth = addMonths(newDate, 1);
       const newBilledDate = setDateFn(nextMonth, 15);
       setBilledDate(newBilledDate);
 
-      // Last payment date is the 4th of the month after billed Date
       const monthAfterBilled = addMonths(newBilledDate, 1);
       const newLastPaymentDate = setDateFn(monthAfterBilled, 4);
       setLastPaymentDate(newLastPaymentDate);
@@ -138,7 +136,6 @@ export const CreditModal: React.FC = () => {
     }
   };
 
-  // Restrict date selection to only the 15th of any month
   const disableDatesOtherThan15th = (date: Date) => {
     return date.getDate() !== 15;
   };
@@ -149,8 +146,10 @@ export const CreditModal: React.FC = () => {
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: "16px", overflow: "visible" },
+      slotProps={{
+        paper: {
+          sx: { borderRadius: "16px", overflow: "visible" },
+        },
       }}
     >
       <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
@@ -164,10 +163,9 @@ export const CreditModal: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Payment Date (15th only)"
+                label="Payment Date"
                 value={paymentDate}
                 onChange={handlePaymentDateChange}
-                shouldDisableDate={disableDatesOtherThan15th}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -181,7 +179,7 @@ export const CreditModal: React.FC = () => {
               <DatePicker
                 label="Billed Date"
                 value={billedDate}
-                disabled
+                shouldDisableDate={disableDatesOtherThan15th}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -194,7 +192,6 @@ export const CreditModal: React.FC = () => {
               <DatePicker
                 label="Last Payment Date"
                 value={lastPaymentDate}
-                disabled
                 slotProps={{
                   textField: {
                     fullWidth: true,
