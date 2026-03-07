@@ -14,5 +14,9 @@ export const CategoryParamsSchema = z.object({
   id: z.coerce.bigint({ message: "Invalid category ID" }),
 });
 
+export const CategoryTypeParamsSchema = z.object({
+  categoryTypeId: z.coerce.bigint({ message: "Invalid category type ID" }),
+});
+
 export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>;
 export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>;

@@ -20,10 +20,11 @@ import { useCategoryStore } from "../../../store/useCategoryStore";
 import type { CreateCreditPayload } from "../../../types";
 import { useCreateCredit, useUpdateCredit } from "../hooks/useCreditHooks";
 import { useCreditModalStore } from "../store/useCreditModalStore";
+import { TransactionTypes } from "../../../types";
 
 export const CreditModal: React.FC = () => {
   const { isOpen, closeModal, editingCredit } = useCreditModalStore();
-  const { categories, fetchCategories } = useCategoryStore();
+  const { categories, fetchCategoriesByType } = useCategoryStore();
 
   const createCreditMutation = useCreateCredit();
   const updateCreditMutation = useUpdateCredit();
@@ -33,13 +34,13 @@ export const CreditModal: React.FC = () => {
   const [lastPaymentDate, setLastPaymentDate] = useState<Date | null>(null);
 
   const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<number | "">("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isOpen) {
-      fetchCategories();
+      fetchCategoriesByType(TransactionTypes.Credit, true);
       setErrors({});
       if (editingCredit) {
         setPaymentDate(
@@ -63,11 +64,11 @@ export const CreditModal: React.FC = () => {
         setBilledDate(null);
         setLastPaymentDate(null);
         setCategoryId(null);
-        setAmount(0);
+        setAmount("");
         setDescription("");
       }
     }
-  }, [isOpen, editingCredit, fetchCategories]);
+  }, [isOpen, editingCredit, fetchCategoriesByType]);
 
   const handlePaymentDateChange = (newDate: Date | null) => {
     setPaymentDate(newDate);

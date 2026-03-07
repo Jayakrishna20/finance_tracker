@@ -10,7 +10,6 @@ import { useCategoryStore } from "../../../store/useCategoryStore";
 export const useTransactions = (params?: { skip?: number; take?: number }) => {
   return useQuery<Transaction[], Error>({
     queryKey: ["transactions", params],
-    // Extract array if backend paginates with meta wrapper
     queryFn: async () => {
       const result: any = await TransactionsAPI.getAll(params);
       return result.data || result;

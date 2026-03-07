@@ -8,6 +8,7 @@ interface CategoryState {
   isLoading: boolean;
   error: Error | null;
   fetchCategories: (force?: boolean) => Promise<void>;
+  fetchCategoriesByType: (typeId: number, force?: boolean) => Promise<void>;
   fetchCategoryTypes: () => Promise<void>;
   addCategory: (payload: CreateCategoryPayload) => Promise<void>;
   removeCategory: (id: number) => Promise<void>;
@@ -41,6 +42,17 @@ export const useCategoryStore = create<CategoryState>((set, get) => ({
       set({ categories, isLoading: false, error: null });
     } catch (error) {
       console.error("Failed to fetch categories", error);
+      set({ error: error as Error, isLoading: false });
+    }
+  },
+  fetchCategoriesByType: async (typeId, force = false) => {
+    if (!force && (get().isLoading || get().categories.length > 0)) return;
+    set({ isLoading: true });
+    try {
+      const categories = await CategoriesAPI.getByType(typeId);
+      set({ categories, isLoading: false, error: null });
+    } catch (error) {
+      console.error(`Failed to fetch categories for type ${typeId}`, error);
       set({ error: error as Error, isLoading: false });
     }
   },

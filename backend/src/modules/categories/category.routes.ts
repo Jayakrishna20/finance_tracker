@@ -5,6 +5,7 @@ import {
   CreateCategorySchema,
   UpdateCategorySchema,
   CategoryParamsSchema,
+  CategoryTypeParamsSchema,
 } from "./category.schema.js";
 
 const categoryRoutes: FastifyPluginAsyncZod = async (fastify) => {
@@ -44,6 +45,18 @@ const categoryRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     categoryController.getCategoryById,
+  );
+
+  fastify.get(
+    "/type/:categoryTypeId",
+    {
+      schema: {
+        params: CategoryTypeParamsSchema,
+        tags: ["Categories"],
+        summary: "Get categories by type ID",
+      },
+    },
+    categoryController.getCategoriesByType,
   );
 
   fastify.put(

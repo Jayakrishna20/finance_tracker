@@ -49,9 +49,7 @@ export const DailyTransactionsGrid: React.FC<
     if (sorting.length > 0) {
       const { id, desc } = sorting[0];
       sorted.sort((a, b) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let valA: any = a[id as keyof Transaction];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let valB: any = b[id as keyof Transaction];
 
         if (id === "dayName") {
@@ -67,7 +65,6 @@ export const DailyTransactionsGrid: React.FC<
           valA = getISOWeek(new Date(a.date));
           valB = getISOWeek(new Date(b.date));
         } else if (id === "monthYear") {
-          // Just use date timestamp for correct chronological sorting
           valA = new Date(a.date).getTime();
           valB = new Date(b.date).getTime();
         }

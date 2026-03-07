@@ -29,20 +29,20 @@ import {
 
 export const TransactionModal: React.FC = () => {
   const { isOpen, closeModal, editingTransaction } = useTransactionModalStore();
-  const { categories, fetchCategories } = useCategoryStore();
+  const { categories, fetchCategoriesByType } = useCategoryStore();
 
   const createTxMutation = useCreateTransaction();
   const updateTxMutation = useUpdateTransaction();
 
   const [date, setDate] = useState<Date | null>(new Date());
   const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<number | "">("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isOpen) {
-      fetchCategories();
+      fetchCategoriesByType(TransactionTypes.Cash, true);
       setErrors({});
       if (editingTransaction) {
         setDate(new Date(editingTransaction.date));
@@ -52,7 +52,7 @@ export const TransactionModal: React.FC = () => {
       } else {
         setDate(new Date());
         setCategoryId(null);
-        setAmount(0);
+        setAmount("");
         setDescription("");
       }
     }
@@ -79,7 +79,7 @@ export const TransactionModal: React.FC = () => {
     if (!validate()) return;
 
     const payload: CreateTransactionPayload = {
-      type: TransactionTypes.Normal,
+      type: TransactionTypes.Cash,
       date: date!.toISOString(),
       amount: Math.round(Number(amount)),
       categoryId: categoryId as number,
@@ -142,7 +142,7 @@ export const TransactionModal: React.FC = () => {
             <FormControl fullWidth error={!!errors.categoryId}>
               <InputLabel id="category-select-label">Category</InputLabel>
               <Select
-                value={categoryId}
+                value={categoryId || ""}
                 onChange={(e) => setCategoryId(e.target.value as number)}
                 labelId="category-select-label"
                 label="Category"

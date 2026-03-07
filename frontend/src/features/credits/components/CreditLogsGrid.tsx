@@ -32,10 +32,8 @@ import {
 import { useConfirmStore } from "../../../store/useConfirmStore";
 import { formatCurrency } from "../../../utils/formatters";
 
-const EMPTY_CREDITS: Credit[] = [];
 export const CreditLogsGrid: React.FC = () => {
-  const { data: creditsData, isLoading } = useCredits({ skip: 0, take: 10 });
-  const credits = creditsData || EMPTY_CREDITS;
+  const { data: credits = [], isLoading } = useCredits({ skip: 0, take: 10 });
   const deleteCreditMutation = useDeleteCredit();
   const batchUpdateMutation = useBatchUpdateCredits();
   const { openModal } = useCreditModalStore();
@@ -43,7 +41,7 @@ export const CreditLogsGrid: React.FC = () => {
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "billedDate", desc: true },
+    { id: "paymentDate", desc: true },
   ]);
 
   const [buttonAction, setButtonAction] = useState<
@@ -124,9 +122,7 @@ export const CreditLogsGrid: React.FC = () => {
     if (sorting.length > 0) {
       const { id, desc } = sorting[0];
       sorted.sort((a, b) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let valA: any = a[id as keyof Credit];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let valB: any = b[id as keyof Credit];
 
         if (id === "categoryName") {
@@ -170,7 +166,6 @@ export const CreditLogsGrid: React.FC = () => {
       groups[monthKey].push(credit);
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any[] = [];
 
     groupOrder.forEach((month) => {
@@ -194,7 +189,6 @@ export const CreditLogsGrid: React.FC = () => {
     return result;
   }, [sortedCredits, expandedGroups]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: ColumnDef<any>[] = useMemo(
     () => [
       {
@@ -282,10 +276,9 @@ export const CreditLogsGrid: React.FC = () => {
         size: 130,
         cell: (info) => {
           if (info.row.original.isGroup) {
-            // Calculate total amount for the group
             const items = info.row.original.items || [];
             if (items.length === 0) return null;
-            return null; // Don't show total at group level for now to keep it clean
+            return null;
           }
           const val = info.getValue() as number;
           return (

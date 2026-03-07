@@ -21,6 +21,7 @@ export const API_ROUTES = {
   CATEGORIES: {
     GET_ALL: "/categories",
     GET_BY_ID: (id: number) => `/categories/${id}`,
+    GET_BY_TYPE: (typeId: number) => `/categories/type/${typeId}`,
     CREATE: "/categories",
     UPDATE: (id: number) => `/categories/${id}`,
     DELETE: (id: number) => `/categories/${id}`,
