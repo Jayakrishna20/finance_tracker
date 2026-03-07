@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import {
   CreateCreditInput,
   CreditQueryInput,
@@ -15,15 +15,13 @@ export class CreditService {
   }
 
   async getAllCredits(query: CreditQueryInput) {
-    const { skip, take } = query;
-
-    let where: Prisma.CreditsWhereInput | undefined = undefined;
+    const skip = query.skip !== undefined ? Number(query.skip) : 0;
+    const take = query.take !== undefined ? Number(query.take) : 10;
 
     const [total, data] = await Promise.all([
-      this.prisma.credits.count({ where }),
-      this.prisma.credits.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
+      this.prisma.creditView.count(),
+      this.prisma.creditView.findMany({
+        orderBy: { paymentDate: "desc" },
         skip,
         take,
       }),

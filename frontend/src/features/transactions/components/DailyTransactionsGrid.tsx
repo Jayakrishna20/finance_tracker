@@ -22,8 +22,10 @@ import {
   type Transaction,
 } from "../../../types";
 import { formatCurrency } from "../../../utils/formatters";
-import { useDeleteTransaction } from "../hooks/useDeleteTransaction";
-import { useTransactions } from "../hooks/useTransactions";
+import {
+  useDeleteTransaction,
+  useTransactions,
+} from "../hooks/useTransactionHooks";
 import { useTransactionModalStore } from "../store/useTransactionModalStore";
 
 export const DailyTransactionsGrid: React.FC<

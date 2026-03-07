@@ -1,7 +1,7 @@
 import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
-import { useTransactions } from "../../transactions/hooks/useTransactions";
+import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
 
 export const MonthlyAnalyticsView: React.FC = () => {
   const currentMonth = format(new Date(), "MMM-yyyy");

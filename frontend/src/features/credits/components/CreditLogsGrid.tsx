@@ -24,13 +24,18 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { useCreditModalStore } from "../store/useCreditModalStore";
 import type { Credit } from "../../../types";
-import { useBatchUpdateCredits } from "../hooks/useBatchUpdateCredits";
-import { useCredits } from "../hooks/useCredits";
-import { useDeleteCredit } from "../hooks/useDeleteCredit";
+import {
+  useBatchUpdateCredits,
+  useCredits,
+  useDeleteCredit,
+} from "../hooks/useCreditHooks";
 import { useConfirmStore } from "../../../store/useConfirmStore";
+import { formatCurrency } from "../../../utils/formatters";
 
+const EMPTY_CREDITS: Credit[] = [];
 export const CreditLogsGrid: React.FC = () => {
-  const { data: credits = [], isLoading } = useCredits({ skip: 0, take: 10 });
+  const { data: creditsData, isLoading } = useCredits({ skip: 0, take: 10 });
+  const credits = creditsData || EMPTY_CREDITS;
   const deleteCreditMutation = useDeleteCredit();
   const batchUpdateMutation = useBatchUpdateCredits();
   const { openModal } = useCreditModalStore();
@@ -52,12 +57,16 @@ export const CreditLogsGrid: React.FC = () => {
 
   useEffect(() => {
     const selectedIds = Object.keys(rowSelection);
-    const selectedCredits = credits.filter((c) =>
+    const selectedCredits = credits.filter((c: Credit) =>
       selectedIds.includes(c.creditId.toString()),
     );
 
-    const paidCount = selectedCredits.filter((c) => c.paidStatus).length;
-    const unpaidCount = selectedCredits.filter((c) => !c.paidStatus).length;
+    const paidCount = selectedCredits.filter(
+      (c: Credit) => c.paidStatus,
+    ).length;
+    const unpaidCount = selectedCredits.filter(
+      (c: Credit) => !c.paidStatus,
+    ).length;
 
     let action: "markPaid" | "markUnpaid" | null = null;
     let label = "";
@@ -120,9 +129,9 @@ export const CreditLogsGrid: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let valB: any = b[id as keyof Credit];
 
-        if (id === "category") {
-          valA = a.category?.categoryName || "";
-          valB = b.category?.categoryName || "";
+        if (id === "categoryName") {
+          valA = a.categoryName || "";
+          valB = b.categoryName || "";
         } else if (
           id === "billedDate" ||
           id === "lastPaymentDate" ||
@@ -249,14 +258,13 @@ export const CreditLogsGrid: React.FC = () => {
         },
       },
       {
-        accessorKey: "category",
+        accessorKey: "categoryName",
         header: "Category",
         size: 140,
         cell: (info) => {
           if (info.row.original.isGroup) return null;
-          const category = info.getValue() as Credit["category"];
-          const categoryName = category?.categoryName || "Unknown";
-          const matchedColor = category?.categoryColorCode || "#ccc";
+          const categoryName = (info.getValue() as string) || "Unknown";
+          const matchedColor = info.row.original.categoryColorCode || "#ccc";
           return (
             <div className="flex items-center gap-2 h-full">
               <div
@@ -265,6 +273,25 @@ export const CreditLogsGrid: React.FC = () => {
               />
               <span className="truncate">{categoryName}</span>
             </div>
+          );
+        },
+      },
+      {
+        accessorKey: "amount",
+        header: "Amount",
+        size: 130,
+        cell: (info) => {
+          if (info.row.original.isGroup) {
+            // Calculate total amount for the group
+            const items = info.row.original.items || [];
+            if (items.length === 0) return null;
+            return null; // Don't show total at group level for now to keep it clean
+          }
+          const val = info.getValue() as number;
+          return (
+            <span className="text-gray-900 font-medium">
+              {formatCurrency(val || 0)}
+            </span>
           );
         },
       },

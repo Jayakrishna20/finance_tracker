@@ -17,8 +17,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format, getISOWeek } from "date-fns";
 import { useTransactionModalStore } from "../store/useTransactionModalStore";
 import { useCategoryStore } from "../../../store/useCategoryStore";
-import { useCreateTransaction } from "../hooks/useCreateTransaction";
-import { useUpdateTransaction } from "../hooks/useUpdateTransaction";
+import {
+  useCreateTransaction,
+  useUpdateTransaction,
+} from "../hooks/useTransactionHooks";
 import { useEffect, useState } from "react";
 import {
   TransactionTypes,

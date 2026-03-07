@@ -52,11 +52,9 @@ export interface Credit {
   creditId: number;
   description: string;
   categoryId: number;
-  category?: {
-    categoryId: number;
-    categoryName: string;
-    categoryColorCode: string;
-  };
+  categoryName: string;
+  categoryColorCode: string;
+  amount: number;
   billedDate: string;
   lastPaymentDate: string;
   paidStatus: boolean;

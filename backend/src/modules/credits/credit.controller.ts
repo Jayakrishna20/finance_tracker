@@ -1,12 +1,13 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import { CreditService } from "./credit.service.js";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { successResponse } from "../../utils/responseBuilder.js";
 import {
   CreateCreditInput,
-  UpdateCreditInput,
-  UpdateCreditStatusParamsInput, // Import new params input
+  CreditQueryInput,
+  UpdateCreditInput, // Import new params input
   UpdateCreditStatusBodyInput,
+  UpdateCreditStatusParamsInput, // Import new params input
 } from "./credit.schema.js";
-import { successResponse } from "../../utils/responseBuilder.js";
+import { CreditService } from "./credit.service.js";
 
 export class CreditController {
   constructor(private creditService: CreditService) {}
@@ -21,9 +22,16 @@ export class CreditController {
       .send(successResponse("Credit created successfully"));
   };
 
-  getAllCredits = async (request: FastifyRequest, reply: FastifyReply) => {
-    const credits = await this.creditService.getAllCredits();
-    return reply.send(successResponse("Credits fetched successfully", credits));
+  getAllCredits = async (
+    request: FastifyRequest<{ Querystring: CreditQueryInput }>,
+    reply: FastifyReply,
+  ) => {
+    const { data, meta } = await this.creditService.getAllCredits(
+      request.query,
+    );
+    return reply.send(
+      successResponse("Credits fetched successfully", data, meta),
+    );
   };
 
   getCreditById = async (
@@ -62,7 +70,6 @@ export class CreditController {
     const { paidStatus } = request.params;
     const { ids } = request.body;
 
-    // Convert incoming numeric IDs to BigInt for Prisma
     const bigIntIds = ids.map((id) => BigInt(id));
 
     await this.creditService.updateCreditStatus(bigIntIds, paidStatus);

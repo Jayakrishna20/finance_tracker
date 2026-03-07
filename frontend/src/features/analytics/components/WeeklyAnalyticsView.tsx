@@ -1,7 +1,7 @@
 import React from "react";
 import { getISOWeek } from "date-fns";
 import { PeriodAnalytics } from "./PeriodAnalytics";
-import { useTransactions } from "../../transactions/hooks/useTransactions";
+import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
 
 export const WeeklyAnalyticsView: React.FC = () => {
   const currentWeek = getISOWeek(new Date()).toString();

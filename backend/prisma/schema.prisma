@@ -1,12 +1,10 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["views", "driverAdapters"]
+  previewFeatures = ["views"]
 }
 
 datasource db {
-  provider = "postgresql"
-  // If using Supabase and PgBouncer, uncomment this:
-  // directUrl = env("DIRECT_URL")
+  provider = "postgresql" 
 }
 
 model CategoryTypes {
@@ -35,7 +33,7 @@ model Categories {
 model Transactions {
   transactionId BigInt     @id @default(autoincrement())
   date          DateTime
-  amount        Int // Rounded before save
+  amount        BigInt
   description   String?
   categoryId    BigInt
   category      Categories @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
@@ -50,6 +48,7 @@ model Credits {
   creditId        BigInt     @id @default(autoincrement())
   description     String
   categoryId      BigInt
+  amount          BigInt
   category        Categories @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
   billedDate      DateTime
   lastPaymentDate DateTime
@@ -62,12 +61,24 @@ model Credits {
 }
 
 view TransactionView {
-  transactionId     BigInt   @unique
-  amount            Int
+  transactionId     BigInt   @unique @map("transactionId")
+  amount            BigInt
   date              DateTime
   description       String?
   categoryId        BigInt
   categoryName      String
   categoryColorCode String
-  categoryTypeName  String
+}
+
+view CreditView {
+  creditId          BigInt   @unique @map("creditId")
+  amount            BigInt
+  billedDate        DateTime
+  lastPaymentDate   DateTime
+  paidStatus        Boolean
+  paymentDate       DateTime
+  description       String?
+  categoryId        BigInt
+  categoryName      String
+  categoryColorCode String
 }

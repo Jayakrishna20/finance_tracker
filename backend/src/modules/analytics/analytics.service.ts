@@ -50,11 +50,11 @@ export class AnalyticsService {
     let grandTotal = 0;
     const formattedCategories = grouped.map((g) => {
       const total = g._sum.amount || 0;
-      grandTotal += total;
+      grandTotal += Number(total);
       return {
         categoryId: g.categoryId,
-        categoryName: categoryMap.get(g.categoryId) || "Unknown",
-        total,
+        categoryName: categoryMap.get(g.categoryId),
+        total: Number(total),
       };
     });
 
