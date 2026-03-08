@@ -43,6 +43,39 @@ const analyticsRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     analyticsController.getYearly,
   );
+
+  fastify.get(
+    "/credits/weekly",
+    {
+      schema: {
+        querystring: WeeklyAnalyticsQuery,
+        tags: ["Analytics"],
+      },
+    },
+    analyticsController.getWeeklyCredits,
+  );
+
+  fastify.get(
+    "/credits/monthly",
+    {
+      schema: {
+        querystring: MonthlyAnalyticsQuery,
+        tags: ["Analytics"],
+      },
+    },
+    analyticsController.getMonthlyCredits,
+  );
+
+  fastify.get(
+    "/credits/yearly",
+    {
+      schema: {
+        querystring: YearlyAnalyticsQuery,
+        tags: ["Analytics"],
+      },
+    },
+    analyticsController.getYearlyCredits,
+  );
 };
 
 export default analyticsRoutes;

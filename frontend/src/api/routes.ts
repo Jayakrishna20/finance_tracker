@@ -9,14 +9,17 @@ export const API_ROUTES = {
     WEEKLY: "/analytics/weekly",
     MONTHLY: "/analytics/monthly",
     YEARLY: "/analytics/yearly",
+    CREDITS_WEEKLY: "/analytics/credits/weekly",
+    CREDITS_MONTHLY: "/analytics/credits/monthly",
+    CREDITS_YEARLY: "/analytics/credits/yearly",
   },
   ARCHIVE: {
     WEEKLY: "/archive/weekly",
     MONTHLY: "/archive/monthly",
     YEARLY: "/archive/yearly",
-  },
-  CATEGORY_TYPES: {
-    GET_ALL: "/category-types",
+    CREDITS_WEEKLY: "/archive/credits/weekly",
+    CREDITS_MONTHLY: "/archive/credits/monthly",
+    CREDITS_YEARLY: "/archive/credits/yearly",
   },
   CATEGORIES: {
     GET_ALL: "/categories",

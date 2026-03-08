@@ -20,4 +20,22 @@ export const AnalyticsAPI = {
     const res = await axiosClient.get(API_ROUTES.ANALYTICS.YEARLY, { params });
     return res.data.data;
   },
+  getWeeklyCredits: async (params: { week: number; year: number }) => {
+    const res = await axiosClient.get(API_ROUTES.ANALYTICS.CREDITS_WEEKLY, {
+      params,
+    });
+    return res.data.data;
+  },
+  getMonthlyCredits: async (params: { month: number; year: number }) => {
+    const res = await axiosClient.get(API_ROUTES.ANALYTICS.CREDITS_MONTHLY, {
+      params,
+    });
+    return res.data.data;
+  },
+  getYearlyCredits: async (params: { year: number }) => {
+    const res = await axiosClient.get(API_ROUTES.ANALYTICS.CREDITS_YEARLY, {
+      params,
+    });
+    return res.data.data;
+  },
 };

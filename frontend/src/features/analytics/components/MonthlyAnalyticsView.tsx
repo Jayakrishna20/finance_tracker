@@ -2,8 +2,15 @@ import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
 import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
+import type { DataSource } from "../../../types";
 
-export const MonthlyAnalyticsView: React.FC = () => {
+interface MonthlyAnalyticsViewProps {
+  dataSource?: DataSource;
+}
+
+export const MonthlyAnalyticsView: React.FC<MonthlyAnalyticsViewProps> = ({
+  dataSource = "transactions",
+}) => {
   const currentMonth = format(new Date(), "MMM-yyyy");
   const { data: transactions } = useTransactions();
 
@@ -15,7 +22,7 @@ export const MonthlyAnalyticsView: React.FC = () => {
           (t) => t.monthYear || format(new Date(t.date), "MMM-yyyy"),
         ),
       ),
-    ).sort((a, b) => b.localeCompare(a)); // Simple sort, maybe better to sort by date
+    ).sort((a, b) => b.localeCompare(a));
     return months.includes(currentMonth) ? months : [currentMonth, ...months];
   }, [transactions, currentMonth]);
 
@@ -34,6 +41,7 @@ export const MonthlyAnalyticsView: React.FC = () => {
           periodType="MONTHLY"
           defaultPeriod={currentMonth}
           availablePeriods={availableMonths}
+          dataSource={dataSource}
         />
       </div>
     </div>

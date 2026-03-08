@@ -1,39 +1,39 @@
 import { Button } from "@mui/material";
 import {
-  useReactTable,
-  getCoreRowModel,
   flexRender,
+  getCoreRowModel,
+  useReactTable,
   type ColumnDef,
-  type SortingState,
   type RowSelectionState,
+  type SortingState,
 } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { format, getISOWeek } from "date-fns";
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Check,
+  ChevronDown,
+  ChevronRight,
   Edit2,
   Info,
   Plus,
   Trash2,
   X,
-  ChevronDown,
-  ChevronRight,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import { useCreditModalStore } from "../store/useCreditModalStore";
+import { useConfirmStore } from "../../../store/useConfirmStore";
 import type { Credit } from "../../../types";
+import { formatCurrency } from "../../../utils/formatters";
 import {
   useBatchUpdateCredits,
   useCredits,
   useDeleteCredit,
 } from "../hooks/useCreditHooks";
-import { useConfirmStore } from "../../../store/useConfirmStore";
-import { formatCurrency } from "../../../utils/formatters";
+import { useCreditModalStore } from "../store/useCreditModalStore";
 
 export const CreditLogsGrid: React.FC = () => {
-  const { data: credits = [], isLoading } = useCredits({ skip: 0, take: 10 });
+  const { data: credits = [], isLoading } = useCredits({ skip: 0, take: 50 });
   const deleteCreditMutation = useDeleteCredit();
   const batchUpdateMutation = useBatchUpdateCredits();
   const { openModal } = useCreditModalStore();
@@ -376,6 +376,24 @@ export const CreditLogsGrid: React.FC = () => {
         },
       },
       {
+        id: "weekNumber",
+        header: "Week",
+        size: 80,
+        accessorFn: (row) => getISOWeek(new Date(row.paymentDate)),
+        cell: (info) => (
+          <span className="text-gray-700">{info.getValue() as number}</span>
+        ),
+      },
+      {
+        id: "monthYear",
+        header: "Month",
+        size: 110,
+        accessorFn: (row) => format(new Date(row.paymentDate), "MMM-yyyy"),
+        cell: (info) => (
+          <span className="text-gray-700">{info.getValue() as string}</span>
+        ),
+      },
+      {
         accessorKey: "paidStatus",
         header: "Status",
         size: 120,
@@ -596,8 +614,8 @@ export const CreditLogsGrid: React.FC = () => {
                           isGroup
                             ? "bg-gray-50/80 hover:bg-gray-100"
                             : row.getIsSelected()
-                              ? "bg-primary-main/5 hover:bg-primary-main/10"
-                              : "hover:bg-gray-50"
+                              ? "bg-primary-main/15 hover:bg-primary-main/25"
+                              : "hover:bg-gray-100"
                         }`}
                         onClick={() => {
                           if (!isGroup && row.getCanSelect()) {

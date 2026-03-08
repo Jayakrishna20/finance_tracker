@@ -10,6 +10,7 @@ import {
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { usePeriodAnalytics } from "../hooks/usePeriodAnalytics";
+import { DataSource } from "../../../types";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { formatCurrency } from "../../../utils/formatters";
 import { CHART_COLORS, type PeriodType } from "../../../config/constants";
@@ -18,12 +19,14 @@ interface PeriodAnalyticsProps {
   periodType: PeriodType;
   defaultPeriod: string;
   availablePeriods: string[];
+  dataSource?: DataSource;
 }
 
 export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
   periodType,
   defaultPeriod,
   availablePeriods,
+  dataSource = "transactions",
 }) => {
   const currentYear = new Date().getFullYear();
   const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);
@@ -33,6 +36,7 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
     periodType,
     selectedPeriod,
     periodType === "WEEKLY" ? selectedYear : undefined,
+    dataSource,
   );
   const { categories } = useCategoryStore();
 

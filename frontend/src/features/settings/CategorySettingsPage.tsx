@@ -21,6 +21,11 @@ import { useNavigate } from "react-router-dom";
 import { TransactionTypes, type TransactionType } from "../../types";
 import { COLORS } from "../../config/constants";
 
+const CATEGORY_TYPE_OPTIONS = [
+  { value: TransactionTypes.Cash, label: "Cash" },
+  { value: TransactionTypes.Credit, label: "Credit" },
+];
+
 export const CategorySettingsPage: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -29,14 +34,11 @@ export const CategorySettingsPage: React.FC = () => {
     removeCategory,
     updateCategory,
     fetchCategories,
-    fetchCategoryTypes,
-    categoryTypes,
   } = useCategoryStore();
 
   useEffect(() => {
     fetchCategories();
-    fetchCategoryTypes();
-  }, [fetchCategories, fetchCategoryTypes]);
+  }, [fetchCategories]);
 
   const { openConfirm } = useConfirmStore();
   const [newCat, setNewCat] = useState("");
@@ -87,15 +89,11 @@ export const CategorySettingsPage: React.FC = () => {
     setEditingCatId(id);
     setIsFetchingDetail(true);
     try {
-      // Ensure types are loaded for the edit modal as well
-      await Promise.all([
-        CategoriesAPI.getById(id).then((category) => {
-          setEditValue(category.categoryName);
-          setEditColor(category.categoryColorCode);
-          setEditType(category.categoryType);
-        }),
-        fetchCategoryTypes(),
-      ]);
+      await CategoriesAPI.getById(id).then((category) => {
+        setEditValue(category.categoryName);
+        setEditColor(category.categoryColorCode);
+        setEditType(category.categoryType);
+      });
     } catch (error) {
       toast.error("Failed to fetch category details.");
       setEditingCatId(null);
@@ -180,14 +178,14 @@ export const CategorySettingsPage: React.FC = () => {
           <InputLabel>Category Type</InputLabel>
           <Select
             value={newCatType}
-            label="Type"
+            label="Category Type"
             onChange={(e) =>
               setNewCatType(Number(e.target.value) as TransactionType)
             }
           >
-            {categoryTypes.map((t) => (
-              <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
-                {t.categoryTypeName}
+            {CATEGORY_TYPE_OPTIONS.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
               </MenuItem>
             ))}
           </Select>
@@ -226,7 +224,9 @@ export const CategorySettingsPage: React.FC = () => {
                   <span
                     className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${cat.categoryType === TransactionTypes.Credit ? "bg-orange-100 text-orange-600" : "bg-gray-100 text-gray-500"}`}
                   >
-                    {cat.type.categoryTypeName}
+                    {cat.categoryType === TransactionTypes.Credit
+                      ? "Credit"
+                      : "Cash"}
                   </span>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -314,14 +314,14 @@ export const CategorySettingsPage: React.FC = () => {
               <InputLabel>Category Type</InputLabel>
               <Select
                 value={editType}
-                label="Type"
+                label="Category Type"
                 onChange={(e) =>
                   setEditType(Number(e.target.value) as TransactionType)
                 }
               >
-                {categoryTypes.map((t) => (
-                  <MenuItem key={t.categoryTypeId} value={t.categoryTypeId}>
-                    {t.categoryTypeName}
+                {CATEGORY_TYPE_OPTIONS.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label}
                   </MenuItem>
                 ))}
               </Select>

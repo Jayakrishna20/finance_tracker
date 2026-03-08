@@ -14,4 +14,16 @@ export const ArchiveAPI = {
     const res = await axiosClient.get(API_ROUTES.ARCHIVE.YEARLY);
     return res.data.data;
   },
+  getWeeklyCredits: async () => {
+    const res = await axiosClient.get(API_ROUTES.ARCHIVE.CREDITS_WEEKLY);
+    return res.data.data;
+  },
+  getMonthlyCredits: async () => {
+    const res = await axiosClient.get(API_ROUTES.ARCHIVE.CREDITS_MONTHLY);
+    return res.data.data;
+  },
+  getYearlyCredits: async () => {
+    const res = await axiosClient.get(API_ROUTES.ARCHIVE.CREDITS_YEARLY);
+    return res.data.data;
+  },
 };

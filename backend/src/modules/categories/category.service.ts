@@ -17,11 +17,6 @@ export class CategoryService {
         categoryName: true,
         categoryColorCode: true,
         categoryType: true,
-        type: {
-          select: {
-            categoryTypeName: true,
-          },
-        },
       },
       orderBy: { createdAt: "desc" },
     });

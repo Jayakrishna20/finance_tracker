@@ -45,4 +45,49 @@ export class AnalyticsController {
       successResponse("Yearly analytics fetched successfully", analytics),
     );
   };
+
+  getWeeklyCredits = async (
+    request: FastifyRequest<{ Querystring: WeeklyQueryInput }>,
+    reply: FastifyReply,
+  ) => {
+    const analytics = await this.analyticsService.getWeeklyCreditAnalytics(
+      request.query,
+    );
+    return reply.send(
+      successResponse(
+        "Weekly credit analytics fetched successfully",
+        analytics,
+      ),
+    );
+  };
+
+  getMonthlyCredits = async (
+    request: FastifyRequest<{ Querystring: MonthlyQueryInput }>,
+    reply: FastifyReply,
+  ) => {
+    const analytics = await this.analyticsService.getMonthlyCreditAnalytics(
+      request.query,
+    );
+    return reply.send(
+      successResponse(
+        "Monthly credit analytics fetched successfully",
+        analytics,
+      ),
+    );
+  };
+
+  getYearlyCredits = async (
+    request: FastifyRequest<{ Querystring: YearlyQueryInput }>,
+    reply: FastifyReply,
+  ) => {
+    const analytics = await this.analyticsService.getYearlyCreditAnalytics(
+      request.query,
+    );
+    return reply.send(
+      successResponse(
+        "Yearly credit analytics fetched successfully",
+        analytics,
+      ),
+    );
+  };
 }

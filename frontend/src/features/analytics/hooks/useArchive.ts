@@ -1,16 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArchiveAPI } from "../../../api/archive";
+import { DataSource } from "../../../types";
 
-export const useArchive = (periodType: "WEEKLY" | "MONTHLY" | "YEARLY") => {
+export const useArchive = (
+  periodType: "WEEKLY" | "MONTHLY" | "YEARLY",
+  dataSource: DataSource = DataSource.Transactions,
+) => {
   return useQuery({
-    queryKey: ["archive", periodType],
+    queryKey: ["archive", periodType, dataSource],
     queryFn: async () => {
+      const isCredits = dataSource === DataSource.Credits;
       if (periodType === "WEEKLY") {
-        return ArchiveAPI.getWeekly();
+        return isCredits
+          ? ArchiveAPI.getWeeklyCredits()
+          : ArchiveAPI.getWeekly();
       } else if (periodType === "MONTHLY") {
-        return ArchiveAPI.getMonthly();
+        return isCredits
+          ? ArchiveAPI.getMonthlyCredits()
+          : ArchiveAPI.getMonthly();
       } else {
-        return ArchiveAPI.getYearly();
+        return isCredits
+          ? ArchiveAPI.getYearlyCredits()
+          : ArchiveAPI.getYearly();
       }
     },
   });

@@ -9,6 +9,11 @@ const archiveRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get("/weekly", archiveController.getWeekly);
   fastify.get("/monthly", archiveController.getMonthly);
   fastify.get("/yearly", archiveController.getYearly);
+
+  // Credits archive routes
+  fastify.get("/credits/weekly", archiveController.getWeeklyCredits);
+  fastify.get("/credits/monthly", archiveController.getMonthlyCredits);
+  fastify.get("/credits/yearly", archiveController.getYearlyCredits);
 };
 
 export default archiveRoutes;

@@ -1,10 +1,10 @@
 -- CategoryTypes
-INSERT INTO "CategoryTypes" ("categoryTypeId", "categoryTypeName", "isActive", "createdAt", "updatedAt") VALUES
+INSERT INTO public."CategoryTypes" ("categoryTypeId", "categoryTypeName", "isActive", "createdAt", "updatedAt") VALUES
 (1, 'Cash', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (2, 'Credit', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Categories (3 for Cash, 3 for Credit)
-INSERT INTO "Categories" ("categoryId", "categoryName", "categoryType", "categoryColorCode", "createdAt", "updatedAt") VALUES
+INSERT INTO public."Categories" ("categoryId", "categoryName", "categoryType", "categoryColorCode", "createdAt", "updatedAt") VALUES
 (1, 'Groceries', 1, '#FF5733', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (2, 'Dining', 1, '#33FF57', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (3, 'Entertainment', 1, '#3357FF', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -13,7 +13,7 @@ INSERT INTO "Categories" ("categoryId", "categoryName", "categoryType", "categor
 (6, 'Utilities', 2, '#33FFF5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Transactions (20 records)
-INSERT INTO "Transactions" ("transactionId", "date", "amount", "description", "categoryId", "createdAt", "updatedAt") VALUES
+INSERT INTO public."Transactions" ("transactionId", "date", "amount", "description", "categoryId", "createdAt", "updatedAt") VALUES
 (1, '2023-10-01 10:00:00', 1500, 'Grocery shopping', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (2, '2023-10-02 12:30:00', 500, 'Lunch at cafe', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (3, '2023-10-03 19:00:00', 2000, 'Movie tickets', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -36,24 +36,24 @@ INSERT INTO "Transactions" ("transactionId", "date", "amount", "description", "c
 (20, '2023-10-20 20:15:00', 2500, 'Theme park', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Credits (20 records)
-INSERT INTO "Credits" ("creditId", "description", "categoryId", "billedDate", "lastPaymentDate", "paidStatus", "paymentDate", "amount", "createdAt", "updatedAt") VALUES
-(1, 'Credit purchase 1', 4, '2023-09-01 00:00:00', '2023-09-15 00:00:00', true, '2023-09-15 00:00:00', 5000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'Credit purchase 2', 5, '2023-09-05 00:00:00', '2023-09-20 00:00:00', true, '2023-09-20 00:00:00', 12000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'Credit purchase 3', 6, '2023-09-10 00:00:00', NULL, false, NULL, 3500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'Credit purchase 4', 4, '2023-09-12 00:00:00', '2023-09-25 00:00:00', true, '2023-09-25 00:00:00', 8000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'Credit purchase 5', 5, '2023-09-15 00:00:00', NULL, false, NULL, 15000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(6, 'Credit purchase 6', 6, '2023-09-18 00:00:00', '2023-09-28 00:00:00', true, '2023-09-28 00:00:00', 4500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(7, 'Credit purchase 7', 4, '2023-09-20 00:00:00', NULL, false, NULL, 6000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(8, 'Credit purchase 8', 5, '2023-09-22 00:00:00', '2023-10-05 00:00:00', true, '2023-10-05 00:00:00', 11000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(9, 'Credit purchase 9', 6, '2023-09-25 00:00:00', NULL, false, NULL, 2500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(10, 'Credit purchase 10', 4, '2023-09-28 00:00:00', '2023-10-10 00:00:00', true, '2023-10-10 00:00:00', 9500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(11, 'Credit purchase 11', 5, '2023-10-01 00:00:00', NULL, false, NULL, 18000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(12, 'Credit purchase 12', 6, '2023-10-03 00:00:00', '2023-10-15 00:00:00', true, '2023-10-15 00:00:00', 3000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(13, 'Credit purchase 13', 4, '2023-10-05 00:00:00', NULL, false, NULL, 7500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(14, 'Credit purchase 14', 5, '2023-10-08 00:00:00', '2023-10-20 00:00:00', true, '2023-10-20 00:00:00', 14000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(15, 'Credit purchase 15', 6, '2023-10-10 00:00:00', NULL, false, NULL, 4000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(16, 'Credit purchase 16', 4, '2023-10-12 00:00:00', '2023-10-25 00:00:00', true, '2023-10-25 00:00:00', 8500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(17, 'Credit purchase 17', 5, '2023-10-15 00:00:00', NULL, false, NULL, 16000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(18, 'Credit purchase 18', 6, '2023-10-18 00:00:00', '2023-10-28 00:00:00', true, '2023-10-28 00:00:00', 5500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(19, 'Credit purchase 19', 4, '2023-10-20 00:00:00', NULL, false, NULL, 6500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(20, 'Credit purchase 20', 5, '2023-10-22 00:00:00', '2023-11-05 00:00:00', true, '2023-11-05 00:00:00', 13000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO public."Credits" ("creditId", "description", "categoryId", "billedDate", "lastPaymentDate", "paidStatus", "paymentDate", "amount", "createdAt", "updatedAt") VALUES
+(1, 'Credit purchase 1', 4, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-01 00:00:00', 5000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'Credit purchase 2', 5, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-05 00:00:00', 12000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'Credit purchase 3', 6, '2023-10-15 00:00:00', '2023-11-04 00:00:00', false, '2023-09-10 00:00:00', 3500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'Credit purchase 4', 4, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-12 00:00:00', 8000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'Credit purchase 5', 5, '2023-10-15 00:00:00', '2023-11-04 00:00:00', false, '2023-09-15 00:00:00', 15000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(6, 'Credit purchase 6', 6, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-18 00:00:00', 4500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, 'Credit purchase 7', 4, '2023-10-15 00:00:00', '2023-11-04 00:00:00', false, '2023-09-20 00:00:00', 6000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(8, 'Credit purchase 8', 5, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-22 00:00:00', 11000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(9, 'Credit purchase 9', 6, '2023-10-15 00:00:00', '2023-11-04 00:00:00', false, '2023-09-25 00:00:00', 2500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(10, 'Credit purchase 10', 4, '2023-10-15 00:00:00', '2023-11-04 00:00:00', true, '2023-09-28 00:00:00', 9500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(11, 'Credit purchase 11', 5, '2023-11-15 00:00:00', '2023-12-04 00:00:00', false, '2023-10-01 00:00:00', 18000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(12, 'Credit purchase 12', 6, '2023-11-15 00:00:00', '2023-12-04 00:00:00', true, '2023-10-03 00:00:00', 3000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(13, 'Credit purchase 13', 4, '2023-11-15 00:00:00', '2023-12-04 00:00:00', false, '2023-10-05 00:00:00', 7500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(14, 'Credit purchase 14', 5, '2023-11-15 00:00:00', '2023-12-04 00:00:00', true, '2023-10-08 00:00:00', 14000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(15, 'Credit purchase 15', 6, '2023-11-15 00:00:00', '2023-12-04 00:00:00', false, '2023-10-10 00:00:00', 4000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(16, 'Credit purchase 16', 4, '2023-11-15 00:00:00', '2023-12-04 00:00:00', true, '2023-10-12 00:00:00', 8500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(17, 'Credit purchase 17', 5, '2023-11-15 00:00:00', '2023-12-04 00:00:00', false, '2023-10-15 00:00:00', 16000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(18, 'Credit purchase 18', 6, '2023-11-15 00:00:00', '2023-12-04 00:00:00', true, '2023-10-18 00:00:00', 5500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(19, 'Credit purchase 19', 4, '2023-11-15 00:00:00', '2023-12-04 00:00:00', false, '2023-10-20 00:00:00', 6500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(20, 'Credit purchase 20', 5, '2023-11-15 00:00:00', '2023-12-04 00:00:00', true, '2023-10-22 00:00:00', 13000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

@@ -2,8 +2,15 @@ import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
 import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
+import type { DataSource } from "../../../types";
 
-export const YearlyAnalyticsView: React.FC = () => {
+interface YearlyAnalyticsViewProps {
+  dataSource?: DataSource;
+}
+
+export const YearlyAnalyticsView: React.FC<YearlyAnalyticsViewProps> = ({
+  dataSource = "transactions",
+}) => {
   const currentYear = format(new Date(), "yyyy");
   const { data: transactions } = useTransactions();
 
@@ -30,6 +37,7 @@ export const YearlyAnalyticsView: React.FC = () => {
           periodType="YEARLY"
           defaultPeriod={currentYear}
           availablePeriods={availableYears}
+          dataSource={dataSource}
         />
       </div>
     </div>
