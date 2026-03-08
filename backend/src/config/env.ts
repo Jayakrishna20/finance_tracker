@@ -10,6 +10,12 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default("0.0.0.0"),
   DATABASE_URL: z.string().url(),
+  // Email
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_USER: z.string().email(),
+  SMTP_PASS: z.string(),
+  EMAIL_TO: z.string().email(),
 });
 
 const _env = envSchema.safeParse(process.env);

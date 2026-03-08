@@ -3,10 +3,12 @@ export const TransactionTypes = {
   Credit: 2,
 } as const;
 
-export enum DataSource {
-  Transactions = "transactions",
-  Credits = "credits",
-}
+export const DataSource = {
+  Transactions: "transactions",
+  Credits: "credits",
+} as const;
+
+export type DataSource = (typeof DataSource)[keyof typeof DataSource];
 
 export type TransactionType =
   (typeof TransactionTypes)[keyof typeof TransactionTypes];
