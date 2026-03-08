@@ -33,7 +33,7 @@ export const DailyTransactionsGrid: React.FC<
 > = ({}) => {
   const { data: allTransactions = [], isLoading } = useTransactions({
     skip: 0,
-    take: 10,
+    take: 50,
   });
 
   const deleteTxMutation = useDeleteTransaction();
@@ -319,7 +319,7 @@ export const DailyTransactionsGrid: React.FC<
                   table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="border-b border-[#F3F4F6] transition-colors hover:bg-gray-50"
+                      className="border-b border-[#F3F4F6] transition-colors hover:bg-gray-100"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-3 text-sm">

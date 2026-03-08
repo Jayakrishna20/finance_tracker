@@ -2,16 +2,19 @@ import React, { useMemo } from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { formatCurrency } from "../../../utils/formatters";
 import { useArchive } from "../hooks/useArchive";
+import { DataSource } from "../../../types";
 import { format } from "date-fns";
 
 interface VaultPivotTableProps {
   periodType: "WEEKLY" | "MONTHLY" | "YEARLY";
+  dataSource?: DataSource;
 }
 
 export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
   periodType,
+  dataSource = "transactions",
 }) => {
-  const { data: archiveData, isLoading } = useArchive(periodType);
+  const { data: archiveData, isLoading } = useArchive(periodType, dataSource);
 
   const { rows, columns, categoryGrandTotals, totalGrand } = useMemo(() => {
     if (!archiveData || !Array.isArray(archiveData))

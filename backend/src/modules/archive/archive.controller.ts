@@ -25,4 +25,25 @@ export class ArchiveController {
       successResponse("Yearly archive fetched successfully", data),
     );
   };
+
+  getWeeklyCredits = async (request: FastifyRequest, reply: FastifyReply) => {
+    const data = await this.archiveService.getWeeklyCreditArchive();
+    return reply.send(
+      successResponse("Weekly credit archive fetched successfully", data),
+    );
+  };
+
+  getMonthlyCredits = async (request: FastifyRequest, reply: FastifyReply) => {
+    const data = await this.archiveService.getMonthlyCreditArchive();
+    return reply.send(
+      successResponse("Monthly credit archive fetched successfully", data),
+    );
+  };
+
+  getYearlyCredits = async (request: FastifyRequest, reply: FastifyReply) => {
+    const data = await this.archiveService.getYearlyCreditArchive();
+    return reply.send(
+      successResponse("Yearly credit archive fetched successfully", data),
+    );
+  };
 }

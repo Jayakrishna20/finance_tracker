@@ -4,12 +4,10 @@ import type { Category, CreateCategoryPayload } from "../types";
 
 interface CategoryState {
   categories: Category[];
-  categoryTypes: { categoryTypeId: number; categoryTypeName: string }[];
   isLoading: boolean;
   error: Error | null;
   fetchCategories: (force?: boolean) => Promise<void>;
   fetchCategoriesByType: (typeId: number, force?: boolean) => Promise<void>;
-  fetchCategoryTypes: () => Promise<void>;
   addCategory: (payload: CreateCategoryPayload) => Promise<void>;
   removeCategory: (id: number) => Promise<void>;
   updateCategory: (
@@ -18,22 +16,10 @@ interface CategoryState {
   ) => Promise<void>;
 }
 
-import { CategoryTypesAPI } from "../api/categoryTypes";
-
 export const useCategoryStore = create<CategoryState>((set, get) => ({
   categories: [],
-  categoryTypes: [],
   isLoading: false,
   error: null,
-  fetchCategoryTypes: async (force = false) => {
-    if (!force && get().categoryTypes.length > 0) return;
-    try {
-      const types = await CategoryTypesAPI.getAll();
-      set({ categoryTypes: types });
-    } catch (error) {
-      console.error("Failed to fetch category types", error);
-    }
-  },
   fetchCategories: async (force = false) => {
     if (!force && (get().isLoading || get().categories.length > 0)) return;
     set({ isLoading: true });

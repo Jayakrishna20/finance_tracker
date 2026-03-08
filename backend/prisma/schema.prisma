@@ -7,27 +7,16 @@ datasource db {
   provider = "postgresql" 
 }
 
-model CategoryTypes {
-  categoryTypeId   BigInt       @id @default(autoincrement())
-  categoryTypeName String
-  isActive         Boolean      @default(true)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  categories       Categories[]
-}
 
 model Categories {
   categoryId        BigInt         @id @default(autoincrement())
   categoryName      String         @unique
   categoryType      BigInt
-  type              CategoryTypes  @relation(fields: [categoryType], references: [categoryTypeId])
   categoryColorCode String
   transactions      Transactions[]
   credits           Credits[]
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
-
-  @@index([categoryType])
 }
 
 model Transactions {

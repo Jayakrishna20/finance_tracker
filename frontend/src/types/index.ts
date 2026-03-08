@@ -3,6 +3,11 @@ export const TransactionTypes = {
   Credit: 2,
 } as const;
 
+export enum DataSource {
+  Transactions = "transactions",
+  Credits = "credits",
+}
+
 export type TransactionType =
   (typeof TransactionTypes)[keyof typeof TransactionTypes];
 
@@ -11,11 +16,6 @@ export interface Category {
   categoryName: string;
   categoryType: TransactionType;
   categoryColorCode: string;
-  type: CategoryTypeName;
-}
-
-export interface CategoryTypeName {
-  categoryTypeName: string;
 }
 
 export interface Transaction {
