@@ -18,6 +18,8 @@ import transactionRoutes from "./modules/transactions/transaction.routes.js";
 import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 import archiveRoutes from "./modules/archive/archive.routes.js";
 import creditRoutes from "./modules/credits/credit.routes.js";
+import notificationRoutes from "./modules/notifications/notification.routes.js";
+import { env } from "./config/env.js";
 
 export const buildApp = async (): Promise<FastifyInstance> => {
   const app = Fastify({
@@ -76,6 +78,10 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   await app.register(analyticsRoutes, { prefix: "/analytics" });
   await app.register(archiveRoutes, { prefix: "/archive" });
   await app.register(creditRoutes, { prefix: "/credits" });
+
+  if (env.NODE_ENV !== "production") {
+    await app.register(notificationRoutes, { prefix: "/notifications" });
+  }
 
   return app;
 };

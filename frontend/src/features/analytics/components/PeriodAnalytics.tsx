@@ -26,7 +26,7 @@ export const PeriodAnalytics: React.FC<PeriodAnalyticsProps> = ({
   periodType,
   defaultPeriod,
   availablePeriods,
-  dataSource = "transactions",
+  dataSource,
 }) => {
   const currentYear = new Date().getFullYear();
   const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);

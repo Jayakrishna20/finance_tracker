@@ -2,14 +2,14 @@ import React from "react";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { format } from "date-fns";
 import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
-import type { DataSource } from "../../../types";
+import { DataSource } from "../../../types";
 
 interface MonthlyAnalyticsViewProps {
   dataSource?: DataSource;
 }
 
 export const MonthlyAnalyticsView: React.FC<MonthlyAnalyticsViewProps> = ({
-  dataSource = "transactions",
+  dataSource,
 }) => {
   const currentMonth = format(new Date(), "MMM-yyyy");
   const { data: transactions } = useTransactions();

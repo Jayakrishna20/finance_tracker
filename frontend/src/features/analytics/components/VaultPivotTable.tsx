@@ -12,7 +12,7 @@ interface VaultPivotTableProps {
 
 export const VaultPivotTable: React.FC<VaultPivotTableProps> = ({
   periodType,
-  dataSource = "transactions",
+  dataSource,
 }) => {
   const { data: archiveData, isLoading } = useArchive(periodType, dataSource);
 

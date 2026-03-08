@@ -2,14 +2,14 @@ import React from "react";
 import { getISOWeek } from "date-fns";
 import { PeriodAnalytics } from "./PeriodAnalytics";
 import { useTransactions } from "../../transactions/hooks/useTransactionHooks";
-import type { DataSource } from "../../../types";
+import { DataSource } from "../../../types";
 
 interface WeeklyAnalyticsViewProps {
   dataSource?: DataSource;
 }
 
 export const WeeklyAnalyticsView: React.FC<WeeklyAnalyticsViewProps> = ({
-  dataSource = "transactions",
+  dataSource,
 }) => {
   const currentWeek = getISOWeek(new Date()).toString();
   const { data: transactions } = useTransactions();
