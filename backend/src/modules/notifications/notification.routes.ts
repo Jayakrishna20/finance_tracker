@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { format } from "date-fns";
+import { z } from "zod";
 import { NotificationService } from "./notification.service.js";
 import {
   sendEmail,
@@ -20,15 +21,11 @@ export default async function notificationRoutes(app: FastifyInstance) {
   // POST /notifications/trigger/monthly-summary
   app.post("/trigger/monthly-summary", {
     schema: {
-      tags: ["Notifications (Dev)"],
       summary: "Trigger monthly transaction summary email",
-      querystring: {
-        type: "object",
-        properties: {
-          year: { type: "integer" },
-          month: { type: "integer", minimum: 1, maximum: 12 },
-        },
-      },
+      querystring: z.object({
+        year: z.coerce.number().int().optional(),
+        month: z.coerce.number().int().min(1).max(12).optional(),
+      }),
     },
     handler: async (request, reply) => {
       const query = request.query as { year?: number; month?: number };
@@ -58,15 +55,11 @@ export default async function notificationRoutes(app: FastifyInstance) {
   // POST /notifications/trigger/credits-billing
   app.post("/trigger/credits-billing", {
     schema: {
-      tags: ["Notifications (Dev)"],
       summary: "Trigger credits billing reminder email",
-      querystring: {
-        type: "object",
-        properties: {
-          year: { type: "integer" },
-          month: { type: "integer", minimum: 1, maximum: 12 },
-        },
-      },
+      querystring: z.object({
+        year: z.coerce.number().int().optional(),
+        month: z.coerce.number().int().min(1).max(12).optional(),
+      }),
     },
     handler: async (request, reply) => {
       const query = request.query as { year?: number; month?: number };
