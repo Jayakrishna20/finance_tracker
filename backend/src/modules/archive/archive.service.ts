@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 
 export class ArchiveService {
   constructor(private prisma: PrismaClient) {}

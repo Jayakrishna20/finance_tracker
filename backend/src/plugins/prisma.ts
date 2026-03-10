@@ -3,7 +3,7 @@ import { FastifyPluginAsync } from "fastify";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 import { env } from "../config/env.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 
 declare module "fastify" {
   interface FastifyInstance {
