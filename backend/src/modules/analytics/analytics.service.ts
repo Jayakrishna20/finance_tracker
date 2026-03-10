@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma/index.js";
 import {
   startOfISOWeek,
   endOfISOWeek,
@@ -37,18 +37,18 @@ export class AnalyticsService {
       return { categories: [], grandTotal: 0 };
     }
 
-    const categoryIds = grouped.map((g) => g.categoryId);
+    const categoryIds = grouped.map((g: any) => g.categoryId);
     const categories = await this.prisma.categories.findMany({
       where: { categoryId: { in: categoryIds } },
       select: { categoryId: true, categoryName: true },
     });
 
     const categoryMap = new Map(
-      categories.map((c) => [c.categoryId, c.categoryName]),
+      categories.map((c: any) => [c.categoryId, c.categoryName]),
     );
 
     let grandTotal = 0;
-    const formattedCategories = grouped.map((g) => {
+    const formattedCategories = grouped.map((g: any) => {
       const total = g._sum.amount || 0;
       grandTotal += Number(total);
       return {
@@ -110,18 +110,18 @@ export class AnalyticsService {
     if (grouped.length === 0) {
       return { categories: [], grandTotal: 0 };
     }
-    const categoryIds = grouped.map((g) => g.categoryId);
+    const categoryIds = grouped.map((g: any) => g.categoryId);
     const categories = await this.prisma.categories.findMany({
       where: { categoryId: { in: categoryIds } },
       select: { categoryId: true, categoryName: true },
     });
 
     const categoryMap = new Map(
-      categories.map((c) => [c.categoryId, c.categoryName]),
+      categories.map((c: any) => [c.categoryId, c.categoryName]),
     );
 
     let grandTotal = 0;
-    const formattedCategories = grouped.map((g) => {
+    const formattedCategories = grouped.map((g: any) => {
       const total = g._sum.amount || 0;
       grandTotal += Number(total);
       return {
