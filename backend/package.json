@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Finance Tracker API using Fastify and Prisma",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "npx prisma generate && tsc",

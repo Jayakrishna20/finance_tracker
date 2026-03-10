@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "@prisma/client/extension";
 import { CreateCategoryInput, UpdateCategoryInput } from "./category.schema.js";
 
 export class CategoryService {

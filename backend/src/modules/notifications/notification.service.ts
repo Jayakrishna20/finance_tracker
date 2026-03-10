@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "@prisma/client/extension";
 import { format } from "date-fns";
 import type { TransactionRow, CreditRow } from "./email.service.js";
 

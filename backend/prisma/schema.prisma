@@ -1,13 +1,17 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-  provider        = "prisma-client"
-  previewFeatures = ["views"]
-  output          = "../src/generated/prisma"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
-
 
 model Categories {
   categoryId        BigInt         @id @default(autoincrement())
@@ -48,27 +52,4 @@ model Credits {
   updatedAt       DateTime   @updatedAt
 
   @@index([categoryId])
-}
-
-view TransactionView {
-  transactionId     BigInt   @unique @map("transactionId")
-  amount            BigInt
-  date              DateTime
-  description       String?
-  categoryId        BigInt
-  categoryName      String
-  categoryColorCode String
-}
-
-view CreditView {
-  creditId          BigInt   @unique @map("creditId")
-  amount            BigInt
-  billedDate        DateTime
-  lastPaymentDate   DateTime
-  paidStatus        Boolean
-  paymentDate       DateTime
-  description       String?
-  categoryId        BigInt
-  categoryName      String
-  categoryColorCode String
 }
