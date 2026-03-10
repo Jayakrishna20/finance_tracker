@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma/index.js";
 import { format } from "date-fns";
 import type { TransactionRow, CreditRow } from "./email.service.js";
 
@@ -26,7 +26,7 @@ export class NotificationService {
       orderBy: { date: "asc" },
     });
 
-    const rows: TransactionRow[] = records.map((r) => ({
+    const rows: TransactionRow[] = records.map((r: any) => ({
       date: format(new Date(r.date), "dd MMM yyyy"),
       description: r.description ?? "",
       categoryName: r.categoryName,
@@ -61,7 +61,7 @@ export class NotificationService {
       orderBy: { billedDate: "asc" },
     });
 
-    return records.map((r) => ({
+    return records.map((r: any) => ({
       description: r.description,
       categoryName: r.category.categoryName,
       amount: Number(r.amount),

@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma/index.js";
 import { format, subDays } from "date-fns";
 import { NotificationService } from "./notification.service.js";
 import {
