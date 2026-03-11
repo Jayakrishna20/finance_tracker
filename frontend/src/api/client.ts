@@ -2,8 +2,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // Create base client
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export const axiosClient = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },

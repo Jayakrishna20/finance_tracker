@@ -10,6 +10,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default("0.0.0.0"),
   DATABASE_URL: z.string().url(),
+  FRONTEND_URL: z.string().url().optional(),
   // Email
   SMTP_HOST: z.string(),
   SMTP_PORT: z.coerce.number().default(587),

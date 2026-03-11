@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: trackmint-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build && npx prisma generate
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_TO
+        sync: false

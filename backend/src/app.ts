@@ -31,7 +31,19 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   app.setSerializerCompiler(serializerCompiler);
 
   await app.register(helmet, { global: true });
-  await app.register(cors, { origin: true });
+
+  const allowedOrigins: (string | RegExp)[] = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+  ];
+  if (env.FRONTEND_URL) {
+    allowedOrigins.push(env.FRONTEND_URL);
+  }
+
+  await app.register(cors, {
+    origin: allowedOrigins,
+    credentials: true,
+  });
 
   await app.register(prismaPlugin);
   await app.register(errorHandler);
