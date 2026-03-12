@@ -3,7 +3,7 @@ services:
     name: trackmint-api
     runtime: node
     rootDir: backend
-    buildCommand: npm install && npm run build && npx prisma generate
+    buildCommand: npm install && npx prisma db push && npm run build
     startCommand: npm run start
     envVars:
       - key: NODE_ENV
@@ -21,4 +21,8 @@ services:
       - key: SMTP_PASS
         sync: false
       - key: EMAIL_TO
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
         sync: false

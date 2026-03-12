@@ -35,6 +35,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   const allowedOrigins: (string | RegExp)[] = [
     "http://localhost:5173",
     "http://localhost:3000",
+    "http://localhost:4173",
   ];
   if (env.FRONTEND_URL) {
     allowedOrigins.push(env.FRONTEND_URL);
@@ -94,6 +95,14 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   if (env.NODE_ENV !== "production") {
     await app.register(notificationRoutes, { prefix: "/notifications" });
   }
+
+  const { default: pushRoutes } =
+    await import("./modules/notifications/push.routes.js");
+  await app.register(pushRoutes, { prefix: "/push" });
+
+  const { initPushScheduler } =
+    await import("./modules/notifications/push.scheduler.js");
+  initPushScheduler(app.prisma as any);
 
   return app;
 };

@@ -24,6 +24,15 @@ model Categories {
   updatedAt         DateTime       @updatedAt
 }
 
+model PushSubscriptions {
+  id        BigInt   @id @default(autoincrement())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
+
 model Transactions {
   transactionId BigInt     @id @default(autoincrement())
   date          DateTime

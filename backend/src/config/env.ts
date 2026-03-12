@@ -17,6 +17,9 @@ const envSchema = z.object({
   SMTP_USER: z.string().email(),
   SMTP_PASS: z.string(),
   EMAIL_TO: z.string().email(),
+  // Push Notification
+  VAPID_PUBLIC_KEY: z.string(),
+  VAPID_PRIVATE_KEY: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);
