@@ -6,6 +6,7 @@ import { TransactionModal } from "../../features/transactions/components/Transac
 import { CreditModal } from "../../features/credits/components/CreditModal";
 import { GlobalConfirmModal } from "../../features/global-modal/GlobalConfirmModal";
 import { useSidebarStore } from "../../store/useSidebarStore";
+import { PushNotificationPrompt } from "./PushNotificationPrompt";
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -51,6 +52,7 @@ export const AppLayout: React.FC = () => {
         <TransactionModal />
         <CreditModal />
         <GlobalConfirmModal />
+        <PushNotificationPrompt />
       </main>
     </div>
   );
