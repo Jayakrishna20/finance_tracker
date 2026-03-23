@@ -104,5 +104,14 @@ export const buildApp = async (): Promise<FastifyInstance> => {
     await import("./modules/notifications/push.scheduler.js");
   initPushScheduler(app.prisma as any);
 
+  // Health check endpoint for keeping the service awake (Render free tier)
+  app.get("/health", async (_request, _reply) => {
+    return {
+      status: "ok",
+      message: "Server is awake",
+      timestamp: new Date().toISOString(),
+    };
+  });
+
   return app;
 };
